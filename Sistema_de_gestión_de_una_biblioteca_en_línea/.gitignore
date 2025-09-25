@@ -1,0 +1,65 @@
+# Ignorar directorios y archivos específicos de entornos virtuales
+.venv/
+venv/
+env/
+
+# Ignorar directorios y archivos de caché de Python
+__pycache__/
+.pytest_cache
+*.pyc
+*.o
+*.so
+.Python
+build/
+dist/
+develop-eggs/
+.eggs/
+*.egg
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.nox/
+
+# Ignorar archivos de configuración de editores/IDEs
+.vscode/           # Visual Studio Code
+.idea/             # IntelliJ / PyCharm
+*.sublime-project
+*.sublime-workspace
+*.swp              # Vim swap files
+*~                 # Archivos temporales de Vim/Emacs
+
+# Ignorar archivos específicos del sistema operativo
+.DS_Store          # macOS
+Thumbs.db          # Windows
+Desktop.ini        # Windows
+
+# Ignorar archivos de registro y temporales
+*.log
+*.tmp
+tmp/
+logs/
+
+# Ignorar archivos de bases de datos locales (si usas SQLite u otros archivos de DB)
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignorar archivos de configuración local (que no deben ser versionados)
+.env
+.env.*.local
+.flaskenv
+.settings.local
+config.local.py
+instance/
+
+# Ignorar credenciales y archivos de seguridad
+*.pem
+*.key
+*.crt
+
+
+# Ignorar archivos generados por herramientas de packaging
+# Si usas poetry, pipenv, etc.
+poetry.lock
+Pipfile.lock
