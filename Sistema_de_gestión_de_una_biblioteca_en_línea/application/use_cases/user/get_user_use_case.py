@@ -8,9 +8,7 @@ from typing import List
 
 
 class GetUserUseCase:
-    """
-    Caso de uso para traer un usuario por su ID.
-    """
+    
     def __init__(self, user_repo: UserRepository, loan_repo: LoanRepository, book_repo: BookRepository):
         self.user_repo = user_repo
         self.loan_repo = loan_repo

@@ -8,10 +8,8 @@ class UserRepository(ABC):
     """
     @abstractmethod
     async def save(self, user: User) -> None:
-        """Guarda un usuario nuevo o actualiza uno existente."""
         pass
 
     @abstractmethod
     async def find_by_id(self, user_id: str) -> Optional[User]:
-        """Busca un usuario por su ID."""
         pass
