@@ -29,7 +29,7 @@ class GetUserUseCase:
         books = await self.book_repo.find_by_ids(book_ids)
         books_dict = {book.book_id: book for book in books}
         
-        #lista de respuestas de préstamos de forma más limpia
+        #lista de respuestas de préstamos
         loaned_books_list = [
             LoanResponse(
                 message="Libro prestado exitosamente",
