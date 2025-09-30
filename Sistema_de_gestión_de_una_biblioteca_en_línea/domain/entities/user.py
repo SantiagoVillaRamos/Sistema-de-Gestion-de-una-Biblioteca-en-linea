@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from domain.value_objects.email import Email
+from domain.value_objects.password import Password
 import uuid
 
 from domain.exceptions.user import UserNotFoundError
@@ -8,9 +9,10 @@ from domain.exceptions.user import UserNotFoundError
 @dataclass
 class User:
     """Entidad que representa a un usuario en el sistema de biblioteca."""
-    user_id: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
+    user_id: str 
     name: str
     email: Email 
+    password: Password
     is_active: bool = True
     
     def __post_init__(self):

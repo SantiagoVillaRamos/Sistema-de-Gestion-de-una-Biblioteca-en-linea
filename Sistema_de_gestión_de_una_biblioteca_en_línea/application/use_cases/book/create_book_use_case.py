@@ -2,9 +2,7 @@
 from domain.entities.book import Book
 from application.ports.book_repository import BookRepository
 from application.dto.book_command_dto import CreateBookCommand, CreateBookResponse
-from domain.value_objects.isbn import ISBN
-from domain.value_objects.title import Title
-
+from domain.factory.bookFactory import BookFactory
 
 class CreateBookUseCase:
     
@@ -13,9 +11,9 @@ class CreateBookUseCase:
 
     async def execute(self, command: CreateBookCommand) -> CreateBookResponse:
         
-        new_book = Book(
-            isbn=ISBN(command.isbn),
-            title=Title(command.title),
+        new_book = BookFactory.create(
+            isbn=command.isbn,
+            title=command.title,
             author=command.author,
             available_copies=command.available_copies
         )

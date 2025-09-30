@@ -8,6 +8,7 @@ class CreateUserCommand:
     """
     name: str
     email: str
+    password: str
     
 
 @dataclass(frozen=True)
@@ -28,6 +29,7 @@ class CreateUserResponse:
     user_id: str
     name: str
     email: str
+    password: str  
     
     
 @dataclass(frozen=True)

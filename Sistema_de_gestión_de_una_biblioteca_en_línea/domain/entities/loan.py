@@ -1,7 +1,7 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-import uuid
+from dataclasses import dataclass
+from datetime import datetime
+from value_objects.due_date import DueDate
 
 from domain.exceptions.loan import LoanNotFoundException, LoanAlreadyReturnedException
 
@@ -11,11 +11,11 @@ class Loan:
     Representa un préstamo de un libro a un usuario. Es una Entidad.
     Se define por su identidad única (ID del préstamo).
     """
-    id: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
+    id: str 
     book_id: str
     user_id: str
-    loan_date: datetime = field(default_factory=datetime.now, init=False)
-    due_date: datetime = field(default_factory=lambda: datetime.now() + timedelta(days=14), init=False)
+    loan_date: datetime
+    due_date: DueDate
     is_returned: bool = False
 
     def __post_init__(self):

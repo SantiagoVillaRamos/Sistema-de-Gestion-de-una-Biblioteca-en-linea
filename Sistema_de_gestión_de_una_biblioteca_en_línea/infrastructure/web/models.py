@@ -22,6 +22,7 @@ class CreateUserCommand(BaseModel):
     
     name: str
     email: str
+    password: str
 
     
 class UserCreationResponse(BaseModel):
@@ -29,6 +30,7 @@ class UserCreationResponse(BaseModel):
     user_id: str
     name: str
     email: EmailStr
+    password: str
 
 
 

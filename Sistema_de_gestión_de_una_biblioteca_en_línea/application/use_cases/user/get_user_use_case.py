@@ -50,3 +50,6 @@ class GetUserUseCase:
             is_active=user.is_active,
             loaned_books=loaned_books_list
         )
+        
+        
+        

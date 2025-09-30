@@ -7,7 +7,7 @@ from . lend_book_command import LendBookCommand, LoanResponse
 from domain.exceptions.book import BookNotFoundError
 from domain.exceptions.user import UserNotFoundError
 from domain.exceptions.book import BookNotFoundError
-
+from domain.factory.loanfactory import LoanFactory
 
 class LendBookUseCase:  
     """
@@ -38,10 +38,7 @@ class LendBookUseCase:
         
         book.lend()
         
-        new_loan = Loan(
-            book_id=book.book_id,
-            user_id=user.user_id
-        )
+        new_loan = LoanFactory.create_loan(book.book_id, user.user_id)
 
         await self._book_repo.update(book)
         await self._loan_repo.save(new_loan)

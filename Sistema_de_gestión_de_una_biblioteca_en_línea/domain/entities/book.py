@@ -4,12 +4,13 @@ from domain.value_objects.isbn import ISBN
 from domain.value_objects.title import Title
 import uuid
 
+
 from domain.exceptions.book import BookNotFoundError
 
 @dataclass
 class Book:
     """Entidad que representa a un libro en el sistema de biblioteca."""
-    book_id: str = field(default_factory=lambda: str(uuid.uuid4()), init=False)
+    book_id: str
     isbn: ISBN
     title: Title
     author: str

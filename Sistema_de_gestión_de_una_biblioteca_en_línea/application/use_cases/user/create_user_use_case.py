@@ -2,7 +2,7 @@
 from application.ports.user_repository import UserRepository
 from domain.entities.user import User
 from application.dto.user_command_dto import CreateUserCommand, CreateUserResponse
-from domain.value_objects.email import Email
+from domain.factory.userFactory import UserFactory
 
 class CreateUserUseCase:
 
@@ -11,9 +11,10 @@ class CreateUserUseCase:
 
     async def execute(self, command: CreateUserCommand) -> str:
         
-        new_user = User(
+        new_user = UserFactory.create(
             name=command.name,
-            email=Email(command.email)
+            email=command.email,
+            password=command.password
         )
         
         await self.user_repo.save(new_user)
@@ -25,7 +26,8 @@ class CreateUserUseCase:
         return CreateUserResponse(
             user_id=new_user.user_id,
             name=new_user.name,
-            email=new_user.email.address
+            email=new_user.email.address,
+            password=new_user.password.hashed
         )
         
     

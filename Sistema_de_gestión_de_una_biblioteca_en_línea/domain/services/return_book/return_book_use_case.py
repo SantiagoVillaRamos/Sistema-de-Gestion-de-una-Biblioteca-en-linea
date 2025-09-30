@@ -1,7 +1,7 @@
 from application.ports.loan_repository import LoanRepository
 from application.ports.book_repository import BookRepository
 
-from . return_book_command import ReturnBookCommand, MessageResponse
+from . return_book_command import ReturnBookCommand
 
 from domain.exceptions.loan import (
     LoanNotFoundException, 
