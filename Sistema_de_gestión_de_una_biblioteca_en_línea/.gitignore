@@ -63,3 +63,7 @@ instance/
 # Si usas poetry, pipenv, etc.
 poetry.lock
 Pipfile.lock
+
+# ignorar git
+.git/
+.gitignore
