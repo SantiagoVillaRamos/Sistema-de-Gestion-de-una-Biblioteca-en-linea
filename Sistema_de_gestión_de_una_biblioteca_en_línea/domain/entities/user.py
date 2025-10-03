@@ -22,15 +22,10 @@ class User:
 
 
     def activate(self) -> None:
-        """
-        Activa la cuenta del usuario.
-        """
         self.is_active = True
 
+
     def deactivate(self) -> None:
-        """
-        Desactiva la cuenta del usuario.
-        """
         self.is_active = False
         
     

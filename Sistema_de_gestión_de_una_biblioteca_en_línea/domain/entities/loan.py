@@ -23,16 +23,12 @@ class Loan:
             raise LoanNotFoundException(self.loan_date ,"La fecha de préstamo no puede ser posterior a la fecha de vencimiento.")
 
     def return_loan(self) -> None:
-        """
-        Marca el préstamo como devuelto.
-        """
+        
         if self.is_returned:
             raise LoanAlreadyReturnedException(self.id)
         self.is_returned = True
 
+
     def is_overdue(self) -> bool:
-        """
-        Verifica si el préstamo está vencido.
-        """
         return not self.is_returned and datetime.now() > self.due_date
     

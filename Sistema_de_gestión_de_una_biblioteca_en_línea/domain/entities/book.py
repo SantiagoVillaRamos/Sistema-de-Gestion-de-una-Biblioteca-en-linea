@@ -21,23 +21,18 @@ class Book:
         if self.available_copies <= 0:
             raise BookNotFoundError(self.available_copies, "No hay copias disponibles")
 
+
     def lend(self) -> None:
-        """
-        Reduce el número de copias disponibles.
-        """
+        
         if self.available_copies <= 0:
             raise BookNotFoundError(self.available_copies, "No hay copias disponibles")
         self.available_copies -= 1
 
+
     def return_book(self) -> None:
-        """
-        Aumenta el número de copias disponibles.
-        """
         self.available_copies += 1
         
+        
     def is_available(self) -> bool:
-        """
-        Verifica si hay copias disponibles para prestar.
-        """
         return self.available_copies > 0
         
