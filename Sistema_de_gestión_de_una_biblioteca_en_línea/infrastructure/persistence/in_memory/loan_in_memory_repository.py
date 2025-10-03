@@ -4,9 +4,7 @@ from domain.entities.loan import Loan
 from domain.exceptions.loan import LoanAlreadyReturnedException, LoanNotFoundException
 
 class LoanInMemoryRepository(LoanRepository):
-    """
-    Implementación del repositorio de préstamos que almacena los datos en memoria.
-    """
+    
     def __init__(self):
         self._loans: Dict[str, Loan] = {}
 

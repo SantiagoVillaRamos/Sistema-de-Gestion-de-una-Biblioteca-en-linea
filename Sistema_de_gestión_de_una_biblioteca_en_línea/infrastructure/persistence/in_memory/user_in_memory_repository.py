@@ -5,9 +5,7 @@ from domain.entities.user import User
 from domain.exceptions.user import UserAlreadyExistsError, UserNotFoundError
 
 class UserInMemoryRepository(UserRepository):
-    """
-    Implementación del repositorio de usuarios que almacena los datos en memoria.
-    """
+    
     def __init__(self):
         self._users: Dict[str, User] = {}
         print(f"\nDiccionario:{self._users}\n")

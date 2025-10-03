@@ -10,10 +10,7 @@ from domain.exceptions.book import BookNotFoundError
 from domain.factory.loanfactory import LoanFactory
 
 class LendBookUseCase:  
-    """
-    Caso de uso para prestar un libro a un usuario.
-    Orquesta la lógica de negocio.
-    """
+    
     def __init__(
         self, 
         book_repo: BookRepository, 
@@ -47,7 +44,7 @@ class LendBookUseCase:
             
             
     def _create_loan_response(self, new_loan: Loan, book) -> LoanResponse:
-        """Crea un objeto LoanResponse a partir de un préstamo y un libro."""
+        
         return LoanResponse(
             message="Libro prestado exitosamente",
             loan_id=new_loan.id,

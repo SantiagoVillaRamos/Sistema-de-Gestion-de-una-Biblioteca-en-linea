@@ -9,7 +9,7 @@ from domain.exceptions.book import BookNotFoundError
 
 @dataclass
 class Book:
-    """Entidad que representa a un libro en el sistema de biblioteca."""
+    
     book_id: str
     isbn: ISBN
     title: Title

@@ -7,10 +7,7 @@ from domain.exceptions.loan import LoanNotFoundException, LoanAlreadyReturnedExc
 
 @dataclass
 class Loan:
-    """
-    Representa un préstamo de un libro a un usuario. Es una Entidad.
-    Se define por su identidad única (ID del préstamo).
-    """
+    
     id: str 
     book_id: str
     user_id: str

@@ -8,7 +8,7 @@ from domain.exceptions.user import UserNotFoundError
 
 @dataclass
 class User:
-    """Entidad que representa a un usuario en el sistema de biblioteca."""
+    
     user_id: str 
     name: str
     email: Email 

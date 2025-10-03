@@ -6,9 +6,7 @@ from domain.value_objects.isbn import ISBN
 from domain.exceptions.book import BookAlreadyExistsError, BookNotFoundError
 
 class BookInMemoryRepository(BookRepository):
-    """
-    Implementación del repositorio de libros que almacena los datos en memoria.
-    """
+    
     def __init__(self):
         # Usamos un diccionario para un acceso rápido por ID
         self._books: Dict[str, Book] = {}

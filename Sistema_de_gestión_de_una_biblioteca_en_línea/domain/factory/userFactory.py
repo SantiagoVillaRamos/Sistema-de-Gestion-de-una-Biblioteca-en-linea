@@ -9,9 +9,7 @@ class UserFactory:
     
     @staticmethod
     def create(name: str, email: str, password:str) -> User:
-        """
-        Crea una entidad User válida, cifrando la clave en el proceso.
-        """
+        
         user_id = str(uuid.uuid4())
         email_vo = Email(email)
         

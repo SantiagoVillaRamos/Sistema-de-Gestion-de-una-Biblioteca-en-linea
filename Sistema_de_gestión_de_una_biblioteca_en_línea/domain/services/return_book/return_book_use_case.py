@@ -10,10 +10,7 @@ from domain.exceptions.loan import (
 
 
 class ReturnBookUseCase:
-    """
-    Caso de uso para devolver un libro.
-    Orquesta la lógica de negocio.
-    """
+    
     def __init__(
         self, 
         loan_repo: LoanRepository, 
