@@ -1,10 +1,10 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
-from domain.value_objects.email import Email
-from domain.value_objects.password import Password
-import uuid
+from domain.models.value_objects.email import Email
+from domain.models.value_objects.password import Password
 
-from domain.exceptions.user import UserNotFoundError
+
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 @dataclass
 class User:
@@ -18,7 +18,7 @@ class User:
     def __post_init__(self):
         
         if not self.name or not self.name.strip():
-            raise UserNotFoundError(self.name, "El nombre no puede estar vacío.")
+            raise BusinessNotFoundError(self.name, "El nombre no puede estar vacío.")
 
 
     def activate(self) -> None:

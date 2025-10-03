@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from domain.exceptions.user import UserNotFoundError
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 import re
 
 @dataclass(frozen=True)
@@ -9,7 +9,7 @@ class Password:
 
     def __post_init__(self):
         if not self._is_valid_password(self.hashed):
-            raise UserNotFoundError(self.hashed, "La contraseña no cumple con los requisitos de seguridad.")
+            raise BusinessNotFoundError(self.hashed, "La contraseña no cumple con los requisitos de seguridad.")
 
     @staticmethod
     def _is_valid_password(password: str) -> bool:

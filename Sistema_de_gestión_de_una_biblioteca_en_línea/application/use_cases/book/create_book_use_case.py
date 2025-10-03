@@ -1,8 +1,8 @@
 
-from domain.entities.book import Book
+from domain.models.book import Book
 from application.ports.book_repository import BookRepository
 from application.dto.book_command_dto import CreateBookCommand, CreateBookResponse
-from domain.factory.bookFactory import BookFactory
+from domain.models.factory.bookFactory import BookFactory
 
 class CreateBookUseCase:
     

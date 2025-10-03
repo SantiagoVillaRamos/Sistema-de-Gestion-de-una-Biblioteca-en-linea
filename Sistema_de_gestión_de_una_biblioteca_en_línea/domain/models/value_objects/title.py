@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from domain.exceptions.book import BookNotFoundError
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 @dataclass(frozen=True)
 class Title:
@@ -9,7 +9,7 @@ class Title:
     def __post_init__(self):
         
         if not self.value or not self.value.strip():
-            raise BookNotFoundError(self.value, "El título no puede estar vacío.")
+            raise BusinessNotFoundError(self.value, "El título no puede estar vacío.")
 
     def __eq__(self, other) -> bool:
         """

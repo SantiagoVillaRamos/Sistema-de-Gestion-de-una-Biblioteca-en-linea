@@ -3,10 +3,7 @@ from application.ports.book_repository import BookRepository
 
 from . return_book_command import ReturnBookCommand
 
-from domain.exceptions.loan import (
-    LoanNotFoundException, 
-    LoanAlreadyReturnedException
-)
+from domain.models.exceptions.business_exception import BusinessNotFoundError, BusinessConflictError
 
 
 class ReturnBookUseCase:
@@ -25,10 +22,10 @@ class ReturnBookUseCase:
         book = await self.book_repo.find_by_id(loan.book_id)
         
         if loan.is_returned:
-            raise LoanAlreadyReturnedException(command.loan_id, "El préstamo ya fue devuelto anteriormente.")
+            raise BusinessConflictError(command.loan_id, "El préstamo ya fue devuelto anteriormente.")
 
         if loan.is_overdue():
-            raise LoanNotFoundException(command.loan_id, "El préstamo está vencido y no puede ser devuelto.")
+            raise BusinessNotFoundError(command.loan_id, "El préstamo está vencido y no puede ser devuelto.")
         
         loan.return_loan()  
         book.return_book()  

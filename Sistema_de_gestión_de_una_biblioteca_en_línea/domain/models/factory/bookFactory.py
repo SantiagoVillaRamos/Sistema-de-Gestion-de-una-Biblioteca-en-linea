@@ -1,7 +1,7 @@
 import uuid
-from domain.value_objects.isbn import ISBN
-from domain.value_objects.title import Title
-from domain.entities.book import Book
+from domain.models.value_objects.isbn import ISBN
+from domain.models.value_objects.title import Title
+from domain.models.book import Book
 
 
 class BookFactory:

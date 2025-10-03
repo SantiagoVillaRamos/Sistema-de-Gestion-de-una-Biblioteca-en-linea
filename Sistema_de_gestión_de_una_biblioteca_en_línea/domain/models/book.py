@@ -1,11 +1,11 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
-from domain.value_objects.isbn import ISBN
-from domain.value_objects.title import Title
-import uuid
+from dataclasses import dataclass
+from domain.models.value_objects.isbn import ISBN
+from domain.models.value_objects.title import Title
 
 
-from domain.exceptions.book import BookNotFoundError
+
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 @dataclass
 class Book:
@@ -19,13 +19,13 @@ class Book:
     def __post_init__(self):
         
         if self.available_copies <= 0:
-            raise BookNotFoundError(self.available_copies, "No hay copias disponibles")
+            raise BusinessNotFoundError(self.available_copies, "No hay copias disponibles")
 
 
     def lend(self) -> None:
         
         if self.available_copies <= 0:
-            raise BookNotFoundError(self.available_copies, "No hay copias disponibles")
+            raise BusinessNotFoundError(self.available_copies, "No hay copias disponibles")
         self.available_copies -= 1
 
 

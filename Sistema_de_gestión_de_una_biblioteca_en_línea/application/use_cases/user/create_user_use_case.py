@@ -1,8 +1,8 @@
 
 from application.ports.user_repository import UserRepository
-from domain.entities.user import User
+from domain.models.user import User
 from application.dto.user_command_dto import CreateUserCommand, CreateUserResponse
-from domain.factory.userFactory import UserFactory
+from domain.models.factory.userFactory import UserFactory
 
 class CreateUserUseCase:
 

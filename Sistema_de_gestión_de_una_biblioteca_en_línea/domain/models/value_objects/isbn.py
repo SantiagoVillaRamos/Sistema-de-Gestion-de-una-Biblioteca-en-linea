@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from domain.exceptions.book import BookNotFoundError
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 @dataclass(frozen=True)
 class ISBN:
@@ -12,7 +12,7 @@ class ISBN:
         processed_isbn = self.value.replace('-', '').replace(' ', '')
 
         if not (len(processed_isbn) == 10 or len(processed_isbn) == 13) or not processed_isbn.isdigit():
-            raise BookNotFoundError(self.value, "El ISBN debe tener 10 o 13 dígitos.")
+            raise BusinessNotFoundError(self.value, "El ISBN debe tener 10 o 13 dígitos.")
         
 
     def __eq__(self, other) -> bool:

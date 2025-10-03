@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from value_objects.due_date import DueDate
 
-from domain.exceptions.loan import LoanNotFoundException, LoanAlreadyReturnedException
+from domain.models.exceptions.business_exception import BusinessNotFoundError, BusinessConflictError
 
 @dataclass
 class Loan:
@@ -18,14 +18,14 @@ class Loan:
     def __post_init__(self):
         
         if not self.book_id or not self.user_id:
-            raise LoanNotFoundException(self.id ,"El ID del libro y el ID del usuario son obligatorios.")
+            raise BusinessNotFoundError(self.id ,"El ID del libro y el ID del usuario son obligatorios.")
         if self.loan_date > self.due_date:
-            raise LoanNotFoundException(self.loan_date ,"La fecha de préstamo no puede ser posterior a la fecha de vencimiento.")
+            raise BusinessNotFoundError(self.loan_date ,"La fecha de préstamo no puede ser posterior a la fecha de vencimiento.")
 
     def return_loan(self) -> None:
         
         if self.is_returned:
-            raise LoanAlreadyReturnedException(self.id)
+            raise BusinessConflictError(self.id)
         self.is_returned = True
 
 

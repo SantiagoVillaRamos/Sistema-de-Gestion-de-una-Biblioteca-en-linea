@@ -14,6 +14,7 @@ class Repositories:
 repos = Repositories()
 
 def get_library_facade() -> LibraryFacade:
+
     return LibraryFacade(repos.book_repo, repos.user_repo, repos.loan_repo)
 
 def get_user_facade() -> UserFacade:

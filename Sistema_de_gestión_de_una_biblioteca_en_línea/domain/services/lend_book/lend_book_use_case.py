@@ -2,12 +2,10 @@
 from application.ports.book_repository import BookRepository
 from application.ports.user_repository import UserRepository
 from application.ports.loan_repository import LoanRepository
-from domain.entities.loan import Loan
+from domain.models.loan import Loan
 from . lend_book_command import LendBookCommand, LoanResponse
-from domain.exceptions.book import BookNotFoundError
-from domain.exceptions.user import UserNotFoundError
-from domain.exceptions.book import BookNotFoundError
-from domain.factory.loanfactory import LoanFactory
+from domain.models.exceptions.business_exception import BusinessNotFoundError
+from domain.models.factory.loanfactory import LoanFactory
 
 class LendBookUseCase:  
     
@@ -28,10 +26,10 @@ class LendBookUseCase:
         active_loans = await self._loan_repo.find_active_loans_by_user(user.user_id)
         
         if any(loan.is_overdue() for loan in active_loans):
-            raise UserNotFoundError(user.user_id, "El usuario tiene préstamos vencidos")
+            raise BusinessNotFoundError(user.user_id, "El usuario tiene préstamos vencidos")
         
         if not book.is_available():
-            raise BookNotFoundError(book.book_id, "No hay copias disponibles")
+            raise BusinessNotFoundError(book.book_id, "No hay copias disponibles")
         
         book.lend()
         

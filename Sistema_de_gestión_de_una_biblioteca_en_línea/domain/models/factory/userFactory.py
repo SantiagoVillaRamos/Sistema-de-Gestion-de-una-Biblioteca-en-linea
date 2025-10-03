@@ -1,8 +1,8 @@
 import uuid
 import bcrypt
-from domain.value_objects.email import Email
-from domain.value_objects.password import Password
-from domain.entities.user import User
+from domain.models.value_objects.email import Email
+from domain.models.value_objects.password import Password
+from domain.models.user import User
 
 
 class UserFactory:

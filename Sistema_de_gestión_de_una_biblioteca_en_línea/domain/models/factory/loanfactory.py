@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from domain.entities.loan import Loan
+from domain.models.loan import Loan
 from value_objects.due_date import DueDate
 import uuid
 
