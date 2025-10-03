@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
-from domain.entities.loan import Loan
+from domain.models.loan import Loan
 
 class LoanRepository(ABC):
     """

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
-from domain.entities.book import Book
-from domain.value_objects.isbn import ISBN
+from domain.models.book import Book
 
 
 class BookRepository(ABC):

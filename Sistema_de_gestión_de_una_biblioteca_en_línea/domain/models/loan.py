@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
-from value_objects.due_date import DueDate
+from domain.models.value_objects.due_date import DueDate
 
 from domain.models.exceptions.business_exception import BusinessNotFoundError, BusinessConflictError
 
@@ -19,7 +19,7 @@ class Loan:
         
         if not self.book_id or not self.user_id:
             raise BusinessNotFoundError(self.id ,"El ID del libro y el ID del usuario son obligatorios.")
-        if self.loan_date > self.due_date:
+        if self.loan_date > self.due_date.value:
             raise BusinessNotFoundError(self.loan_date ,"La fecha de préstamo no puede ser posterior a la fecha de vencimiento.")
 
     def return_loan(self) -> None:
@@ -30,5 +30,5 @@ class Loan:
 
 
     def is_overdue(self) -> bool:
-        return not self.is_returned and datetime.now() > self.due_date
+        return not self.is_returned and datetime.now() > self.due_date.value
     

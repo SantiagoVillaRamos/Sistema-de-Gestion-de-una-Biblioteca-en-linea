@@ -48,7 +48,7 @@ class LendBookUseCase:
             loan_id=new_loan.id,
             book_title=book.title.value,
             loan_date=new_loan.loan_date,
-            due_date=new_loan.due_date
+            due_date=new_loan.due_date.value
         )
 
         

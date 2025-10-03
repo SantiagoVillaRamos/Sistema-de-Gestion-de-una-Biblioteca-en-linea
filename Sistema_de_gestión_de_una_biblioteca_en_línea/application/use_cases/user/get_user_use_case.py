@@ -2,7 +2,7 @@ from typing import Optional
 from application.ports.user_repository import UserRepository
 from application.ports.loan_repository import LoanRepository
 from application.ports.book_repository import BookRepository
-from domain.entities.user import User
+from domain.models.user import User
 from application.dto.user_command_dto import GetUserCommand, GetUserResponse, LoanResponse
 from typing import List
 
@@ -36,7 +36,7 @@ class GetUserUseCase:
                 loan_id=loan.id,
                 book_title=books_dict[loan.book_id].title.value if loan.book_id in books_dict else "Título no disponible",
                 loan_date=loan.loan_date,
-                due_date=loan.due_date     
+                due_date=loan.due_date.value     
             )for loan in active_loans
         ]
         
