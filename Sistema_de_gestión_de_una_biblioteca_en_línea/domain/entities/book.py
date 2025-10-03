@@ -18,7 +18,7 @@ class Book:
 
     def __post_init__(self):
         
-        if self.available_copies < 0:
+        if self.available_copies <= 0:
             raise BookNotFoundError(self.available_copies, "No hay copias disponibles")
 
     def lend(self) -> None:
