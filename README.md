@@ -1,7 +1,3 @@
-¡Claro\! Un buen `README.md` es esencial para mostrar la calidad de tu proyecto. Destacaremos la arquitectura, las buenas prácticas y las tecnologías clave.
-
-Aquí tienes un borrador completo y estructurado que puedes usar para tu proyecto de "Sistema de Gestión de una Biblioteca":
-
 -----
 
 # 📚 Sistema de Gestión de Biblioteca (Backend)
