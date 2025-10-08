@@ -7,13 +7,13 @@ from typing import Annotated
 
 
 router = APIRouter(
-    prefix="/Books",
+    prefix="/books",
     tags=["Books"]
 )
 
 
 @router.post(
-    "/books", 
+    "/create", 
     status_code=status.HTTP_201_CREATED,
     response_model=CreateBookResponse
 )
