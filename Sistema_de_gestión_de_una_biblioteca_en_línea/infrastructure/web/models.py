@@ -30,7 +30,6 @@ class UserCreationResponse(BaseModel):
     user_id: str
     name: str
     email: EmailStr
-    password: str
 
 
 

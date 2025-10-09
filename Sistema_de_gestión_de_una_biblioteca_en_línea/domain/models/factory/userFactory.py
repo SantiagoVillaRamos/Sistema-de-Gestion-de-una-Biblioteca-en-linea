@@ -7,7 +7,7 @@ from domain.models.user import User
 class UserFactory:
     
     @staticmethod
-    def create(name: str, email: str, password:str) -> User:
+    def create(name: str, email: str, password: str) -> User:
         
         user_id = str(uuid.uuid4())
         email_vo = Email(email)
@@ -26,4 +26,3 @@ class UserFactory:
             email=email_vo,
             password=password_vo
         )
-        
