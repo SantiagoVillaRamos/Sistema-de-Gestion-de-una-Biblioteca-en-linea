@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, field_validator
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 
 class MessageResponse(BaseModel):
@@ -18,11 +18,12 @@ class LoanResponse(BaseModel):
 
 
 
-class CreateUserCommand(BaseModel):
+class CreateUserRequest(BaseModel):
     
     name: str
     email: str
     password: str
+    user_type: str = "general"
 
     
 class UserCreationResponse(BaseModel):
@@ -57,13 +58,18 @@ class CreateBookResponse(BaseModel):
     author: str
     
     
-class LendBookCommand(BaseModel):
+class LendBookRequest(BaseModel):
     
     user_id: str
     book_id: str
     
     
     
-class ReturnBookCommand(BaseModel):
+class ReturnBookRequest(BaseModel):
 
     loan_id: str
+
+class ReturnBookResponse(BaseModel):
+    
+    message: str
+    penalty_charged: float

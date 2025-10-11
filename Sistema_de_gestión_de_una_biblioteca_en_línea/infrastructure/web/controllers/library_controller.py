@@ -2,7 +2,8 @@
 from fastapi import APIRouter, Depends, status
 from application.facade.facade_library import LibraryFacade
 from infrastructure.web.dependencies import get_library_facade
-from infrastructure.web.models import LoanResponse, MessageResponse, LendBookCommand, ReturnBookCommand
+from infrastructure.web.models import LoanResponse, ReturnBookResponse, LendBookRequest, ReturnBookRequest
+from application.dto.library_command_dto import LendBookCommand, ReturnBookCommand
 from typing import Annotated
 
 
@@ -18,23 +19,24 @@ router = APIRouter(
     response_model=LoanResponse
 )
 async def lend_book(
-    command: LendBookCommand,
-    lend_use_case: Annotated[LibraryFacade, Depends(get_library_facade)]
+    request: LendBookRequest,
+    facade: Annotated[LibraryFacade, Depends(get_library_facade)]
 ):
-    return await lend_use_case.lend_book(command)
-    
+    # Traducir el modelo de la petición web (Request) al DTO de la aplicación (Command)
+    command = LendBookCommand(user_id=request.user_id, book_id=request.book_id)
+    return await facade.lend_book(command)
+
 
 
 @router.post(
     "/books/return", 
     status_code=status.HTTP_200_OK,
-    response_model=MessageResponse
+    response_model=ReturnBookResponse
 )
 async def return_book(
-    command: ReturnBookCommand,
-    return_use_case: Annotated[LibraryFacade, Depends(get_library_facade)]
+    request: ReturnBookRequest,
+    facade: Annotated[LibraryFacade, Depends(get_library_facade)]
 ):
-    await return_use_case.return_book(command)
-    return MessageResponse(message="Libro devuelto exitosamente")
-    
-    
+    # Traducir el modelo de la petición web (Request) al DTO de la aplicación (Command)
+    command = ReturnBookCommand(loan_id=request.loan_id)
+    return await facade.return_book(command)

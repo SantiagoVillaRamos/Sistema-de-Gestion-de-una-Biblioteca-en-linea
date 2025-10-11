@@ -9,6 +9,7 @@ class CreateUserCommand:
     name: str
     email: str
     password: str
+    user_type: str = "general"
     
 
 @dataclass(frozen=True)

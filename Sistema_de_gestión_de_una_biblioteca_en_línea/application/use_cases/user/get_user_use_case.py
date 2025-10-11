@@ -14,12 +14,12 @@ class GetUserUseCase:
         self.loan_repo = loan_repo
         self.book_repo = book_repo
 
-    async def execute(self, user_id: GetUserCommand) -> Optional[User]:
+    async def execute(self, command: GetUserCommand) -> Optional[GetUserResponse]:
         
-        user = await self.user_repo.find_by_id(user_id)
-        active_loans = await self.loan_repo.find_active_loans_by_user(user_id)
+        user = await self.user_repo.find_by_id(command.user_id)
+        active_loans = await self.loan_repo.find_active_loans_by_user(command.user_id)
         
-        if not active_loans:
+        if not user:
             return self._build_user_response(user, [])
         
         # Optimización: Obténer todos los IDs de los libros prestados en una lista

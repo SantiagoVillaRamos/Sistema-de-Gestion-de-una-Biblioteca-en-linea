@@ -12,6 +12,7 @@ class User:
     email: Email 
     password: Password
     is_active: bool = True
+    user_type: str = "general"
     
     def __post_init__(self):
         

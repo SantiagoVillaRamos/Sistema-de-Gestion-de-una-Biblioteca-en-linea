@@ -17,6 +17,10 @@ class Loan:
 
     def __post_init__(self):
         
+        # Asegurarse de que due_date sea siempre un objeto DueDate
+        if isinstance(self.due_date, datetime):
+            self.due_date = DueDate(self.due_date)
+            
         if not self.book_id or not self.user_id:
             raise BusinessNotFoundError(self.id ,"El ID del libro y el ID del usuario son obligatorios.")
         if self.loan_date > self.due_date.value:

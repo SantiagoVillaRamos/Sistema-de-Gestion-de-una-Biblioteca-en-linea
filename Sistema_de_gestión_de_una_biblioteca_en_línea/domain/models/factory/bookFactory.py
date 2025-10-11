@@ -5,6 +5,7 @@ from domain.models.book import Book
 
 
 class BookFactory:
+   
     @staticmethod
     def create(isbn: str, title: str, author: str, available_copies: int) -> Book:
         

@@ -17,7 +17,8 @@ class UserMapper:
             name=persistence_data['name'],
             email=Email(persistence_data['email']),
             password=Password(persistence_data['password']),
-            is_active=persistence_data['is_active']
+            is_active=persistence_data['is_active'],
+            user_type=persistence_data['user_type']
         )
 
     @staticmethod
@@ -28,5 +29,7 @@ class UserMapper:
             "name": domain_user.name,
             "email": domain_user.email.address,
             "password": domain_user.password.hashed,
-            "is_active": domain_user.is_active
+            "is_active": domain_user.is_active,
+            "user_type": domain_user.user_type
+        
         }

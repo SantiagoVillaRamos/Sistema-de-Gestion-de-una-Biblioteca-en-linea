@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 @dataclass(frozen=True)
 class CreateBookCommand:
     """
@@ -10,8 +9,7 @@ class CreateBookCommand:
     title: str
     author: str
     available_copies: int
-    
-    
+
 @dataclass(frozen=True)
 class CreateBookResponse:
     """
