@@ -7,7 +7,7 @@ from domain.models.book import Book
 class BookFactory:
    
     @staticmethod
-    def create(isbn: str, title: str, author: str, available_copies: int) -> Book:
+    def create(isbn: str, title: str, author_id: str, description: str, available_copies: int) -> Book:
         
         book_id = str(uuid.uuid4())
         
@@ -15,6 +15,7 @@ class BookFactory:
             book_id=book_id,
             isbn=ISBN(isbn),
             title=Title(title),
-            author=author,
+            author_id=author_id,
+            description=description,
             available_copies=available_copies
         )

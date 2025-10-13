@@ -7,7 +7,8 @@ class CreateBookCommand:
     """
     isbn: str
     title: str
-    author: str
+    author_id: str
+    description: str
     available_copies: int
 
 @dataclass(frozen=True)
@@ -18,4 +19,5 @@ class CreateBookResponse:
     book_id: str
     isbn: str
     title: str
-    author: str
+    author_id: str
+    description: str

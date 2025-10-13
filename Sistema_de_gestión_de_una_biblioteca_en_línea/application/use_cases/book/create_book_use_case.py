@@ -14,7 +14,8 @@ class CreateBookUseCase:
         new_book = BookFactory.create(
             isbn=command.isbn,
             title=command.title,
-            author=command.author,
+            author_id=command.author_id,
+            description=command.description,
             available_copies=command.available_copies
         )
         
@@ -28,7 +29,8 @@ class CreateBookUseCase:
             book_id=new_book.book_id,
             isbn=new_book.isbn.value,
             title=new_book.title.value,
-            author=new_book.author
+            author_id=new_book.author_id,
+            description=new_book.description
         )
         
         

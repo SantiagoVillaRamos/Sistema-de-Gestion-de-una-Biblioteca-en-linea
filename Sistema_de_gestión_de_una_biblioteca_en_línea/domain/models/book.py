@@ -13,7 +13,8 @@ class Book:
     book_id: str
     isbn: ISBN
     title: Title
-    author: str
+    author_id: str
+    description: str
     available_copies: int
 
     def __post_init__(self):
