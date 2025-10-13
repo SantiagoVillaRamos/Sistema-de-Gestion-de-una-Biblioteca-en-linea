@@ -1,19 +1,22 @@
 from application.ports.user_repository import UserRepository
+from domain.ports.PasswordService import PasswordService
 from domain.models.user import User
 from application.dto.user_command_dto import CreateUserCommand, CreateUserResponse
 from domain.models.factory.userFactory import UserFactory
 
 class CreateUserUseCase:
 
-    def __init__(self, user_repo: UserRepository):
+    def __init__(self, user_repo: UserRepository, password_service: PasswordService):
         self.user_repo = user_repo
+        self.user_factory = UserFactory(password_service)
 
     async def execute(self, command: CreateUserCommand) -> CreateUserResponse:
         # El caso de uso extrae los datos del DTO y los pasa a la factoría de dominio.
-        new_user = UserFactory.create(
+        new_user = self.user_factory.create(
             name=command.name,
             email=command.email,
-            password=command.password
+            password=command.password,
+            roles=command.roles
         )
         await self.user_repo.save(new_user)
         

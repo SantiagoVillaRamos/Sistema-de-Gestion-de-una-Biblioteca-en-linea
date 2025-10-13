@@ -9,7 +9,7 @@ class CreateUserCommand:
     name: str
     email: str
     password: str
-    user_type: str = "general"
+    roles: list[str] = None
     
 
 @dataclass(frozen=True)
@@ -50,3 +50,20 @@ class GetUserResponse:
     email: str
     is_active: bool
     loaned_books: list[LoanResponse] = None
+
+
+@dataclass(frozen=True)
+class LoginUserCommand:
+    """
+    DTO para los datos de entrada del caso de uso de login de usuario.
+    """
+    email: str
+    password: str
+
+
+@dataclass(frozen=True)
+class LoginUserResponse:
+    """
+    DTO para los datos de salida del caso de uso de login de usuario.
+    """
+    token: str

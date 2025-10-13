@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from application.facade.facade_user import UserFacade
-from infrastructure.web.dependencies import get_user_facade
+from infrastructure.web.dependencies import get_user_facade, RoleChecker
 from infrastructure.web.models import UserCreationResponse, GetUserResponse, CreateUserRequest
 from application.dto.user_command_dto import CreateUserCommand, GetUserCommand
 from typing import Annotated
 
+
+admin_role_checker = RoleChecker(["ADMIN"])
 
 router = APIRouter(
     prefix="/users",
@@ -15,7 +17,8 @@ router = APIRouter(
 @router.post(
     "/", 
     status_code=status.HTTP_201_CREATED,
-    response_model=UserCreationResponse
+    response_model=UserCreationResponse,
+    dependencies=[Depends(admin_role_checker)]
 )
 async def create_user(
     request: CreateUserRequest,
@@ -26,7 +29,7 @@ async def create_user(
         name=request.name,
         email=request.email,
         password=request.password,
-        user_type=request.user_type
+        roles=request.roles
     )
     return await facade.create_user_facade(command)
 

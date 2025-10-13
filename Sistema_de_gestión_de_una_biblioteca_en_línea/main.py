@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 import uvicorn
-from infrastructure.web.controllers import book_controller, user_controller, library_controller
+from infrastructure.web.controllers import book_controller, user_controller, library_controller, auth_controller
 from contextlib import asynccontextmanager
 from fastapi.responses import JSONResponse
 from fastapi import Request, status
 
-from domain.models.exceptions.resource import ResourceConflictError, ResourceNotFoundError
+from domain.models.exceptions.resource import ResourceConflictError, ResourceNotFoundError, ResourceUnauthorizedError
 
 
 @asynccontextmanager
@@ -25,6 +25,7 @@ app = FastAPI(
 app.include_router(book_controller.router)
 app.include_router(library_controller.router)
 app.include_router(user_controller.router)
+app.include_router(auth_controller.router)
  
     
 @app.exception_handler(ResourceConflictError)
@@ -38,6 +39,14 @@ async def book_already_exists_exception_handler(request: Request, exc: ResourceC
 async def book_not_found_exception_handler(request: Request, exc: ResourceNotFoundError):
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
+        content={"detail": str(exc)}
+    )
+
+
+@app.exception_handler(ResourceUnauthorizedError)
+async def unauthorized_exception_handler(request: Request, exc: ResourceUnauthorizedError):
+    return JSONResponse(
+        status_code=status.HTTP_401_UNAUTHORIZED,
         content={"detail": str(exc)}
     )
     

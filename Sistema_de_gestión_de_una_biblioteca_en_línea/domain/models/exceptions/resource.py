@@ -8,3 +8,7 @@ class ResourceNotFoundError(Exception):
     """Excepcion base para cuando un recurso no es encontrado."""
     pass
 
+class ResourceUnauthorizedError(Exception):
+    """Excepción base para cuando una acción no está autorizada."""
+    pass
+

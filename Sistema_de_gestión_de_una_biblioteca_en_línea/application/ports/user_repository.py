@@ -13,3 +13,7 @@ class UserRepository(ABC):
     @abstractmethod
     async def find_by_id(self, user_id: str) -> Optional[User]:
         pass
+
+    @abstractmethod
+    async def find_by_email(self, email: str) -> Optional[User]:
+        pass

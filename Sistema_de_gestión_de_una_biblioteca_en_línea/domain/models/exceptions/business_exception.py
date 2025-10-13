@@ -1,4 +1,4 @@
-from . resource import ResourceNotFoundError, ResourceConflictError
+from . resource import ResourceNotFoundError, ResourceConflictError, ResourceUnauthorizedError
 
 class BusinessNotFoundError(ResourceNotFoundError):
     
@@ -10,5 +10,10 @@ class BusinessConflictError(ResourceConflictError):
     
     def __init__(self, business_id: str, message: str):
         super().__init__(f"'{business_id}': {message}.")
+
+
+class BusinessUnauthorizedError(ResourceUnauthorizedError):
+    def __init__(self, message: str):
+        super().__init__(message)
         
         

@@ -23,7 +23,7 @@ class CreateUserRequest(BaseModel):
     name: str
     email: str
     password: str
-    user_type: str = "general"
+    roles: List[str] = None
 
     
 class UserCreationResponse(BaseModel):
@@ -73,3 +73,11 @@ class ReturnBookResponse(BaseModel):
     
     message: str
     penalty_charged: float
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class LoginResponse(BaseModel):
+    token: str
+    token_type: str = "bearer"

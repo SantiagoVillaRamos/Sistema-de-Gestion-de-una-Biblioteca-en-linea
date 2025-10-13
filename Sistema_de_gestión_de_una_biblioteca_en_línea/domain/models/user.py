@@ -12,7 +12,7 @@ class User:
     email: Email 
     password: Password
     is_active: bool = True
-    user_type: str = "general"
+    roles: list[str] = field(default_factory=lambda: ["MEMBER"])
     
     def __post_init__(self):
         
