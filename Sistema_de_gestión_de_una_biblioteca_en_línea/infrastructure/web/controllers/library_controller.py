@@ -1,11 +1,13 @@
 
 from fastapi import APIRouter, Depends, status
 from application.facade.facade_library import LibraryFacade
-from infrastructure.web.dependencies import get_library_facade
+from infrastructure.web.dependencies import get_library_facade, RoleChecker
 from infrastructure.web.models import LoanResponse, ReturnBookResponse, LendBookRequest, ReturnBookRequest
 from application.dto.library_command_dto import LendBookCommand, ReturnBookCommand
 from typing import Annotated
 
+
+admin_role_checker = RoleChecker(["ADMIN"])
 
 router = APIRouter(
     prefix="/library",
@@ -16,7 +18,8 @@ router = APIRouter(
 @router.post(
     "/books/lend", 
     status_code=status.HTTP_201_CREATED,
-    response_model=LoanResponse
+    response_model=LoanResponse,
+    dependencies=[Depends(admin_role_checker)]
 )
 async def lend_book(
     request: LendBookRequest,
@@ -31,7 +34,8 @@ async def lend_book(
 @router.post(
     "/books/return", 
     status_code=status.HTTP_200_OK,
-    response_model=ReturnBookResponse
+    response_model=ReturnBookResponse,
+    dependencies=[Depends(admin_role_checker)]
 )
 async def return_book(
     request: ReturnBookRequest,

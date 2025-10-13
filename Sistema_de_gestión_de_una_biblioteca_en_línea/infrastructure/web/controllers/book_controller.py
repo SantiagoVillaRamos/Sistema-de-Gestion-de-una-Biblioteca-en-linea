@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends, status
 
 from application.facade.facade_book import BookFacade
-from infrastructure.web.dependencies import get_book_facade
+from infrastructure.web.dependencies import get_book_facade, RoleChecker
 from infrastructure.web.models import CreateBookRequest, CreateBookResponse
 from application.dto.book_command_dto import CreateBookCommand
 from typing import Annotated
 
+
+admin_role_checker = RoleChecker(["ADMIN"])
 
 router = APIRouter(
     prefix="/books",
@@ -16,7 +18,8 @@ router = APIRouter(
 @router.post(
     "/", 
     status_code=status.HTTP_201_CREATED,
-    response_model=CreateBookResponse
+    response_model=CreateBookResponse,
+    dependencies=[Depends(admin_role_checker)]
 )
 async def add_book(
     request: CreateBookRequest,

@@ -47,7 +47,7 @@ async def get_user(
     current_user: Annotated[User, Depends(get_current_user)]
 ):
     # Authorization check
-    if "ADMIN" not in current_user.roles and current_user.id != user_id:
+    if "ADMIN" not in current_user.roles and current_user.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to access this resource"
