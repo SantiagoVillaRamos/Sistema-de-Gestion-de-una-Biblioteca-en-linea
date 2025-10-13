@@ -29,4 +29,12 @@ class UserInMemoryRepository(UserRepository):
         
         # Usamos el mapper para convertir el diccionario de vuelta a un objeto de dominio.
         return UserMapper.to_domain(persistence_data)
+
+    async def find_by_email(self, email: str) -> Optional[User]:
+        for user_data in self._users.values():
+            if user_data['email'] == email:
+                # Usamos el mapper para convertir el diccionario de vuelta a un objeto de dominio.
+                return UserMapper.to_domain(user_data)
+        return None
+        
         

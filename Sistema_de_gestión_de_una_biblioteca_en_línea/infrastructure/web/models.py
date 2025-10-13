@@ -47,7 +47,8 @@ class CreateBookRequest(BaseModel):
     
     isbn: str
     title: str
-    author: str
+    author_id: str
+    description: str
     available_copies: int
     
 class CreateBookResponse(BaseModel):
@@ -55,8 +56,20 @@ class CreateBookResponse(BaseModel):
     book_id: str
     isbn: str
     title: str
-    author: str
+    author_id: str
+    description: str
     
+
+class CreateAuthorRequest(BaseModel):
+    
+    name: str
+    description: str
+
+class CreateAuthorResponse(BaseModel):
+    
+    author_id: str
+    name: str
+    description: str
     
 class LendBookRequest(BaseModel):
     

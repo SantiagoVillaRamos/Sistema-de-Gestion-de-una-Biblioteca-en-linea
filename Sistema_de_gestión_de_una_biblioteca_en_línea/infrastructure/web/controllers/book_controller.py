@@ -29,7 +29,8 @@ async def add_book(
     command = CreateBookCommand(
         isbn=request.isbn,
         title=request.title,
-        author=request.author,
+        author_id=request.author_id,
+        description=request.description,
         available_copies=request.available_copies
     )
     return await facade.create_book_facade(command)

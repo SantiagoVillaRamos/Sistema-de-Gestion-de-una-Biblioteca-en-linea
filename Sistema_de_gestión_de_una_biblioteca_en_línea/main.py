@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 import uvicorn
-from infrastructure.web.controllers import book_controller, user_controller, library_controller, auth_controller
 from contextlib import asynccontextmanager
 from fastapi.responses import JSONResponse
 from fastapi import Request, status
 
+from infrastructure.web.controllers import book_controller, user_controller, library_controller, auth_controller, author_controller
 from domain.models.exceptions.resource import ResourceConflictError, ResourceNotFoundError, ResourceUnauthorizedError
 
 
@@ -14,49 +14,52 @@ async def lifesfan(app: FastAPI):
     yield
     print(f"Finalizando la aplicación en el puerto 8008")   
 
-
-app = FastAPI(
-    title="Servicio de Biblioteca",
-    description="Una API para la gestión de préstamos y devoluciones de libros.",
-    lifespan=lifesfan
-)
-
-
-app.include_router(book_controller.router)
-app.include_router(library_controller.router)
-app.include_router(user_controller.router)
-app.include_router(auth_controller.router)
- 
-    
-@app.exception_handler(ResourceConflictError)
-async def book_already_exists_exception_handler(request: Request, exc: ResourceConflictError):
-    return JSONResponse(
-        status_code=status.HTTP_409_CONFLICT,
-        content={"detail": str(exc)}
+def create_app() -> FastAPI:
+    app = FastAPI(
+        title="Servicio de Biblioteca",
+        description="Una API para la gestión de préstamos y devoluciones de libros.",
+        lifespan=lifesfan
     )
     
-@app.exception_handler(ResourceNotFoundError)
-async def book_not_found_exception_handler(request: Request, exc: ResourceNotFoundError):
-    return JSONResponse(
-        status_code=status.HTTP_404_NOT_FOUND,
-        content={"detail": str(exc)}
-    )
-
-
-@app.exception_handler(ResourceUnauthorizedError)
-async def unauthorized_exception_handler(request: Request, exc: ResourceUnauthorizedError):
-    return JSONResponse(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        content={"detail": str(exc)}
-    )
+    # Registrar routers
+    app.include_router(book_controller.router)
+    app.include_router(library_controller.router)
+    app.include_router(user_controller.router)
+    app.include_router(auth_controller.router)
+    app.include_router(author_controller.router)
     
+    # Registrar manejadores de excepciones
+    @app.exception_handler(ResourceConflictError)
+    async def book_already_exists_exception_handler(request: Request, exc: ResourceConflictError):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"detail": str(exc)}
+        )
+        
+    @app.exception_handler(ResourceNotFoundError)
+    async def book_not_found_exception_handler(request: Request, exc: ResourceNotFoundError):
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"detail": str(exc)}
+        )
 
-@app.exception_handler(Exception)
-async def general_exception_handler(request: Request, exc: Exception):
-    return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": f"Error interno del servidor: {str(exc)}"}
-    )   
+    @app.exception_handler(ResourceUnauthorizedError)
+    async def unauthorized_exception_handler(request: Request, exc: ResourceUnauthorizedError):
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"detail": str(exc)}
+        )
+        
+    @app.exception_handler(Exception)
+    async def general_exception_handler(request: Request, exc: Exception):
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"detail": f"Error interno del servidor: {str(exc)}"}
+        )
+        
+    return app
+
+app = create_app()
 
 # Datos de prueba  
 # Crear libros

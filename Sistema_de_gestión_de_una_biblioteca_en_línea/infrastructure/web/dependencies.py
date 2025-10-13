@@ -1,13 +1,16 @@
 from infrastructure.persistence.in_memory.book_in_memory_repository import BookInMemoryRepository
 from infrastructure.persistence.in_memory.user_in_memory_repository import UserInMemoryRepository
 from infrastructure.persistence.in_memory.loan_in_memory_repository import LoanInMemoryRepository
+from infrastructure.persistence.in_memory.author_in_memory_repository import AuthorInMemoryRepository
 from application.facade.facade_library import LibraryFacade
 from infrastructure.services.email_notification_service import EmailNotificationService
 from infrastructure.services.passlib_password_service import PasslibPasswordService
 from infrastructure.services.jwt_auth_service import JwtAuthService
 from application.facade.facade_user import UserFacade
 from application.facade.facade_book import BookFacade
+from application.facade.facade_author import AuthorFacade
 from application.facade.facade_auth import AuthFacade
+from application.use_cases.author.create_author_use_case import CreateAuthorUseCase
 from application.use_cases.user.login_user_use_case import LoginUserUseCase
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -20,6 +23,7 @@ class Repositories:
     book_repo = BookInMemoryRepository()
     user_repo = UserInMemoryRepository()
     loan_repo = LoanInMemoryRepository()
+    author_repo = AuthorInMemoryRepository()
     notification_service = EmailNotificationService()
     password_service = PasslibPasswordService()
     # WARNING: Use a real secret key from environment variables in a real app
@@ -37,6 +41,10 @@ def get_user_facade() -> UserFacade:
 
 def get_book_facade() -> BookFacade:
     return BookFacade(repos.book_repo)
+
+def get_author_facade() -> AuthorFacade:
+    create_author_use_case = CreateAuthorUseCase(author_repository=repos.author_repo)
+    return AuthorFacade(create_author_use_case)
 
 def get_auth_facade() -> AuthFacade:
     login_use_case = LoginUserUseCase(
