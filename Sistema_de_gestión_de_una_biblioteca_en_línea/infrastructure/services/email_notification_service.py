@@ -25,10 +25,7 @@ class EmailNotificationService(NotificationService):
         print(f"Asunto: {subject}")
         print(f"Cuerpo:\n{body}")
         print(f"---------------------------------\n")
-        # Aquí iría el código real de envío de correo:
-        # import smtplib
-        # with smtplib.SMTP('smtp.example.com') as server:
-        #     server.sendmail('biblioteca@example.com', user.email.address, f"Subject: {subject}\n\n{body}")
+    
 
     async def send_return_notification(self, user: User, book: Book) -> None:
         message = (
@@ -37,8 +34,6 @@ class EmailNotificationService(NotificationService):
         )
         
         print(f"\n--- SIMULando ENVÍO DE SMS ---")
-        # En un caso real, necesitaríamos el número de teléfono del usuario.
-        # print(f"Para: {user.phone_number}") 
         print(f"Mensaje: {message}")
         print(f"----------------------------\n")
 
@@ -49,7 +44,5 @@ class EmailNotificationService(NotificationService):
         )
         
         print(f"\n--- SIMULANDO ENVÍO DE SMS (MULTA) ---")
-        # En un caso real, necesitaríamos el número de teléfono del usuario.
-        # print(f"Para: {user.phone_number}") 
         print(f"Mensaje: {message}")
         print(f"-------------------------------------\n")

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from application.facade.facade_user import UserFacade
-from infrastructure.web.dependencies import get_user_facade, RoleChecker
+from infrastructure.web.dependencies import get_user_facade, RoleChecker, get_current_user
 from infrastructure.web.models import UserCreationResponse, GetUserResponse, CreateUserRequest
 from application.dto.user_command_dto import CreateUserCommand, GetUserCommand
 from typing import Annotated
+from domain.models.user import User
 
 
 admin_role_checker = RoleChecker(["ADMIN"])
@@ -42,8 +43,16 @@ async def create_user(
 )
 async def get_user(
     user_id: str,
-    facade: Annotated[UserFacade, Depends(get_user_facade)]
+    facade: Annotated[UserFacade, Depends(get_user_facade)],
+    current_user: Annotated[User, Depends(get_current_user)]
 ):
+    # Authorization check
+    if "ADMIN" not in current_user.roles and current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to access this resource"
+        )
+    
     # 2. Construir el DTO (Command) que la fachada espera
     command = GetUserCommand(user_id=user_id)
     return await facade.get_user_facade(command)
