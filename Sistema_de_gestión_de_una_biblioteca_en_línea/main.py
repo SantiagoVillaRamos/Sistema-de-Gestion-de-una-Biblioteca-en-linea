@@ -10,9 +10,9 @@ from domain.models.exceptions.resource import ResourceConflictError, ResourceNot
 
 @asynccontextmanager
 async def lifesfan(app: FastAPI):
-    print(f"Iniciando la aplicación en el puerto 8008")
+    print(f"Iniciando la aplicación en el puerto 8009")
     yield
-    print(f"Finalizando la aplicación en el puerto 8008")   
+    print(f"Finalizando la aplicación en el puerto 8009")   
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -87,4 +87,4 @@ app = create_app()
     
 # Si el script se ejecuta directamente, arranca el servidor
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=8008, reload=True)
+    uvicorn.run("main:app", port=8009, reload=True)

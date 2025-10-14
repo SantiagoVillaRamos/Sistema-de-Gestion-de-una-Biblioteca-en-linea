@@ -5,8 +5,8 @@ from domain.models.factory.authorFactory import AuthorFactory
 
 class CreateAuthorUseCase:
     
-    def __init__(self, author_repo: AuthorRepository):
-        self.author_repo = author_repo
+    def __init__(self, author_repository: AuthorRepository):
+        self.author_repo = author_repository
 
     async def execute(self, command: CreateAuthorCommand) -> CreateAuthorResponse:
         

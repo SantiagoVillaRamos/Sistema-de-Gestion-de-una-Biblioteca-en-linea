@@ -12,6 +12,9 @@ from application.facade.facade_author import AuthorFacade
 from application.facade.facade_auth import AuthFacade
 from application.use_cases.author.create_author_use_case import CreateAuthorUseCase
 from application.use_cases.user.login_user_use_case import LoginUserUseCase
+from application.use_cases.user.create_user_use_case import CreateUserUseCase
+from application.use_cases.user.get_user_use_case import GetUserUseCase
+from domain.models.factory.userFactory import UserFactory
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
@@ -31,13 +34,21 @@ class Repositories:
     
 repos = Repositories()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
 
 def get_library_facade() -> LibraryFacade:
     return LibraryFacade(repos.book_repo, repos.user_repo, repos.loan_repo, repos.notification_service)
 
 def get_user_facade() -> UserFacade:
-    return UserFacade(repos.book_repo, repos.user_repo, repos.loan_repo, repos.password_service)
+    user_factory = UserFactory(password_service=repos.password_service)
+    create_user_use_case = CreateUserUseCase(
+        user_repository=repos.user_repo, 
+        user_factory=user_factory
+    )
+    get_user_use_case = GetUserUseCase(
+        user_repo=repos.user_repo, loan_repo=repos.loan_repo, book_repo=repos.book_repo
+    )
+    return UserFacade(create_user_use_case, get_user_use_case)
 
 def get_book_facade() -> BookFacade:
     return BookFacade(repos.book_repo)
@@ -54,7 +65,15 @@ def get_auth_facade() -> AuthFacade:
     )
     return AuthFacade(login_use_case)
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
+async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)]) -> User:
+    if token is None:
+        # This happens when auto_error=False and no token is provided.
+        # We explicitly raise the 401 error that would have been raised automatically.
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     try:
         payload = repos.auth_service.validate_token(token)
         user_id: str = payload.get("sub")
@@ -79,6 +98,14 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
+
+async def get_optional_current_user(token: Annotated[str | None, Depends(oauth2_scheme)] = None) -> User | None:
+    if token is None:
+        return None
+    try:
+        return await get_current_user(token)
+    except HTTPException:
+        return None
 
 class RoleChecker:
     def __init__(self, allowed_roles: list[str]):

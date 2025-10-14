@@ -1,8 +1,3 @@
-
-from application.ports.user_repository import UserRepository
-from application.ports.loan_repository import LoanRepository
-from application.ports.book_repository import BookRepository
-from domain.ports.PasswordService import PasswordService
 from application.use_cases.user.create_user_use_case import CreateUserUseCase
 from application.dto.user_command_dto import CreateUserCommand, GetUserCommand, CreateUserResponse, GetUserResponse
 from application.use_cases.user.get_user_use_case import GetUserUseCase
@@ -12,10 +7,9 @@ from typing import Optional
 
 class UserFacade:
     
-    def __init__(self, book_repo: BookRepository, user_repo: UserRepository, loan_repo: LoanRepository, password_service: PasswordService):
-        
-        self._create_user_use_case = CreateUserUseCase(user_repo, password_service)
-        self._get_user_use_case = GetUserUseCase(user_repo, loan_repo, book_repo)
+    def __init__(self, create_user_use_case: CreateUserUseCase, get_user_use_case: GetUserUseCase):
+        self._create_user_use_case = create_user_use_case
+        self._get_user_use_case = get_user_use_case
 
     async def create_user_facade(self, command: CreateUserCommand) -> CreateUserResponse:
         return await self._create_user_use_case.execute(command)

@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr, field_validator
 from datetime import datetime
+from pydantic import BaseModel, EmailStr, Field
 from typing import List
 
 
@@ -22,7 +22,7 @@ class CreateUserRequest(BaseModel):
     
     name: str
     email: str
-    password: str
+    password: str = Field(..., max_length=72)
     roles: List[str] = None
 
     
@@ -89,7 +89,7 @@ class ReturnBookResponse(BaseModel):
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., max_length=72)
 
 class LoginResponse(BaseModel):
     token: str

@@ -12,14 +12,17 @@ class UserMapper:
     @staticmethod
     def to_domain(persistence_data: dict) -> User:
         """Convierte un diccionario de datos de persistencia a un objeto de dominio User."""
+        # Al reconstruir, el password ya está hasheado. Lo pasamos directamente.
+        # El Value Object Password se usa para hashear, no para almacenar un hash.
         return User(
             user_id=persistence_data['user_id'],
             name=persistence_data['name'],
             email=Email(persistence_data['email']),
             password=Password(persistence_data['password']),
-            is_active=persistence_data['is_active'],
-            user_type=persistence_data['user_type']
+            roles=persistence_data.get('roles', ['MEMBER']), # Usar .get para retrocompatibilidad
+            is_active=persistence_data.get('is_active', True)
         )
+
 
     @staticmethod
     def to_persistence(domain_user: User) -> dict:
@@ -29,7 +32,6 @@ class UserMapper:
             "name": domain_user.name,
             "email": domain_user.email.address,
             "password": domain_user.password.hashed,
+            "roles": domain_user.roles,
             "is_active": domain_user.is_active,
-            "user_type": domain_user.user_type
-        
         }
