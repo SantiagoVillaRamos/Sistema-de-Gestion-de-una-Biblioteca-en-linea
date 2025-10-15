@@ -1,6 +1,6 @@
 from domain.models.user import User
 from domain.models.loan import Loan
-from .penalty_strategy import PenaltyStrategy
+from domain.ports.penalty_strategy import PenaltyStrategy
 from .concrete_strategies import StudentPenaltyStrategy, ProfessorPenaltyStrategy, GeneralPublicPenaltyStrategy
 
 class PenaltyCalculator:

@@ -119,5 +119,5 @@ class RoleChecker:
         if not any(role in self.allowed_roles for role in user.roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Operation not permitted"
+                detail="Operacion no Permitida"
             )

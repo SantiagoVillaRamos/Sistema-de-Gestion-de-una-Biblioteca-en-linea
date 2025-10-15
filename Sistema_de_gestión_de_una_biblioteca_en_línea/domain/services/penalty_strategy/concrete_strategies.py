@@ -1,6 +1,6 @@
 from datetime import datetime
 from domain.models.loan import Loan
-from .penalty_strategy import PenaltyStrategy
+from domain.ports.penalty_strategy import PenaltyStrategy
 
 class StudentPenaltyStrategy(PenaltyStrategy):
     """
