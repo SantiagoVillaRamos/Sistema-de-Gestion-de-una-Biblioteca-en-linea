@@ -4,8 +4,8 @@ from application.dto.author_command_dto import CreateAuthorCommand, CreateAuthor
 
 class AuthorFacade:
     
-    def __init__(self, author_repo: AuthorRepository):
-        self._create_author_use_case = CreateAuthorUseCase(author_repo)
+    def __init__(self, author_repo: CreateAuthorUseCase):
+        self._create_author_use_case = author_repo
 
     async def create_author_facade(self, command: CreateAuthorCommand) -> CreateAuthorResponse:
         return await self._create_author_use_case.execute(command)

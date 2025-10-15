@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from typing import List
 @dataclass(frozen=True)
 class CreateBookCommand:
     """
@@ -7,7 +7,7 @@ class CreateBookCommand:
     """
     isbn: str
     title: str
-    author_id: str
+    author_id: List[str]
     description: str
     available_copies: int
 
@@ -19,5 +19,5 @@ class CreateBookResponse:
     book_id: str
     isbn: str
     title: str
-    author_id: str
+    author_id: List[str]
     description: str

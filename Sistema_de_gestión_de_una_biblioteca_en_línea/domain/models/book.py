@@ -1,11 +1,10 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from typing import List
 from domain.models.value_objects.isbn import ISBN
 from domain.models.value_objects.title import Title
-
-
-
 from domain.models.exceptions.business_exception import BusinessNotFoundError
+from domain.models.author import Author
 
 @dataclass
 class Book:
@@ -13,7 +12,7 @@ class Book:
     book_id: str
     isbn: ISBN
     title: Title
-    author_id: str
+    author_id: List[Author]
     description: str
     available_copies: int
 

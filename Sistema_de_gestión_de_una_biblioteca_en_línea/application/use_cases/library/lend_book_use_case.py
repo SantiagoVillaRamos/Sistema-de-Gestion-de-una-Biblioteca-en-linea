@@ -41,6 +41,8 @@ class LendBookUseCase:
             message="Libro prestado exitosamente",
             loan_id=new_loan.id,
             book_title=book.title.value,
+            description=book.description,
+            authors=book.author_id,
             loan_date=new_loan.loan_date,
             due_date=new_loan.due_date.value
         )

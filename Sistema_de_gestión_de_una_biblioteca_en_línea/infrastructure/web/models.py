@@ -13,6 +13,8 @@ class LoanResponse(BaseModel):
     message: str
     loan_id: str
     book_title: str
+    description: str
+    authors: List[str]
     loan_date: datetime
     due_date: datetime
 
@@ -47,7 +49,7 @@ class CreateBookRequest(BaseModel):
     
     isbn: str
     title: str
-    author_id: str
+    author_id: List[str]
     description: str
     available_copies: int
     
@@ -56,7 +58,7 @@ class CreateBookResponse(BaseModel):
     book_id: str
     isbn: str
     title: str
-    author_id: str
+    author_id: List[str]
     description: str
     
 

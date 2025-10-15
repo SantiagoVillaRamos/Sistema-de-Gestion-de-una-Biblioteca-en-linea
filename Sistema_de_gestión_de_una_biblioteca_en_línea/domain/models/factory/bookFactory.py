@@ -2,12 +2,13 @@ import uuid
 from domain.models.value_objects.isbn import ISBN
 from domain.models.value_objects.title import Title
 from domain.models.book import Book
+from typing import List
 
 
 class BookFactory:
    
     @staticmethod
-    def create(isbn: str, title: str, author_id: str, description: str, available_copies: int) -> Book:
+    def create(isbn: str, title: str, author_id: List[str], description: str, available_copies: int) -> Book:
         
         book_id = str(uuid.uuid4())
         

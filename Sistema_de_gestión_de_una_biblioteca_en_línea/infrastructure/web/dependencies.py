@@ -53,9 +53,11 @@ def get_user_facade() -> UserFacade:
 def get_book_facade() -> BookFacade:
     return BookFacade(repos.book_repo)
 
+
 def get_author_facade() -> AuthorFacade:
     create_author_use_case = CreateAuthorUseCase(author_repository=repos.author_repo)
     return AuthorFacade(create_author_use_case)
+
 
 def get_auth_facade() -> AuthFacade:
     login_use_case = LoginUserUseCase(
@@ -64,6 +66,8 @@ def get_auth_facade() -> AuthFacade:
         auth_service=repos.auth_service
     )
     return AuthFacade(login_use_case)
+
+
 
 async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)]) -> User:
     if token is None:
