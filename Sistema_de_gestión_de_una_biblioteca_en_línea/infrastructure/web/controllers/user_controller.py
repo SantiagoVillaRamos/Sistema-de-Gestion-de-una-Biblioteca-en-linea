@@ -60,8 +60,6 @@ async def get_user(
             detail="No autorizado para acceder a este recurso",
         )
 
-    print(f"\nROLES: {current_user.roles}")
-    
     # 2. Construir el DTO (Command) que la fachada espera
     command = GetUserCommand(user_id=user_id)
     return await facade.get_user_facade(command)

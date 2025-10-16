@@ -26,3 +26,7 @@ class BookRepository(ABC):
     @abstractmethod
     async def get_all(self) -> List[Book]:
         pass
+
+    @abstractmethod
+    async def delete(self, book: Book) -> None:
+        pass

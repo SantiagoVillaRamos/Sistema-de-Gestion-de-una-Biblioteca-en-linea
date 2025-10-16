@@ -45,3 +45,9 @@ class BookInMemoryRepository(BookRepository):
         if not self._books:
             return []
         return [BookMapper.to_domain(data) for data in self._books.values()]
+
+    async def delete(self, book: Book) -> None:
+        if book.book_id not in self._books:
+            raise BusinessNotFoundError(book.book_id, "El ID no existe")
+        else:
+            del self._books[book.book_id]

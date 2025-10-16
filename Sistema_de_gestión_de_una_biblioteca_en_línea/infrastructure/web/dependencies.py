@@ -7,13 +7,18 @@ from infrastructure.services.email_notification_service import EmailNotification
 from infrastructure.services.passlib_password_service import PasslibPasswordService
 from infrastructure.services.jwt_auth_service import JwtAuthService
 from application.facade.facade_user import UserFacade
-from application.facade.facade_book import BookFacade
+from application.facade.facade_book import FacadeBook
 from application.facade.facade_author import AuthorFacade
 from application.facade.facade_auth import AuthFacade
 from application.use_cases.author.create_author_use_case import CreateAuthorUseCase
 from application.use_cases.user.login_user_use_case import LoginUserUseCase
 from application.use_cases.user.create_user_use_case import CreateUserUseCase
 from application.use_cases.user.get_user_use_case import GetUserUseCase
+from application.use_cases.book.create_book_use_case import CreateBookUseCase
+from application.use_cases.book.update_book_use_case import UpdateBookUseCase
+from application.use_cases.book.get_all_books_use_case import GetAllBooksUseCase
+from application.use_cases.book.get_book_by_id_use_case import GetBookByIdUseCase
+from application.use_cases.book.delete_book_use_case import DeleteBookUseCase
 from domain.models.factory.userFactory import UserFactory
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -50,8 +55,22 @@ def get_user_facade() -> UserFacade:
     )
     return UserFacade(create_user_use_case, get_user_use_case)
 
-def get_book_facade() -> BookFacade:
-    return BookFacade(repos.book_repo)
+
+
+def get_book_facade() -> FacadeBook:
+    create_book_use_case = CreateBookUseCase(book_repository=repos.book_repo)
+    update_book_use_case = UpdateBookUseCase(book_repository=repos.book_repo)
+    get_all_books_use_case = GetAllBooksUseCase(book_repository=repos.book_repo)
+    get_book_by_id_use_case = GetBookByIdUseCase(book_repository=repos.book_repo)
+    delete_book_use_case = DeleteBookUseCase(book_repository=repos.book_repo)
+    
+    return FacadeBook(
+        create_book_use_case=create_book_use_case,
+        update_book_use_case=update_book_use_case,
+        get_all_books_use_case=get_all_books_use_case,
+        get_book_by_id_use_case=get_book_by_id_use_case,
+        delete_book_use_case=delete_book_use_case
+    )
 
 
 def get_author_facade() -> AuthorFacade:
@@ -66,6 +85,8 @@ def get_auth_facade() -> AuthFacade:
         auth_service=repos.auth_service
     )
     return AuthFacade(login_use_case)
+
+
 
 
 

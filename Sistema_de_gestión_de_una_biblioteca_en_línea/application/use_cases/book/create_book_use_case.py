@@ -6,8 +6,8 @@ from domain.models.factory.bookFactory import BookFactory
 
 class CreateBookUseCase:
     
-    def __init__(self, book_repo: BookRepository):
-        self.book_repo = book_repo
+    def __init__(self, book_repository: BookRepository):
+        self.book_repo = book_repository
 
     async def execute(self, command: CreateBookCommand) -> CreateBookResponse:
         

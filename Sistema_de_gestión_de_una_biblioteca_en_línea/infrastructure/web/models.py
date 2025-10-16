@@ -48,22 +48,6 @@ class GetUserResponse(BaseModel):
     loaned_books: List[LoanResponse] = []
     
     
-class CreateBookRequest(BaseModel):
-    
-    isbn: str
-    title: str
-    author_id: List[str]
-    description: str
-    available_copies: int
-    
-class CreateBookResponse(BaseModel):
-    
-    book_id: str
-    isbn: str
-    title: str
-    author_id: List[str]
-    description: str
-    
 
 class CreateAuthorRequest(BaseModel):
     
