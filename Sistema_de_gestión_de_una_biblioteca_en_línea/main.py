@@ -3,9 +3,8 @@ import uvicorn
 from contextlib import asynccontextmanager
 from fastapi.responses import JSONResponse
 from fastapi import Request, status
-
 from infrastructure.web.controllers import book_controller, user_controller, library_controller, auth_controller, author_controller
-from domain.models.exceptions.resource import ResourceConflictError, ResourceNotFoundError, ResourceUnauthorizedError
+from domain.models.exceptions.resource import ResourceConflictError, ResourceNotFoundError, ResourceUnauthorizedError, InvalidUserTypeException
 
 
 @asynccontextmanager
@@ -47,6 +46,13 @@ def create_app() -> FastAPI:
     async def unauthorized_exception_handler(request: Request, exc: ResourceUnauthorizedError):
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"detail": str(exc)}
+        )
+        
+    @app.exception_handler(InvalidUserTypeException)
+    async def invalid_user_type_exception(request: Request, exc:InvalidUserTypeException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
             content={"detail": str(exc)}
         )
         

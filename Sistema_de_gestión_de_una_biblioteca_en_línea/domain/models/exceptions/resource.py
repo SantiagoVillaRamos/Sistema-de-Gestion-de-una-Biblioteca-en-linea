@@ -12,3 +12,5 @@ class ResourceUnauthorizedError(Exception):
     """Excepción base para cuando una acción no está autorizada."""
     pass
 
+class InvalidUserTypeException(Exception):
+    pass

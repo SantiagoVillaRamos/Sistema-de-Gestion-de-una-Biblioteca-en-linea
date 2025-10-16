@@ -38,7 +38,8 @@ async def create_user(
         name=request.name,
         email=request.email,
         password=request.password,
-        roles=request.roles or ["MEMBER"] # Asigna rol "MEMBER" por defecto
+        user_type=request.user_type,
+        roles=request.roles 
     )
     return await facade.create_user_facade(command)
 

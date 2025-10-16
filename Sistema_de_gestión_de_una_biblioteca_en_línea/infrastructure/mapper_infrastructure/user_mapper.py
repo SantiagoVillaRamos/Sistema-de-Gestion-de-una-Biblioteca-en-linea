@@ -19,7 +19,8 @@ class UserMapper:
             name=persistence_data['name'],
             email=Email(persistence_data['email']),
             password=Password(persistence_data['password']),
-            roles=persistence_data.get('roles', ['MEMBER']), # Usar .get para retrocompatibilidad
+            user_type=persistence_data.get('user_type', 'general'),
+            roles=persistence_data.get('roles', ['MEMBER']),
             is_active=persistence_data.get('is_active', True)
         )
 
@@ -32,6 +33,7 @@ class UserMapper:
             "name": domain_user.name,
             "email": domain_user.email.address,
             "password": domain_user.password.hashed,
+            "user_type": domain_user.user_type,
             "roles": domain_user.roles,
             "is_active": domain_user.is_active,
         }

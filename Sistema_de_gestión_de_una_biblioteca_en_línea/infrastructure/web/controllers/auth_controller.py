@@ -16,7 +16,7 @@ router = APIRouter(
     "/login",
     status_code=status.HTTP_200_OK,
     response_model=LoginResponse,
-    dependencies=[Depends(admin_role_checker)]
+    
 )
 async def login_for_access_token(
     request: LoginRequest,

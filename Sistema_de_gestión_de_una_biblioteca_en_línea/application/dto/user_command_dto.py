@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Literal, List
 
 @dataclass(frozen=True)
 class CreateUserCommand:
@@ -9,7 +10,9 @@ class CreateUserCommand:
     name: str
     email: str
     password: str
-    roles: list[str] = None
+    user_type: Literal["student", "professor", "general"] = "general"
+    roles: List[str] = None
+    
     
 
 @dataclass(frozen=True)
@@ -30,6 +33,8 @@ class CreateUserResponse:
     user_id: str
     name: str
     email: str
+    user_type: Literal["student", "professor", "general"]
+    roles: List[str]
     
     
 @dataclass(frozen=True)

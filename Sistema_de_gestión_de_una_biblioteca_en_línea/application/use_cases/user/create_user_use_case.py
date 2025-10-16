@@ -15,8 +15,10 @@ class CreateUserUseCase:
             name=command.name,
             email=command.email,
             password=command.password,
-            roles=command.roles
+            roles=command.roles,
+            user_type=command.user_type
         )
+        
         await self.user_repo.save(new_user)
         
         return self._build_user_response(new_user)
@@ -25,5 +27,7 @@ class CreateUserUseCase:
         return CreateUserResponse(
             user_id=new_user.user_id,
             name=new_user.name,
-            email=new_user.email.address
+            email=new_user.email.address,
+            user_type=new_user.user_type,
+            roles=new_user.roles
         )

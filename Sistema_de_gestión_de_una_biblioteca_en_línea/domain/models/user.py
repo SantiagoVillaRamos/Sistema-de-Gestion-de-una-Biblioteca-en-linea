@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from domain.models.value_objects.email import Email
 from domain.models.value_objects.password import Password
 from domain.models.exceptions.business_exception import BusinessNotFoundError
+from typing import Literal
 
 @dataclass
 class User:
@@ -11,8 +12,9 @@ class User:
     name: str
     email: Email 
     password: Password
+    user_type: Literal["student", "professor", "general"]
+    roles: list[str]
     is_active: bool = True
-    roles: list[str] = field(default_factory=lambda: ["MEMBER"])
     
     def __post_init__(self):
         

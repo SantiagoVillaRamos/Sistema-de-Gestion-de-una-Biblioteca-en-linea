@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
-from typing import List
+from typing import List, Literal
 
 
 class MessageResponse(BaseModel):
@@ -25,7 +25,9 @@ class CreateUserRequest(BaseModel):
     name: str
     email: str
     password: str = Field(..., max_length=72)
+    user_type: Literal["student", "professor", "general"]
     roles: List[str] = None
+    
 
     
 class UserCreationResponse(BaseModel):
@@ -33,7 +35,8 @@ class UserCreationResponse(BaseModel):
     user_id: str
     name: str
     email: EmailStr
-
+    user_type: Literal["student", "professor", "general"]
+    roles: List[str]
 
 
 class GetUserResponse(BaseModel):
