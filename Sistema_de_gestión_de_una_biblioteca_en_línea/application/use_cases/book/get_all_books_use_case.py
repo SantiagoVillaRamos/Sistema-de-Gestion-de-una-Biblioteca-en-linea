@@ -8,3 +8,5 @@ class GetAllBooksUseCase:
 
     async def execute(self) -> List[Book]:
         return await self.book_repository.get_all()
+        
+        

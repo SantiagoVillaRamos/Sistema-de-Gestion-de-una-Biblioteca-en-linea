@@ -9,7 +9,7 @@ class CreateBookUseCase:
     def __init__(self, book_repository: BookRepository):
         self.book_repo = book_repository
 
-    async def execute(self, command: CreateBookCommand) -> CreateBookResponse:
+    async def execute(self, command: CreateBookCommand) -> Book:
         
         new_book = BookFactory.create(
             isbn=command.isbn,
@@ -21,16 +21,7 @@ class CreateBookUseCase:
         
         await self.book_repo.save(new_book)
 
-        return self._build_book_response(new_book)
+        return new_book
     
-    def _build_book_response(self, new_book: Book) -> CreateBookResponse:   
-        
-        return CreateBookResponse(
-            book_id=new_book.book_id,
-            isbn=new_book.isbn.value,
-            title=new_book.title.value,
-            author_id=new_book.author_id,
-            description=new_book.description
-        )
         
         

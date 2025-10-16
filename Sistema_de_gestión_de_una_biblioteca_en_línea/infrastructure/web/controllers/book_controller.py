@@ -31,7 +31,14 @@ async def add_book(
         description=request.description,
         available_copies=request.available_copies
     )
-    return await facade.create_book(command)
+    new_book = await facade.create_book(command)
+    return CreateBookResponse(
+        book_id=new_book.book_id,
+        sbn=new_book.isbn.value,
+        title=new_book.title.value,
+        author_id=[author.author_id for author in new_book.author_id], #corregir error
+        description=new_book.description
+    )
 
 
 @router.get(
@@ -41,7 +48,16 @@ async def add_book(
 async def get_all_books(
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
-    return await facade.get_all_books()
+    books = await facade.get_all_books()
+    return [
+        GetBooksResponse(
+            isbn=book.isbn.value,
+            title=book.title.value,
+            author_id=[author.author_id for author in book.author_id],
+            description=book.description,
+            available_copies=book.available_copies
+        ) for book in books
+    ]
 
 
 @router.get(
@@ -53,7 +69,14 @@ async def get_book_by_id(
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
     command = GetBookCommand(book_id=book_id)
-    return await facade.get_book_by_id(command)
+    book = await facade.get_book_by_id(command)
+    return GetBooksResponse(
+        isbn=book.isbn.value,
+        title=book.title.value,
+        author_id=[author.author_id for author in book.author_id],
+        description=book.description,
+        available_copies=book.available_copies
+    )
     
 
 
@@ -72,7 +95,14 @@ async def update_book(
         title=request.title,
         description=request.description
     )
-    return await facade.update_book(command_id, command)
+    book = await facade.update_book(command_id, command)
+    return GetBooksResponse(
+        isbn=book.isbn.value,
+        title=book.title.value,
+        author_id=[author.author_id for author in book.author_id],
+        description=book.description,
+        available_copies=book.available_copies
+    )
     
 
 
@@ -87,5 +117,7 @@ async def delete_book(
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
     command = GetBookCommand(book_id=book_id)
-    return await facade.delete_book(command)
-    
+    book_delete = await facade.delete_book(command)
+    return BookMessage(
+        message=f"Libro '{book_delete.title}' Eliminado"
+    )
