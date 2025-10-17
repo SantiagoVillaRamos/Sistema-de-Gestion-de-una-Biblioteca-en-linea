@@ -1,13 +1,12 @@
-from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
-from typing import List, Literal, Optional
 
+from pydantic import BaseModel
+from typing import List, Optional
 
 class CreateBookRequest(BaseModel):
     
     isbn: str
     title: str
-    author_id: List[str]
+    author: List[str]
     description: str
     available_copies: int
 
@@ -16,7 +15,7 @@ class CreateBookResponse(BaseModel):
     book_id: str
     isbn: str
     title: str
-    author_id: List[str]
+    author: List[str]
     description: str
     
     
@@ -24,7 +23,7 @@ class GetBooksResponse(BaseModel):
     
     isbn: str
     title: str
-    author_id: List[str]
+    author_names: List[str]
     description: str
     available_copies: int
     
@@ -36,3 +35,18 @@ class UpdateBookDTO(BaseModel):
 class BookMessage(BaseModel):
     
     message: str
+    
+    
+class AuthorResponseDTO(BaseModel):
+    
+    author_id: str
+    name: str
+    description: str
+
+class BookFullResponseDTO(BaseModel):
+    book_id: str
+    isbn: str
+    title: str
+    description: str
+    available_copies: int
+    authors: List[AuthorResponseDTO]

@@ -21,8 +21,34 @@ class AuthorInMemoryRepository(AuthorRepository):
         if not persistence_data:
             raise BusinessNotFoundError(author_id, "El ID no existe")
         return AuthorMapper.to_domain(persistence_data)
+    
 
     async def get_all(self) -> List[Author]:
         if not self._authors:
             return []
         return [AuthorMapper.to_domain(data) for data in self._authors.values()]
+
+    async def find_by_name(self, name: str) -> Optional[Author]:
+        for data in self._authors.values():
+            if data['name'] == name:
+                return AuthorMapper.to_domain(data)
+        return BusinessNotFoundError(name, f"El nombre no existe")
+    
+    async def find_by_ids(self, author_ids: List[str]) -> List[Author]:
+        
+        # 1. Recuperar los datos de persistencia (diccionarios) para los IDs dados.
+        #    Solo incluimos datos si el ID existe en el diccionario _authors.
+        authors_data = [
+            self._authors[author_id] 
+            for author_id in author_ids 
+            if author_id in self._authors
+        ]
+        
+        # 2. Mapear los datos de persistencia a las Entidades de Dominio (Author).
+        #    Usamos AuthorMapper.to_domain para la conversión.
+        domain_authors = [
+            AuthorMapper.to_domain(data) 
+            for data in authors_data
+        ]
+    
+        return domain_authors

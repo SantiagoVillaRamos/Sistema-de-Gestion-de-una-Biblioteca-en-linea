@@ -18,3 +18,12 @@ class AuthorRepository(ABC):
     @abstractmethod
     async def get_all(self) -> List[Author]:
         pass
+
+    @abstractmethod
+    async def find_by_name(self, name: str) -> Optional[Author]:
+        pass
+
+    @abstractmethod
+    async def find_by_ids(self, author_ids: List[str]) -> List[Author]:
+        """Busca una lista de autores por sus IDs."""
+        pass

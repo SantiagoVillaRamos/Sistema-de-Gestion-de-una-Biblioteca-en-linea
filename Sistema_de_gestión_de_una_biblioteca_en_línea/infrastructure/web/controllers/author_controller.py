@@ -18,7 +18,7 @@ router = APIRouter(
     "/",
     status_code=status.HTTP_201_CREATED,
     response_model=CreateAuthorResponse,
-    dependencies=[Depends(admin_role_checker)]
+    #dependencies=[Depends(admin_role_checker)]
 )
 async def add_author(
     request: CreateAuthorRequest,

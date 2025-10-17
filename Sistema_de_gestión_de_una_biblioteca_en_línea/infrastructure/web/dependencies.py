@@ -58,10 +58,10 @@ def get_user_facade() -> UserFacade:
 
 
 def get_book_facade() -> FacadeBook:
-    create_book_use_case = CreateBookUseCase(book_repository=repos.book_repo)
-    update_book_use_case = UpdateBookUseCase(book_repository=repos.book_repo)
-    get_all_books_use_case = GetAllBooksUseCase(book_repository=repos.book_repo)
-    get_book_by_id_use_case = GetBookByIdUseCase(book_repository=repos.book_repo)
+    create_book_use_case = CreateBookUseCase(book_repository=repos.book_repo, author_repository=repos.author_repo)
+    update_book_use_case = UpdateBookUseCase(book_repository=repos.book_repo, author_repository=repos.author_repo)
+    get_all_books_use_case = GetAllBooksUseCase(book_repository=repos.book_repo, author_repository=repos.author_repo)
+    get_book_by_id_use_case = GetBookByIdUseCase(book_repository=repos.book_repo, author_repository=repos.author_repo)
     delete_book_use_case = DeleteBookUseCase(book_repository=repos.book_repo)
     
     return FacadeBook(

@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional
+from domain.models.book import Book
+from domain.models.author import Author
 
 @dataclass(frozen=True)
 class CreateBookCommand:
@@ -8,7 +10,7 @@ class CreateBookCommand:
     """
     isbn: str
     title: str
-    author_id: List[str]
+    author: List[str]
     description: str
     available_copies: int
 
@@ -20,7 +22,7 @@ class CreateBookResponse:
     book_id: str
     isbn: str
     title: str
-    author_id: List[str]
+    author: List[str]
     description: str
     
 @dataclass(frozen=True)
@@ -31,13 +33,11 @@ class GetBookCommand:
     book_id: str
     
 @dataclass(frozen=True) 
-class GetResponseBookCommand:
+class BookDetailsResponse:
     
-    isbn: str
-    title: str
-    author_id: List[str]
-    description: str
-    available_copies: int
+    book: Book
+    authors: List[Author]
+    
     
 @dataclass(frozen=True)
 class UpdateBookDTOCommand:

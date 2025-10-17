@@ -7,10 +7,11 @@ class CreateAuthorUseCase:
     
     def __init__(self, author_repository: AuthorRepository):
         self.author_repo = author_repository
+        self.author_factory = AuthorFactory()
 
     async def execute(self, command: CreateAuthorCommand) -> CreateAuthorResponse:
         
-        new_author = AuthorFactory.create(
+        new_author = await self.author_factory.create(
             name=command.name,
             description=command.description
         )
