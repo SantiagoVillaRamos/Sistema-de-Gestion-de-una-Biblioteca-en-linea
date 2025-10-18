@@ -4,6 +4,7 @@ from domain.models.author import Author
 from infrastructure.mapper_infrastructure.author_mapper import AuthorMapper
 from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
 
+
 class AuthorInMemoryRepository(AuthorRepository):
     
     def __init__(self):

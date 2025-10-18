@@ -35,3 +35,4 @@ class Book:
     def is_available(self) -> bool:
         return self.available_copies > 0
         
+    

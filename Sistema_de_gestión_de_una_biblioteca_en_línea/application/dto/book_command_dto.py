@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
 from domain.models.book import Book
 from domain.models.author import Author
 
