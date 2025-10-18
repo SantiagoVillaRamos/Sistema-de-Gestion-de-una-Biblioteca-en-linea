@@ -1,4 +1,4 @@
-# c:\...\domain\models\author.py (VERSIÓN MEJORADA)
+
 from dataclasses import dataclass
 from domain.models.value_objects.author.author_name import AuthorName  
 from domain.models.value_objects.author.author_description import AuthorDescription

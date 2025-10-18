@@ -11,6 +11,8 @@ from application.facade.facade_book import FacadeBook
 from application.facade.facade_author import AuthorFacade
 from application.facade.facade_auth import AuthFacade
 from application.use_cases.author.create_author_use_case import CreateAuthorUseCase
+from application.use_cases.author.get_all_authors_use_case import GetAllAuthorsUseCase
+from application.use_cases.author.get_author_by_id_use_case import GetAuthorByIdUseCase
 from application.use_cases.user.login_user_use_case import LoginUserUseCase
 from application.use_cases.user.create_user_use_case import CreateUserUseCase
 from application.use_cases.user.get_user_use_case import GetUserUseCase
@@ -75,7 +77,18 @@ def get_book_facade() -> FacadeBook:
 
 def get_author_facade() -> AuthorFacade:
     create_author_use_case = CreateAuthorUseCase(author_repository=repos.author_repo)
-    return AuthorFacade(create_author_use_case)
+    get_all_authors_use_case = GetAllAuthorsUseCase(author_repository=repos.author_repo)
+    get_author_by_id_use_case = GetAuthorByIdUseCase(
+        author_repository=repos.author_repo,
+        book_repository=repos.book_repo
+    )
+    return AuthorFacade(
+        create_use_case = create_author_use_case,
+        get_all_use_case=get_all_authors_use_case,
+        get_by_id_use_case=get_author_by_id_use_case
+    )
+
+
 
 
 def get_auth_facade() -> AuthFacade:

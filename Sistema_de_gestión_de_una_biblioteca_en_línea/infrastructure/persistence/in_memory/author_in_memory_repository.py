@@ -13,7 +13,7 @@ class AuthorInMemoryRepository(AuthorRepository):
     async def save(self, author: Author) -> None:
         author_exists = any(a['name'] == author.name for a in self._authors.values())
         if author_exists:
-            raise BusinessConflictError(author.name, "El autor con este nombre ya existe")
+            raise BusinessConflictError(author.name.value, "El autor con este nombre ya existe")
         persistence_data = AuthorMapper.to_persistence(author)
         self._authors[author.author_id] = persistence_data
 
@@ -53,3 +53,4 @@ class AuthorInMemoryRepository(AuthorRepository):
         ]
     
         return domain_authors
+

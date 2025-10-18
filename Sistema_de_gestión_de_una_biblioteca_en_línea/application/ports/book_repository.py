@@ -30,3 +30,7 @@ class BookRepository(ABC):
     @abstractmethod
     async def delete(self, book: Book) -> None:
         pass
+    
+    @abstractmethod
+    async def find_by_author_id(self, author_id: str) -> List[Book]:
+        pass

@@ -49,17 +49,6 @@ class GetUserResponse(BaseModel):
     
     
 
-class CreateAuthorRequest(BaseModel):
-    
-    name: str
-    description: str
-
-class CreateAuthorResponse(BaseModel):
-    
-    author_id: str
-    name: str
-    description: str
-    
 class LendBookRequest(BaseModel):
     
     user_id: str

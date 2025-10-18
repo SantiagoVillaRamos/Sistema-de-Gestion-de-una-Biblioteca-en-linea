@@ -2,7 +2,6 @@ import uuid
 from domain.models.value_objects.isbn import ISBN
 from domain.models.value_objects.title import Title
 from domain.models.book import Book
-from domain.models.author import Author
 from typing import List
 
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from typing import List
 @dataclass(frozen=True)
 class CreateAuthorCommand:
     """
@@ -16,3 +16,19 @@ class CreateAuthorResponse:
     author_id: str
     name: str
     description: str
+
+@dataclass(frozen=True)
+class GetBooksResponse:
+    
+    isbn: str
+    title: str
+    author: List[str]
+    description: str
+    available_copies: int
+
+@dataclass(frozen=True)
+class AuthorDetailResponse:
+    author_id: str
+    name: str
+    description: str
+    books: List[GetBooksResponse]

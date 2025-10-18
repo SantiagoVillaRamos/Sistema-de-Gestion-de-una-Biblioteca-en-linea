@@ -96,3 +96,22 @@ class BookAPIMapper:
             available_copies=book.available_copies
         )
         
+        
+class BookAPIMapperResponse:
+    
+    @staticmethod
+    def from_entity_to_response(book: Book, author_names: List[str] = None) -> GetBooksResponse:
+        """
+        Mapeo estándar de la Entidad Book al DTO GetBooksResponse.
+        Permite inyectar los nombres de los autores si se conocen.
+        """
+        # Si author_names no se proporciona, usa una lista vacía (como cuando se usa dentro de AuthorMapper)
+        names = author_names if author_names is not None else []
+        
+        return GetBooksResponse(
+            isbn=book.isbn.value,
+            title=book.title.value,
+            author_names=names,
+            description=book.description,
+            available_copies=book.available_copies
+        )
