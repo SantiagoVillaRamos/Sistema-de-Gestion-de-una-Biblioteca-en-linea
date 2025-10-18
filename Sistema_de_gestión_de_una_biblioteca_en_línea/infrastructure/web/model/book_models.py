@@ -50,3 +50,4 @@ class BookFullResponseDTO(BaseModel):
     description: str
     available_copies: int
     authors: List[AuthorResponseDTO]
+    

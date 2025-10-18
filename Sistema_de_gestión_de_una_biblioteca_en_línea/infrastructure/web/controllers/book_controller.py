@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status
 from typing import List
 from application.facade.facade_book import FacadeBook
 from infrastructure.web.dependencies import get_book_facade, RoleChecker
 from infrastructure.web.model.book_models import CreateBookResponse, CreateBookRequest, GetBooksResponse, UpdateBookDTO, BookMessage, BookFullResponseDTO, AuthorResponseDTO
-from application.dto.book_command_dto import CreateBookCommand, GetBookCommand, UpdateBookDTOCommand
-from domain.models.book import Book  # Assuming Book model can be used as a response model
+from application.dto.book_command_dto import CreateBookCommand, UpdateBookDTOCommand
+from domain.models.book import Book 
 from typing import Annotated
+from infrastructure.web.mappers.book_mappers import BookAPIMapper
 
 admin_role_checker = RoleChecker(["ADMIN"])
 
@@ -24,21 +25,26 @@ async def add_book(
     request: CreateBookRequest,
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
-    command = CreateBookCommand(
-        isbn=request.isbn,
-        title=request.title,
-        author=request.author,
-        description=request.description,
-        available_copies=request.available_copies
-    )
+    command = BookAPIMapper.to_create_command(request)
     new_book = await facade.create_book(command)
-    return CreateBookResponse(
-        book_id=new_book.book_id,
-        isbn=new_book.isbn.value,
-        title=new_book.title.value,
-        author= new_book.author, 
-        description=new_book.description
-    )
+    return BookAPIMapper.from_entity_to_create_response(new_book)
+    
+    # command = CreateBookCommand(
+    #     isbn=request.isbn,
+    #     title=request.title,
+    #     author=request.author,
+    #     description=request.description,
+    #     available_copies=request.available_copies
+    # )
+    # new_book = await facade.create_book(command)
+    # return CreateBookResponse(
+    #     book_id=new_book.book_id,
+    #     isbn=new_book.isbn.value,
+    #     title=new_book.title.value,
+    #     author= new_book.author, 
+    #     description=new_book.description
+    # )
+
 
 
 @router.get(
@@ -99,13 +105,12 @@ async def update_book(
     request: UpdateBookDTO,
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
-    command_id = GetBookCommand(book_id=book_id)
     command = UpdateBookDTOCommand(
         title=request.title,
         description=request.description
     )
     
-    book, author_names = await facade.update_book(command_id, command)
+    book, author_names = await facade.update_book(book_id, command)
     return GetBooksResponse(
         isbn=book.isbn.value,
         title=book.title.value,
@@ -126,8 +131,7 @@ async def delete_book(
     book_id: str,
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
-    command = GetBookCommand(book_id=book_id)
-    book_delete = await facade.delete_book(command)
+    await facade.delete_book(book_id)
     return BookMessage(
-        message=f"Libro '{book_delete.title}' Eliminado"
+        message=f"Libro Eliminado"
     )

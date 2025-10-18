@@ -2,7 +2,7 @@
 from domain.models.book import Book
 from application.ports.book_repository import BookRepository
 from application.ports.author_repository import AuthorRepository
-from application.dto.book_command_dto import CreateBookCommand, CreateBookResponse
+from application.dto.book_command_dto import CreateBookCommand
 from domain.models.factory.bookFactory import BookFactory
 from domain.models.exceptions.business_exception import BusinessNotFoundError 
 import asyncio
