@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
-from infrastructure.web.model.book_models import CreateBookResponse, CreateBookRequest, GetBooksResponse, BookFullResponseDTO, AuthorResponseDTO
-from application.dto.book_command_dto import CreateBookCommand
+from infrastructure.web.model.book_models import CreateBookResponse, CreateBookRequest, GetBooksResponse, BookFullResponseDTO, AuthorResponseDTO, UpdateBookDTO
+from application.dto.book_command_dto import CreateBookCommand, UpdateBookDTOCommand
 from domain.models.book import Book 
 from domain.models.author import Author
 
@@ -76,4 +76,23 @@ class BookAPIMapper:
             authors=authors_http_dtos
         )
     
-    
+    @staticmethod
+    def to_update_command(request: UpdateBookDTO) -> UpdateBookDTOCommand:
+        """Convierte UpdateBookDTO a UpdateBookDTOCommand."""
+        
+        return UpdateBookDTOCommand(
+            title=request.title,
+            description=request.description
+        )
+        
+    @staticmethod
+    def from_update_result_to_response(book: Book, author_names: List[str]) -> GetBooksResponse:
+        """Convierte la tupla (Book, List[str]) del Caso de Uso a GetBooksResponse."""
+        return GetBooksResponse(
+            isbn=book.isbn.value,
+            title=book.title.value,
+            author_names=author_names,
+            description=book.description,
+            available_copies=book.available_copies
+        )
+        
