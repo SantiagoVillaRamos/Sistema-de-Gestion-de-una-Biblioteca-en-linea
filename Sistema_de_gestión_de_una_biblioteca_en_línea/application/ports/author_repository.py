@@ -27,3 +27,8 @@ class AuthorRepository(ABC):
     async def find_by_ids(self, author_ids: List[str]) -> List[Author]:
         """Busca una lista de autores por sus IDs."""
         pass
+    
+    @abstractmethod
+    async def update(self, author: Author) -> None:
+        """Actualiza la información de un autor existente."""
+        pass

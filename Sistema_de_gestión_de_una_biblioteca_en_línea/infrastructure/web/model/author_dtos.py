@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class CreateAuthorRequest(BaseModel):
   
@@ -23,7 +23,13 @@ class GetBooksResponse(BaseModel):
 
 
 class AuthorDetailResponse(BaseModel):
+    
     author_id: str
     name: str
     description: str
     books: List[GetBooksResponse]
+    
+class UpdateAuthorRequest(BaseModel):
+    # Usamos Optional para permitir actualizaciones parciales (si no se envía, no se modifica).
+    name: Optional[str] = None
+    description: Optional[str] = None

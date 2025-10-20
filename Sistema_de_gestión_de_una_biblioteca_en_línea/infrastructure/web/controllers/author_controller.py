@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from typing import Annotated, List
 from application.facade.facade_author import AuthorFacade
 from infrastructure.web.dependencies import get_author_facade, RoleChecker
-from infrastructure.web.model.author_dtos import CreateAuthorRequest, CreateAuthorResponse, AuthorDetailResponse
+from infrastructure.web.model.author_dtos import CreateAuthorRequest, CreateAuthorResponse, AuthorDetailResponse, UpdateAuthorRequest
 from infrastructure.web.mappers.author_api_mapper import AuthorAPIMapper
 
 admin_role_checker = RoleChecker(["ADMIN"])
@@ -52,3 +52,17 @@ async def get_author_details(
     author, books, author_map = await facade.get_author_by_id(author_id) 
     return AuthorAPIMapper.from_full_details_to_response(author, books, author_map)
 
+
+
+@router.put(
+    "/{author_id}", 
+    response_model=CreateAuthorResponse
+)
+async def update_author(
+    author_id: str,
+    request: UpdateAuthorRequest,
+    facade: Annotated[AuthorFacade, Depends(get_author_facade)]
+):
+    command = AuthorAPIMapper.to_update_command(request)
+    updated_author = await facade.update_author_data(author_id, command)
+    return AuthorAPIMapper.from_entity_to_create_response(updated_author)

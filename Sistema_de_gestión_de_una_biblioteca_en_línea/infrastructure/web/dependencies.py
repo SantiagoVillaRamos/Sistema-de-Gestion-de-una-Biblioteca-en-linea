@@ -13,6 +13,7 @@ from application.facade.facade_auth import AuthFacade
 from application.use_cases.author.create_author_use_case import CreateAuthorUseCase
 from application.use_cases.author.get_all_authors_use_case import GetAllAuthorsUseCase
 from application.use_cases.author.get_author_by_id_use_case import GetAuthorByIdUseCase
+from application.use_cases.author.update_author_use_case import UpdateAuthorUseCase
 from application.use_cases.user.login_user_use_case import LoginUserUseCase
 from application.use_cases.user.create_user_use_case import CreateUserUseCase
 from application.use_cases.user.get_user_use_case import GetUserUseCase
@@ -82,10 +83,13 @@ def get_author_facade() -> AuthorFacade:
         author_repository=repos.author_repo,
         book_repository=repos.book_repo
     )
+    update_data_author = UpdateAuthorUseCase(author_repository=repos.author_repo)
+    
     return AuthorFacade(
         create_use_case = create_author_use_case,
         get_all_use_case=get_all_authors_use_case,
-        get_by_id_use_case=get_author_by_id_use_case
+        get_by_id_use_case=get_author_by_id_use_case,
+        update_use_case=update_data_author
     )
 
 

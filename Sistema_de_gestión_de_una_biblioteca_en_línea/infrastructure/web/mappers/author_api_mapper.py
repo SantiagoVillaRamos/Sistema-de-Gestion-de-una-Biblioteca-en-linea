@@ -2,6 +2,8 @@
 from infrastructure.web.model.author_dtos import CreateAuthorRequest, CreateAuthorResponse, AuthorDetailResponse
 from application.dto.author_command_dto import CreateAuthorCommand
 from infrastructure.web.mappers.book_mappers import BookAPIMapperResponse
+from application.dto.author_command_dto import UpdateAuthorCommand
+from infrastructure.web.model.author_dtos import UpdateAuthorRequest
 from domain.models.author import Author
 from domain.models.book import Book
 from typing import List, Dict
@@ -64,4 +66,11 @@ class AuthorAPIMapper:
             books=book_dtos_as_dicts
         )
         
+    @staticmethod
+    def to_update_command(request: UpdateAuthorRequest) -> UpdateAuthorCommand:
+        """Mapea el DTO de entrada HTTP al Comando de Actualización."""
+        return UpdateAuthorCommand(
+            name=request.name,
+            description=request.description
+        )
     

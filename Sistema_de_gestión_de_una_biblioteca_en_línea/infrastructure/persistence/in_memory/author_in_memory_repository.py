@@ -54,3 +54,10 @@ class AuthorInMemoryRepository(AuthorRepository):
     
         return domain_authors
 
+    async def update(self, author: Author) -> None:
+        if author.author_id not in self._authors:
+            raise BusinessNotFoundError(author.author_id, "El autor no existe y no se puede actualizar")
+        
+        # Actualizar los datos de persistencia con la nueva información del autor.
+        updated_data = AuthorMapper.to_persistence(author)
+        self._authors[author.author_id] = updated_data

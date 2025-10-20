@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
+
 @dataclass(frozen=True)
 class CreateAuthorCommand:
     """
@@ -27,8 +28,7 @@ class GetBooksResponse:
     available_copies: int
 
 @dataclass(frozen=True)
-class AuthorDetailResponse:
-    author_id: str
-    name: str
-    description: str
-    books: List[GetBooksResponse]
+class UpdateAuthorCommand:
+    
+    name: Optional[str] = None
+    description: Optional[str] = None
