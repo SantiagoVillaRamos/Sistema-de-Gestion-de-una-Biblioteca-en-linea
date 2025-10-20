@@ -49,7 +49,7 @@ class GetAllBooksUseCase:
         for book in books:
             # Enriquecer la lista de IDs con los nombres
             author_names = [
-                author_map[author_id].name 
+                author_map[author_id].name.value 
                 for author_id in book.author
                 if author_id in author_map 
             ]

@@ -17,4 +17,19 @@ class GetAuthorByIdUseCase:
         
         books = await self.book_repo.find_by_author_id(author_id)
         
-        return (author, books)
+        all_book_author_ids = await self._all_book_author_ids(books)
+        
+        return (author, books, all_book_author_ids)
+    
+    
+    async def _all_book_author_ids(self, books: List[Book]) -> List[str]:
+        # 1. Recolectar todos los IDs de autores únicos de ESTOS libros
+        all_book_author_ids = set()
+        for book in books:
+            all_book_author_ids.update(book.author)
+        # 2. Consultar TODOS esos autores en una llamada
+        all_authors = await self.author_repo.find_by_ids(list(all_book_author_ids))
+        # 3. Crear un mapa global para búsqueda O(1)
+        author_map = {a.author_id: a for a in all_authors}
+        
+        return author_map

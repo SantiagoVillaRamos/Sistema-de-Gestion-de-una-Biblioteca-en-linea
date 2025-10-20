@@ -54,8 +54,8 @@ class BookAPIMapper:
         return [
             AuthorResponseDTO(
                 author_id=author.author_id, 
-                name=author.name, 
-                description=author.description
+                name=author.name.value, 
+                description=author.description.value
             )
             for author in authors
         ]
@@ -115,3 +115,5 @@ class BookAPIMapperResponse:
             description=book.description,
             available_copies=book.available_copies
         )
+        
+        

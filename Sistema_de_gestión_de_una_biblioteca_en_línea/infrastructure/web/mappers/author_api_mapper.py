@@ -4,7 +4,7 @@ from application.dto.author_command_dto import CreateAuthorCommand
 from infrastructure.web.mappers.book_mappers import BookAPIMapperResponse
 from domain.models.author import Author
 from domain.models.book import Book
-from typing import List
+from typing import List, Dict
 
 class AuthorAPIMapper:
     
@@ -32,13 +32,23 @@ class AuthorAPIMapper:
         
     
     @staticmethod
-    def from_full_details_to_response(author: Author, books: List[Book]) -> AuthorDetailResponse:
+    def from_full_details_to_response(author: Author, books: List[Book], all_authors_map: Dict[str, Author]) -> AuthorDetailResponse:
         """Mapea la tupla (Author, List[Book]) a AuthorDetailResponse."""
         
-        book_instances = [
-            BookAPIMapperResponse.from_entity_to_response(book, author_names=[])
-            for book in books
-        ]
+        book_instances = []
+        for book in books:
+            # 1. Obtener los nombres de autor para ESTE libro usando el mapa global
+            book_author_names = [
+                all_authors_map[author_id].name.value
+                for author_id in book.author
+                if author_id in all_authors_map
+            ]
+            # 2. Llamar al mapper del libro inyectando los nombres
+            instance = BookAPIMapperResponse.from_entity_to_response(
+                book, 
+                author_names=book_author_names
+            )
+            book_instances.append(instance)
         
         # CONVERSIÓN CRÍTICA: Convertir cada instancia de DTO a un diccionario
         # antes de pasarla al constructor del DTO final.
@@ -53,3 +63,5 @@ class AuthorAPIMapper:
             description=author.description.value,
             books=book_dtos_as_dicts
         )
+        
+    
