@@ -13,10 +13,8 @@ class DeleteAuthorUseCase:
         # 1. Cargar el Agregado Raíz (para obtener el nombre antes de eliminar)
         author_to_delete: Author = await self.author_repo.find_by_id(author_id)
         
-        # 2. VERIFICACIÓN DE LÓGICA DE NEGOCIO (Invariante entre Agregados)
-        # Asumimos que BookRepository tiene un método para contar libros por autor.
+        # 2. VERIFICACIÓN DE LÓGICA DE NEGOCIO
         await self._count_books_by_author(author_id, author_to_delete)
-        # 3. Eliminar
         await self.author_repo.delete(author_id)
         
         return author_to_delete

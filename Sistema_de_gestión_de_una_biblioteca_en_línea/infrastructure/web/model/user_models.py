@@ -1,0 +1,51 @@
+from pydantic import BaseModel, EmailStr, Field
+from typing import List, Literal
+from datetime import datetime
+
+
+class UserCreationResponse(BaseModel):
+    
+    user_id: str
+    name: str
+    email: EmailStr
+    user_type: Literal["student", "professor", "general"]
+    roles: List[str]
+
+
+class CreateUserRequest(BaseModel):
+    
+    name: str
+    email: str
+    password: str = Field(..., max_length=72)
+    user_type: Literal["student", "professor", "general"]
+    roles: List[str] = None
+    
+    
+class LoanResponse(BaseModel):
+    
+    message: str
+    loan_id: str
+    book_title: str
+    description: str
+    authors: List[str]
+    loan_date: datetime
+    due_date: datetime
+
+    
+    
+class GetUserResponse(BaseModel):
+    
+    user_id: str
+    name: str
+    email: EmailStr
+    is_active: bool
+    loaned_books: List[LoanResponse] = []
+    
+    
+# class LoanResponse(BaseModel):
+#     """Modelo de respuesta para el préstamo de un libro."""
+#     message: str
+#     loan_id: str
+#     book_title: str
+#     loan_date: datetime
+#     due_date: datetime

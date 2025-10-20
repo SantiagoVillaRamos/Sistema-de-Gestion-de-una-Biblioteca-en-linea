@@ -19,7 +19,7 @@ router = APIRouter(
     "/books/lend", 
     status_code=status.HTTP_201_CREATED,
     response_model=LoanResponse,
-    dependencies=[Depends(admin_role_checker)]
+    #dependencies=[Depends(admin_role_checker)]
 )
 async def lend_book(
     request: LendBookRequest,
@@ -35,7 +35,7 @@ async def lend_book(
     "/books/return", 
     status_code=status.HTTP_200_OK,
     response_model=ReturnBookResponse,
-    dependencies=[Depends(admin_role_checker)]
+    #dependencies=[Depends(admin_role_checker)]
 )
 async def return_book(
     request: ReturnBookRequest,

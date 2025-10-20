@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from application.facade.facade_user import UserFacade
 from infrastructure.web.dependencies import get_user_facade, get_optional_current_user
-from infrastructure.web.models import UserCreationResponse, GetUserResponse, CreateUserRequest
-from application.dto.user_command_dto import CreateUserCommand, GetUserCommand
+from infrastructure.web.model.user_models import UserCreationResponse, GetUserResponse, CreateUserRequest
+from infrastructure.web.mappers.user_api_mapper import UserAPIMapper
 from typing import Annotated
 from domain.models.user import User
 
@@ -33,33 +33,30 @@ async def create_user(
             detail="Only administrators can create other administrators."
         )
 
-    # Traducir el modelo de la petición web (Request) al DTO de la aplicación (Command)
-    command = CreateUserCommand(
-        name=request.name,
-        email=request.email,
-        password=request.password,
-        user_type=request.user_type,
-        roles=request.roles 
-    )
-    return await facade.create_user_facade(command)
+    command = UserAPIMapper.to_create_command(request)
+    object_user = await facade.create_user_facade(command)
+    return UserAPIMapper.from_entity_to_creation_response(object_user)
 
     
     
-@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=GetUserResponse)
+@router.get(
+    "/{user_id}", 
+    status_code=status.HTTP_200_OK, 
+    response_model=GetUserResponse
+)
 async def get_user(
     user_id: str,
     facade: Annotated[UserFacade, Depends(get_user_facade)],
-    current_user: Annotated[User, Depends(get_optional_current_user)],
+    # current_user: Annotated[User, Depends(get_optional_current_user)],
 ):
-    # Authorization check
-    if not current_user or (
-        "ADMIN" not in current_user.roles and current_user.user_id != user_id
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No autorizado para acceder a este recurso",
-        )
-
-    # 2. Construir el DTO (Command) que la fachada espera
-    command = GetUserCommand(user_id=user_id)
-    return await facade.get_user_facade(command)
+    
+    # if not current_user or (
+    #     "ADMIN" not in current_user.roles and current_user.user_id != user_id
+    # ):
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="No autorizado para acceder a este recurso",
+    #     )
+        
+    details_dto = await facade.get_user_facade(user_id)
+    return UserAPIMapper.from_details_dto_to_get_response(details_dto)

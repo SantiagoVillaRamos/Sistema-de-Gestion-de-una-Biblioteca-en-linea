@@ -1,4 +1,8 @@
 from dataclasses import dataclass
+from typing import Dict
+from domain.models.user import User
+from domain.models.loan import Loan
+from domain.models.author import Author
 from datetime import datetime
 from typing import Literal, List
 
@@ -12,6 +16,14 @@ class CreateUserCommand:
     password: str
     user_type: Literal["student", "professor", "general"] = "general"
     roles: List[str] = None
+    
+
+@dataclass(frozen=True)
+class UserDetailsDTO:
+    """DTO para transportar detalles del usuario junto con sus préstamos activos y libros prestados."""
+    user: User
+    active_loans: List[Loan]
+    loaned_books_map: Dict[str, Author]
     
     
 

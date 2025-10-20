@@ -1,12 +1,19 @@
-from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, Field
 from typing import List, Literal
-
+from datetime import datetime
 
 class MessageResponse(BaseModel):
     
     message: str
 
+
+
+class LendBookRequest(BaseModel):
+    
+    user_id: str
+    book_id: str
+    
 
 class LoanResponse(BaseModel):
     
@@ -19,42 +26,6 @@ class LoanResponse(BaseModel):
     due_date: datetime
 
 
-
-class CreateUserRequest(BaseModel):
-    
-    name: str
-    email: str
-    password: str = Field(..., max_length=72)
-    user_type: Literal["student", "professor", "general"]
-    roles: List[str] = None
-    
-
-    
-class UserCreationResponse(BaseModel):
-    
-    user_id: str
-    name: str
-    email: EmailStr
-    user_type: Literal["student", "professor", "general"]
-    roles: List[str]
-
-
-class GetUserResponse(BaseModel):
-    
-    user_id: str
-    name: str
-    email: EmailStr
-    is_active: bool
-    loaned_books: List[LoanResponse] = []
-    
-    
-
-class LendBookRequest(BaseModel):
-    
-    user_id: str
-    book_id: str
-    
-    
     
 class ReturnBookRequest(BaseModel):
 

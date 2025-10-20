@@ -38,15 +38,17 @@ class Repositories:
     author_repo = AuthorInMemoryRepository()
     notification_service = EmailNotificationService()
     password_service = PasslibPasswordService()
-    # WARNING: Use a real secret key from environment variables in a real app
+    
     auth_service = JwtAuthService(secret_key="a_very_secret_key")
     
 repos = Repositories()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
 
+
 def get_library_facade() -> LibraryFacade:
     return LibraryFacade(repos.book_repo, repos.user_repo, repos.loan_repo, repos.notification_service)
+
 
 def get_user_facade() -> UserFacade:
     user_factory = UserFactory(password_service=repos.password_service)
