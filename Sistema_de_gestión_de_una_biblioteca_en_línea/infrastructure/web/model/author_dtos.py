@@ -30,6 +30,10 @@ class AuthorDetailResponse(BaseModel):
     books: List[GetBooksResponse]
     
 class UpdateAuthorRequest(BaseModel):
-    # Usamos Optional para permitir actualizaciones parciales (si no se envía, no se modifica).
+    
     name: Optional[str] = None
     description: Optional[str] = None
+    
+    
+class AuthorMessage(BaseModel):
+    message: str

@@ -30,5 +30,8 @@ class AuthorRepository(ABC):
     
     @abstractmethod
     async def update(self, author: Author) -> None:
-        """Actualiza la información de un autor existente."""
+        pass
+    
+    @abstractmethod
+    async def delete(self, author_id: str) -> None:
         pass

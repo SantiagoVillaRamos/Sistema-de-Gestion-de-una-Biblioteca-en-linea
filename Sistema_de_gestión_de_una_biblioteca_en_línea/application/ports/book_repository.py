@@ -34,3 +34,7 @@ class BookRepository(ABC):
     @abstractmethod
     async def find_by_author_id(self, author_id: str) -> List[Book]:
         pass
+    
+    @abstractmethod
+    async def count_by_author_id(self, author_id: str) -> int:
+        pass

@@ -64,9 +64,17 @@ class BookInMemoryRepository(BookRepository):
         # Busca en todos los libros aquellos donde author_id esté en la lista de autores
         books_data = [
             data for data in self._books.values() 
-            if author_id in data['author'] # 'author' debe ser List[str] en persistence_data
+            if author_id in data['author'] 
         ]
         
         return [BookMapper.to_domain(data) for data in books_data]
             
             
+    async def count_by_author_id(self, author_id: str) -> int:
+        """Cuenta cuántos libros tienen este author_id en su lista de autores."""
+        count = 0
+        for data in self._books.values():
+            if author_id in data['author']:
+                count += 1
+        return count        
+    

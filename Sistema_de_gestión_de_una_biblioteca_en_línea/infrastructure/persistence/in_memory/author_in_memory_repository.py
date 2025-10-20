@@ -61,3 +61,9 @@ class AuthorInMemoryRepository(AuthorRepository):
         # Actualizar los datos de persistencia con la nueva información del autor.
         updated_data = AuthorMapper.to_persistence(author)
         self._authors[author.author_id] = updated_data
+
+
+    async def delete(self, author_id: str) -> None:
+        if author_id not in self._authors:
+            raise BusinessNotFoundError(author_id, "El autor no existe para ser eliminado.")
+        del self._authors[author_id]

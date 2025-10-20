@@ -1,4 +1,4 @@
-# c:\...\application\use_cases\author\update_author_use_case.py (NUEVO CASO DE USO)
+
 from domain.models.author import Author
 from application.dto.author_command_dto import UpdateAuthorCommand
 from domain.models.value_objects.author.author_name import AuthorName
