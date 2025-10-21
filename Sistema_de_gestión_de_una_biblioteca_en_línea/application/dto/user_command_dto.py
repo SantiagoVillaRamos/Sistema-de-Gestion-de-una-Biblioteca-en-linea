@@ -4,7 +4,7 @@ from domain.models.user import User
 from domain.models.loan import Loan
 from domain.models.author import Author
 from datetime import datetime
-from typing import Literal, List
+from typing import Literal, List, Optional  
 
 @dataclass(frozen=True)
 class CreateUserCommand:
@@ -81,6 +81,17 @@ class UserListResponseItem:
     user_type: str
     roles: List[str]
     is_active: bool
+
+
+@dataclass
+class UpdateUserCommand:
+    """Commando de aplicación para la actualización de usuario.
+    Incluye el ID del usuario que se está actualizando (el 'yo').
+    """
+    user_id: str  # ID del usuario a modificar (el 'me')
+    name: Optional[str] = None
+    new_email: Optional[str] = None
+    new_password: Optional[str] = None
 
 
 @dataclass(frozen=True)

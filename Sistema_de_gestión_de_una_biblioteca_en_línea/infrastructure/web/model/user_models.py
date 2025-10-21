@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import List, Literal
+from typing import List, Literal, Optional
 from datetime import datetime
 
 
@@ -33,6 +33,13 @@ class UserListResponseItem(BaseModel):
 
 class UserListResponse(BaseModel):
     users: List[UserListResponseItem]
+
+
+class UpdateUserRequest(BaseModel):
+
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
 
     
 class LoanResponse(BaseModel):

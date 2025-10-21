@@ -19,12 +19,14 @@ from application.use_cases.user.login_user_use_case import LoginUserUseCase
 from application.use_cases.user.create_user_use_case import CreateUserUseCase
 from application.use_cases.user.get_user_use_case import GetUserUseCase
 from application.use_cases.user.get_all_users_use_case import GetAllUsersUseCase
+from application.use_cases.user.update_current_user_use_case import UpdateCurrentUserUseCase
 from application.use_cases.book.create_book_use_case import CreateBookUseCase
 from application.use_cases.book.update_book_use_case import UpdateBookUseCase
 from application.use_cases.book.get_all_books_use_case import GetAllBooksUseCase
 from application.use_cases.book.get_book_by_id_use_case import GetBookByIdUseCase
 from application.use_cases.book.delete_book_use_case import DeleteBookUseCase
 from domain.models.factory.userFactory import UserFactory
+from domain.services.UpdateCurrentFactory import UserUpdaterService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
@@ -39,6 +41,7 @@ class Repositories:
     author_repo = AuthorInMemoryRepository()
     notification_service = EmailNotificationService()
     password_service = PasslibPasswordService()
+    user_updated_service = UserUpdaterService(password_service=password_service)
     
     auth_service = JwtAuthService(secret_key="a_very_secret_key")
     
@@ -61,9 +64,13 @@ def get_user_facade() -> UserFacade:
         user_repo=repos.user_repo, loan_repo=repos.loan_repo, book_repo=repos.book_repo, author_repository=repos.author_repo
     )
     all_users_use_case = GetAllUsersUseCase(
-        user_repository=repos.user_repo 
+        user_repository=repos.user_repo
     )
-    return UserFacade(create_user_use_case, get_user_use_case,all_users_use_case)
+    update_current_user_uc = UpdateCurrentUserUseCase(
+        user_repo=repos.user_repo,
+        user_updater_service=repos.user_updated_service
+    )
+    return UserFacade(create_user_use_case, get_user_use_case,all_users_use_case, update_current_user_uc)
 
 
 

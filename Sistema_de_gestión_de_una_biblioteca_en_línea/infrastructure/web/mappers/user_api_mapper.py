@@ -1,5 +1,5 @@
-from infrastructure.web.model.user_models import UserResponse, GetUserResponse, CreateUserRequest, LoanResponse, UserListResponse, UserListResponseItem
-from application.dto.user_command_dto import CreateUserCommand
+from infrastructure.web.model.user_models import UserResponse, GetUserResponse, CreateUserRequest, LoanResponse, UserListResponse, UserListResponseItem, UpdateUserRequest
+from application.dto.user_command_dto import CreateUserCommand, UpdateUserCommand
 from application.dto.user_command_dto import UserDetailsDTO
 from domain.models.user import User
 from domain.models.loan import Loan
@@ -113,4 +113,20 @@ class UserAPIMapper:
             user_items.append(item)
             
         return UserListResponse(users=user_items)
+    
+    @staticmethod
+    def to_update_command(request: UpdateUserRequest, user_id: str) -> UpdateUserCommand:
+        """Convierte la solicitud web al comando de aplicación."""
+        return UpdateUserCommand(
+            user_id=user_id,
+            name=request.name,
+            new_email=request.email,
+            new_password=request.password,
+        )
+        
+    @staticmethod
+    def from_entity_to_update_response(user: User) -> UserResponse:
+        """Reutilizamos el DTO de creación, ya que muestra el estado actual del usuario."""
+        
+        return UserAPIMapper.from_entity_to_creation_response(user)
     

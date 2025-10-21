@@ -40,5 +40,7 @@ class UserInMemoryRepository(UserRepository):
     async def find_all(self) -> list[User]:
         users = [ UserMapper.to_domain(user_data) for user_data in self._users.values() ]
         return users
+    
+   
         
         
