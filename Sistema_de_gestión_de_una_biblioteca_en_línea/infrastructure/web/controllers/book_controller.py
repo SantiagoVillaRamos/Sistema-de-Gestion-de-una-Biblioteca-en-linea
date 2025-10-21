@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from typing import List
 from application.facade.facade_book import FacadeBook
-from infrastructure.web.dependencies import get_book_facade, RoleChecker
+from infrastructure.web.dependencie import get_book_facade, RoleChecker
 from infrastructure.web.model.book_models import CreateBookResponse, CreateBookRequest, GetBooksResponse, UpdateBookDTO, BookMessage, BookFullResponseDTO
 from typing import Annotated
 from infrastructure.web.mappers.book_mappers import BookAPIMapper

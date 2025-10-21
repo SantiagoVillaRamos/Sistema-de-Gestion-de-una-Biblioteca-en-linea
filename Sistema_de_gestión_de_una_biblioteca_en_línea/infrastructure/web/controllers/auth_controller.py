@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from typing import Annotated
 from application.facade.facade_auth import AuthFacade
-from infrastructure.web.dependencies import get_auth_facade, RoleChecker
+from infrastructure.web.dependencie import get_auth_facade, RoleChecker
 from infrastructure.web.models import LoginRequest, LoginResponse
 from application.dto.user_command_dto import LoginUserCommand
 

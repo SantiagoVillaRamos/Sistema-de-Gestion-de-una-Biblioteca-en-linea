@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from typing import Annotated, List
 from application.facade.facade_author import AuthorFacade
-from infrastructure.web.dependencies import get_author_facade, RoleChecker
+from infrastructure.web.dependencie import get_author_facade, RoleChecker
 from infrastructure.web.model.author_dtos import CreateAuthorRequest, CreateAuthorResponse, AuthorDetailResponse, UpdateAuthorRequest, AuthorMessage
 from infrastructure.web.mappers.author_api_mapper import AuthorAPIMapper
 

@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter, Depends, status
 from application.facade.facade_library import LibraryFacade
-from infrastructure.web.dependencies import get_library_facade, RoleChecker
+from infrastructure.web.dependencie import get_library_facade, RoleChecker
 from infrastructure.web.models import LoanResponse, ReturnBookResponse, LendBookRequest, ReturnBookRequest
 from application.dto.library_command_dto import LendBookCommand, ReturnBookCommand
 from typing import Annotated
