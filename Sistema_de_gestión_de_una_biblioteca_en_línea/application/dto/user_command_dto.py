@@ -24,6 +24,7 @@ class UserDetailsDTO:
     user: User
     active_loans: List[Loan]
     loaned_books_map: Dict[str, Author]
+    loaned_authors_map: Dict[str, Author]
     
     
 

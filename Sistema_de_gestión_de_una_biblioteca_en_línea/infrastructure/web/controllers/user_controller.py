@@ -60,3 +60,4 @@ async def get_user(
         
     details_dto = await facade.get_user_facade(user_id)
     return UserAPIMapper.from_details_dto_to_get_response(details_dto)
+

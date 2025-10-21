@@ -57,7 +57,7 @@ def get_user_facade() -> UserFacade:
         user_factory=user_factory
     )
     get_user_use_case = GetUserUseCase(
-        user_repo=repos.user_repo, loan_repo=repos.loan_repo, book_repo=repos.book_repo
+        user_repo=repos.user_repo, loan_repo=repos.loan_repo, book_repo=repos.book_repo, author_repository=repos.author_repo
     )
     return UserFacade(create_user_use_case, get_user_use_case)
 

@@ -3,6 +3,7 @@ from application.dto.user_command_dto import CreateUserCommand
 from application.dto.user_command_dto import UserDetailsDTO
 from domain.models.user import User
 from domain.models.loan import Loan
+from domain.models.author import Author
 from domain.models.book import Book
 from typing import Dict
 
@@ -32,14 +33,12 @@ class UserAPIMapper:
         
         
     @staticmethod
-    def _map_loan_to_response(loan: Loan, book_map: Dict[str, Book]) -> LoanResponse:
+    def _map_loan_to_response(loan: Loan, book_map: Dict[str, Book], authors_map: Dict[str, Author]) -> LoanResponse:
         """Helper para mapear una entidad Loan a su DTO de respuesta, enriqueciendo con Book."""
         
-        #book = book_map.get(loan.book_id)
+        book = book_map.get(loan.book_id)
         
         book_title = "Título no disponible"
-        #book_description = "Descripción no disponible"
-        #book_authors = []
         due_date_value = None
 
         if loan.book_id in book_map:
@@ -47,13 +46,24 @@ class UserAPIMapper:
         
         if loan.due_date is not None:
             due_date_value = loan.due_date.value # <-- Extrae VO
+        
+        book_authors_names = []
+        if book and book.author:
+            # Iteramos sobre los IDs de autor del libro (book.author)
+            # y mapeamos el ID al nombre usando el authors_map
+            book_authors_names = [
+                authors_map[author_id].name.value # <--- Extraemos el Objeto de Valor (VO) del nombre
+                for author_id in book.author
+                if author_id in authors_map 
+            ]   
+        
              
         return LoanResponse(
             message="Préstamo activo",
             loan_id=loan.id, 
             book_title=book_title,
             description=book_map[loan.book_id].description,
-            authors=[author for author in book_map[loan.book_id].author],
+            authors=book_authors_names,
             loan_date=loan.loan_date,
             due_date=due_date_value 
         )
@@ -65,7 +75,7 @@ class UserAPIMapper:
         
         # 1. Mapear la lista de préstamos usando el mapa de libros
         loan_instances = [
-            UserAPIMapper._map_loan_to_response(loan, details.loaned_books_map)
+            UserAPIMapper._map_loan_to_response(loan, details.loaned_books_map, details.loaned_authors_map)
             for loan in details.active_loans
         ]
         
