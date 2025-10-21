@@ -3,7 +3,7 @@ from typing import List, Literal
 from datetime import datetime
 
 
-class UserCreationResponse(BaseModel):
+class UserResponse(BaseModel):
     
     user_id: str
     name: str
@@ -20,6 +20,20 @@ class CreateUserRequest(BaseModel):
     user_type: Literal["student", "professor", "general"]
     roles: List[str] = None
     
+
+class UserListResponseItem(BaseModel):
+    
+    user_id: str
+    name: str
+    email: str
+    user_type: str
+    roles: List[str]
+    is_active: bool
+
+
+class UserListResponse(BaseModel):
+    users: List[UserListResponseItem]
+
     
 class LoanResponse(BaseModel):
     

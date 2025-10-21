@@ -1,11 +1,12 @@
 from fastapi import Depends, HTTPException, status, Path
 from typing import Annotated
 from infrastructure.web.dependencie import get_optional_current_user, get_current_user
-from infrastructure.web.model.user_models import CreateUserRequest
+from infrastructure.web.model.user_models import UserResponse
 from domain.models.user import User 
 
+
 async def validate_admin_creation(
-    request: CreateUserRequest,
+    request: UserResponse,
     current_user: Annotated[User | None, Depends(get_optional_current_user)]
 ) -> None:
     """Verifica si el usuario autenticado tiene permiso para crear un usuario ADMIN."""
@@ -17,7 +18,7 @@ async def validate_admin_creation(
     if is_creating_admin and current_user and "ADMIN" not in current_user.roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only authenticated administrators can create other administrators."
+            detail="Solo los administradores pueden crear usuarios con rol ADMIN."
         )
         
     return None
@@ -45,4 +46,17 @@ async def validate_user_access(
             detail="No autorizado para acceder a este recurso de usuario. Acceso denegado."
         )
     
+    return None
+
+
+async def validate_admin_only(
+    current_user: Annotated[User, Depends(get_current_user)], # Asumimos que get_current_user fuerza la autenticación
+) -> None:
+    """Verifica si el usuario autenticado tiene el rol ADMIN."""
+    
+    if "ADMIN" not in current_user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acceso denegado. Se requiere rol de administrador."
+        )
     return None

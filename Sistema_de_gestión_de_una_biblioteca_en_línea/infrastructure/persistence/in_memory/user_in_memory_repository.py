@@ -36,5 +36,9 @@ class UserInMemoryRepository(UserRepository):
                 # Usamos el mapper para convertir el diccionario de vuelta a un objeto de dominio.
                 return UserMapper.to_domain(user_data)
         return None
+    
+    async def find_all(self) -> list[User]:
+        users = [ UserMapper.to_domain(user_data) for user_data in self._users.values() ]
+        return users
         
         

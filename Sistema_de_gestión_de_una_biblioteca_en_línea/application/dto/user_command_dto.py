@@ -68,6 +68,19 @@ class GetUserResponse:
     email: str
     is_active: bool
     loaned_books: list[LoanResponse] = None
+    
+@dataclass(frozen=True)
+class UserListResponseItem:
+    
+    """
+    DTO para representar un usuario en la lista de usuarios.
+    """
+    user_id: str
+    name: str
+    email: str
+    user_type: str
+    roles: List[str]
+    is_active: bool
 
 
 @dataclass(frozen=True)

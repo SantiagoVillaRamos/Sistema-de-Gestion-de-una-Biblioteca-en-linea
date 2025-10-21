@@ -1,11 +1,11 @@
-from infrastructure.web.model.user_models import UserCreationResponse, GetUserResponse, CreateUserRequest, LoanResponse
+from infrastructure.web.model.user_models import UserResponse, GetUserResponse, CreateUserRequest, LoanResponse, UserListResponse, UserListResponseItem
 from application.dto.user_command_dto import CreateUserCommand
 from application.dto.user_command_dto import UserDetailsDTO
 from domain.models.user import User
 from domain.models.loan import Loan
 from domain.models.author import Author
 from domain.models.book import Book
-from typing import Dict
+from typing import Dict, List, Optional
 
 class UserAPIMapper:
     
@@ -21,9 +21,9 @@ class UserAPIMapper:
         )
         
     @staticmethod
-    def from_entity_to_creation_response(user: User) -> UserCreationResponse:
+    def from_entity_to_creation_response(user: User) -> UserResponse:
         """Mapea la Entidad User (con VOs) al DTO de respuesta HTTP (con strings)."""
-        return UserCreationResponse(
+        return UserResponse(
             user_id=user.user_id,
             name=user.name,
             email=user.email.address,
@@ -95,4 +95,22 @@ class UserAPIMapper:
             loaned_books=loaned_books_list_as_dicts
         )    
     
+    @staticmethod
+    def from_entity_list_to_response(users: List[User]) -> UserListResponse:
+        """Mapea una lista de entidades User al DTO UserListResponse."""
+        
+        user_items = []
+        for user in users:
+            # Reutilizamos el mapeo de los atributos básicos
+            item = UserListResponseItem(
+                user_id=user.user_id,
+                name=user.name,
+                email=user.email.address, # Extraer VO
+                user_type=user.user_type,
+                roles=user.roles,
+                is_active=user.is_active
+            )
+            user_items.append(item)
+            
+        return UserListResponse(users=user_items)
     

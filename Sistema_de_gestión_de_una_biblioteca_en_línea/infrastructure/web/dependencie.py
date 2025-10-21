@@ -18,6 +18,7 @@ from application.use_cases.author.delete_author_use_case import DeleteAuthorUseC
 from application.use_cases.user.login_user_use_case import LoginUserUseCase
 from application.use_cases.user.create_user_use_case import CreateUserUseCase
 from application.use_cases.user.get_user_use_case import GetUserUseCase
+from application.use_cases.user.get_all_users_use_case import GetAllUsersUseCase
 from application.use_cases.book.create_book_use_case import CreateBookUseCase
 from application.use_cases.book.update_book_use_case import UpdateBookUseCase
 from application.use_cases.book.get_all_books_use_case import GetAllBooksUseCase
@@ -59,7 +60,10 @@ def get_user_facade() -> UserFacade:
     get_user_use_case = GetUserUseCase(
         user_repo=repos.user_repo, loan_repo=repos.loan_repo, book_repo=repos.book_repo, author_repository=repos.author_repo
     )
-    return UserFacade(create_user_use_case, get_user_use_case)
+    all_users_use_case = GetAllUsersUseCase(
+        user_repository=repos.user_repo 
+    )
+    return UserFacade(create_user_use_case, get_user_use_case,all_users_use_case)
 
 
 

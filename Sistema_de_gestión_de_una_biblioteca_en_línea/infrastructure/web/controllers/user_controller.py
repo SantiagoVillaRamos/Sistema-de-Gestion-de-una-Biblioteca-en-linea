@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, status
 from application.facade.facade_user import UserFacade
 from infrastructure.web.dependencie import get_user_facade
-from infrastructure.web.model.user_models import UserCreationResponse, GetUserResponse, CreateUserRequest
+from infrastructure.web.model.user_models import UserResponse, GetUserResponse, CreateUserRequest, UserListResponse
 from infrastructure.web.mappers.user_api_mapper import UserAPIMapper
-from infrastructure.web.dependencies.auth_validators import validate_admin_creation, validate_user_access
+from infrastructure.web.dependencies.auth_validators import validate_admin_creation, validate_user_access, validate_admin_only
 from typing import Annotated
 
 
@@ -17,11 +17,11 @@ router = APIRouter(
 @router.post(
     "/", 
     status_code=status.HTTP_201_CREATED,
-    response_model=UserCreationResponse,
+    response_model=UserResponse,
 )
 async def create_user(
     request: CreateUserRequest,
-    auth_check: Annotated[None, Depends(validate_admin_creation)],
+    #auth_check: Annotated[None, Depends(validate_admin_creation)],
     facade: Annotated[UserFacade, Depends(get_user_facade)],
     
 ):
@@ -38,11 +38,26 @@ async def create_user(
 )
 async def get_user(
     user_id: str,
-    # auth_check: Annotated[None, Depends(validate_user_access)],
+    #auth_check: Annotated[None, Depends(validate_user_access)],
     facade: Annotated[UserFacade, Depends(get_user_facade)],
     
 ):
         
     details_dto = await facade.get_user_facade(user_id)
     return UserAPIMapper.from_details_dto_to_get_response(details_dto)
+
+
+@router.get(
+    "/", 
+    status_code=status.HTTP_200_OK, 
+    response_model=UserListResponse
+)
+async def list_users(
+    
+    #auth_check: Annotated[None, Depends(validate_admin_only)], 
+    facade: Annotated[UserFacade, Depends(get_user_facade)],
+):
+    
+    users = await facade.get_all_users()
+    return UserAPIMapper.from_entity_list_to_response(users)
 
