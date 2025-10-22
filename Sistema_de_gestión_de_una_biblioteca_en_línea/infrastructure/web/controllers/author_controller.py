@@ -50,7 +50,7 @@ async def get_author_details(
     facade: Annotated[AuthorFacade, Depends(get_author_facade)]
 ):
     author, books, author_map = await facade.get_author_by_id(author_id) 
-    return AuthorAPIMapper.from_full_details_to_response(author, books, author_map)
+    return AuthorAPIMapper.from_details_result_to_response(author, books, author_map)
 
 
 

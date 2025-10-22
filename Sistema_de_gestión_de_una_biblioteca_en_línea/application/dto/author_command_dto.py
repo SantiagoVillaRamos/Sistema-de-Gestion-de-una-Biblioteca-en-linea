@@ -1,5 +1,7 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Dict
+from domain.models.author import Author
+from domain.models.book import Book
 
 @dataclass(frozen=True)
 class CreateAuthorCommand:
@@ -32,3 +34,12 @@ class UpdateAuthorCommand:
     
     name: Optional[str] = None
     description: Optional[str] = None
+    
+    
+@dataclass(frozen=True)
+class GetAuthorDetailsResult:
+    """Resultado enriquecido del caso de uso GetAuthorById."""
+    author: Author
+    books: List[Book]
+    all_authors_map: Dict[str, Author]
+    

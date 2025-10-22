@@ -197,8 +197,7 @@ def get_auth_facade() -> AuthFacade:
 
 async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)]) -> User:
     if token is None:
-        # This happens when auto_error=False and no token is provided.
-        # We explicitly raise the 401 error that would have been raised automatically.
+        
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
@@ -213,7 +212,7 @@ async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)])
                 detail="Could not validate credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-    except Exception as e: # Catches validation errors from auth_service
+    except Exception as e: 
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
