@@ -2,8 +2,9 @@
 from fastapi import APIRouter, Depends, status
 from application.facade.facade_library import LibraryFacade
 from infrastructure.web.dependencie import get_library_facade, RoleChecker
-from infrastructure.web.models import LoanResponse, ReturnBookResponse, LendBookRequest, ReturnBookRequest
+from infrastructure.web.model.lend_models import LoanResponse, ReturnBookResponse, LendBookRequest, ReturnBookRequest
 from application.dto.library_command_dto import LendBookCommand, ReturnBookCommand
+from infrastructure.web.mappers.loan_api_mapper import LoanApiMapper
 from typing import Annotated
 
 
@@ -25,9 +26,9 @@ async def lend_book(
     request: LendBookRequest,
     facade: Annotated[LibraryFacade, Depends(get_library_facade)]
 ):
-    # Traducir el modelo de la petición web (Request) al DTO de la aplicación (Command)
     command = LendBookCommand(user_id=request.user_id, book_id=request.book_id)
-    return await facade.lend_book(command)
+    app_dto = await facade.lend_book(command)
+    return LoanApiMapper.from_application_dto_to_response(app_dto)
 
 
 

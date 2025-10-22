@@ -1,9 +1,11 @@
 from application.ports.book_repository import BookRepository
 from application.ports.user_repository import UserRepository
 from application.ports.loan_repository import LoanRepository
-from application.dto.library_command_dto import LendBookCommand, LendBookResponse
+from application.ports.author_repository import AuthorRepository
+from application.dto.library_command_dto import LendBookCommand, LendBookResult
 from application.ports.notification_service import NotificationService
 from domain.services.lending_service import LendingService
+from domain.models.book import Book
 
 class LendBookUseCase:  
     
@@ -12,15 +14,17 @@ class LendBookUseCase:
         book_repo: BookRepository, 
         user_repo: UserRepository, 
         loan_repo: LoanRepository,
-        notification_service: NotificationService
+        notification_service: NotificationService,
+        author_repos: AuthorRepository
     ):
         self._book_repo = book_repo
         self._user_repo = user_repo
         self._loan_repo = loan_repo
         self._notification_service = notification_service
-        self._lending_service = LendingService() # El servicio de dominio es stateless
+        self._author_repo = author_repos
+        self._lending_service = LendingService()
 
-    async def execute(self, command: LendBookCommand) -> LendBookResponse:
+    async def execute(self, command: LendBookCommand) -> LendBookResult:
         # 1. Orquestación: Cargar los datos desde la persistencia
         user = await self._user_repo.find_by_id(command.user_id)
         book = await self._book_repo.find_by_id(command.book_id)
@@ -35,14 +39,20 @@ class LendBookUseCase:
 
         # 4. Orquestación: Enviar notificación
         await self._notification_service.send_loan_notification(user, book, new_loan)
-
-        # 5. Orquestación: Crear la respuesta para la capa de aplicación
-        return LendBookResponse(
-            message="Libro prestado exitosamente",
-            loan_id=new_loan.id,
-            book_title=book.title.value,
-            description=book.description,
-            authors=book.author,
-            loan_date=new_loan.loan_date,
-            due_date=new_loan.due_date.value
+        # 5. Preparar el resultado
+        author_names = await self._get_author_names(book.author, book)
+        
+        return LendBookResult(
+            loan=new_loan,
+            user=user,
+            book=book,
+            author_names=author_names,
         )
+        
+    async def _get_author_names(self, author_ids: list[str], book:Book ) -> list[str]:
+        
+        author_ids = book.author
+        authors = await self._author_repo.find_by_ids(author_ids)
+        author_names = [author.name.value for author in authors]
+        return author_names
+        

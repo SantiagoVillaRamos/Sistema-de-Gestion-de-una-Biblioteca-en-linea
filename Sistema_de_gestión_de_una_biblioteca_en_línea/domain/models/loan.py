@@ -36,3 +36,4 @@ class Loan:
     def is_overdue(self) -> bool:
         return not self.is_returned and datetime.now() > self.due_date.value
     
+    

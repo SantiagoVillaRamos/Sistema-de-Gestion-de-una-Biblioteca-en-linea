@@ -1,3 +1,6 @@
+from domain.models.book import Book
+from domain.models.user import User
+from domain.models.loan import Loan
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List
@@ -11,15 +14,16 @@ class LendBookCommand:
 class ReturnBookCommand:
     loan_id: str
 
+
 @dataclass(frozen=True)
-class LendBookResponse:
-    message: str
-    loan_id: str
-    book_title: str
-    description: str
-    authors: List[str]
-    loan_date: datetime
-    due_date: datetime
+class LendBookResult:
+    """Contiene las entidades de Dominio afectadas por el préstamo."""
+    loan: Loan
+    user: User
+    book: Book
+    author_names: List[str]
+    message: str = "Libro prestado exitosamente"
+
 
 @dataclass(frozen=True)
 class ReturnBookResponse:
