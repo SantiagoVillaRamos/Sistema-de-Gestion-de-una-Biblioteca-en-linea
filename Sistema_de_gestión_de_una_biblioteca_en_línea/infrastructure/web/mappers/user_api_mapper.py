@@ -123,6 +123,7 @@ class UserAPIMapper:
             name=request.name,
             new_email=request.email,
             new_password=request.password,
+            current_password=request.current_password
         )
         
     @staticmethod

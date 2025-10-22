@@ -28,7 +28,7 @@ from application.use_cases.book.get_all_books_use_case import GetAllBooksUseCase
 from application.use_cases.book.get_book_by_id_use_case import GetBookByIdUseCase
 from application.use_cases.book.delete_book_use_case import DeleteBookUseCase
 from domain.models.factory.userFactory import UserFactory
-from domain.services.UpdateCurrentFactory import UserUpdaterService
+from domain.services.UpdateCurrentService import UserUpdaterService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated

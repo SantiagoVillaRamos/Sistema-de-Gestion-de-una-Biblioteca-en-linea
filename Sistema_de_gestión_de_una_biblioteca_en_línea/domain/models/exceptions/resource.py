@@ -14,3 +14,7 @@ class ResourceUnauthorizedError(Exception):
 
 class InvalidUserTypeException(Exception):
     pass
+
+class ResorceError(Exception):
+    """Excepcion base para errores relacionados con recursos."""
+    pass

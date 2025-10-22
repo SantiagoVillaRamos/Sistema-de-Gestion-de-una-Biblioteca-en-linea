@@ -6,3 +6,7 @@ import re
 class Password:
     
     hashed: str
+    
+    
+    
+    

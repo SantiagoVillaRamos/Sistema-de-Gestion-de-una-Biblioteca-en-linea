@@ -16,7 +16,7 @@ class UserInMemoryRepository(UserRepository):
         # Usamos el mapper para obtener el email para la comprobación
         user_exists = any(u['email'] == user.email.address for u in self._users.values())
         if user_exists:
-            raise BusinessConflictError(user.email, "El usuario con este email ya existe")
+            raise BusinessConflictError(user.email.address, "El usuario con este email ya existe")
         
         # Usamos el mapper para convertir el objeto de dominio a un diccionario antes de guardarlo.
         persistence_data = UserMapper.to_persistence(user)

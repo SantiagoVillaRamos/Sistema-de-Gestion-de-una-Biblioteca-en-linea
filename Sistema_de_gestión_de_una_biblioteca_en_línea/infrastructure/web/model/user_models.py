@@ -40,6 +40,7 @@ class UpdateUserRequest(BaseModel):
     name: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None
+    current_password: Optional[str] = None
 
 
 class LoanHistoryItemResponse(BaseModel):
@@ -78,10 +79,3 @@ class GetUserResponse(BaseModel):
     loaned_books: List[LoanResponse] = []
     
     
-# class LoanResponse(BaseModel):
-#     """Modelo de respuesta para el préstamo de un libro."""
-#     message: str
-#     loan_id: str
-#     book_title: str
-#     loan_date: datetime
-#     due_date: datetime

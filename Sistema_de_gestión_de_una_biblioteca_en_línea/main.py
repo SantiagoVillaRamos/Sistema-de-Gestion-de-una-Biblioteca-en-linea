@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Request, status
 from infrastructure.web.controllers import book_controller, user_controller, library_controller, auth_controller, author_controller
 from domain.models.exceptions.resource import ResourceConflictError, ResourceNotFoundError, ResourceUnauthorizedError, InvalidUserTypeException
+from domain.models.exceptions.business_exception import BusinessError
 
 
 @asynccontextmanager
@@ -28,6 +29,13 @@ def create_app() -> FastAPI:
     app.include_router(author_controller.router)
     
     # Registrar manejadores de excepciones
+    @app.exception_handler(BusinessError)
+    async def business_exception_handler(request: Request, exc: BusinessError):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"detail": str(exc)}
+        )
+
     @app.exception_handler(ResourceConflictError)
     async def book_already_exists_exception_handler(request: Request, exc: ResourceConflictError):
         return JSONResponse(

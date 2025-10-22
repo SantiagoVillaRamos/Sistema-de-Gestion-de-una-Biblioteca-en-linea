@@ -1,4 +1,4 @@
-from . resource import ResourceNotFoundError, ResourceConflictError, ResourceUnauthorizedError, InvalidUserTypeException
+from . resource import ResourceNotFoundError, ResourceConflictError, ResourceUnauthorizedError, InvalidUserTypeException, ResorceError
 
 class BusinessNotFoundError(ResourceNotFoundError):
     
@@ -22,3 +22,6 @@ class BusinessTypeError(InvalidUserTypeException):
     def __init__(self, message: str):
         super().__init__(message)
         
+class BusinessError(ResorceError):
+    def __init__(self, message: str):
+        super().__init__(message)

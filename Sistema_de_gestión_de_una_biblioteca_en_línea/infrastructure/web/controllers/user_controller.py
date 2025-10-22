@@ -63,7 +63,7 @@ async def list_users(
 @router.put(
     "/me", 
     status_code=status.HTTP_200_OK, 
-    response_model=UserResponse # Reutilizamos el DTO de respuesta
+    response_model=UserResponse 
 )
 async def update_user_me(
     request: UpdateUserRequest,
@@ -72,7 +72,7 @@ async def update_user_me(
 ):
     command = UserAPIMapper.to_update_command(
         request=request, 
-        user_id=current_user.user_id # <-- Usamos el ID del usuario autenticado
+        user_id=current_user.user_id 
     )
     updated_user = await facade.update_current_user(command)
     return UserAPIMapper.from_entity_to_update_response(updated_user)
@@ -99,7 +99,7 @@ async def get_my_loan_history(
 )
 async def delete_user(
     user_id: str,
-    # 1. Aplicar la dependencia de seguridad (ADMIN y no auto-eliminación)
+    #Aplicar la dependencia de seguridad (ADMIN y no auto-eliminación)
     auth_check: Annotated[None, Depends(validate_admin_delete)], 
     facade: Annotated[UserFacade, Depends(get_user_facade)],
 ):

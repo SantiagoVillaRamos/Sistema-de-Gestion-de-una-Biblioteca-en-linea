@@ -2,7 +2,7 @@
 from domain.models.user import User
 from application.dto.user_command_dto import UpdateUserCommand
 from application.ports.user_repository import UserRepository 
-from domain.services.UpdateCurrentFactory import UserUpdaterService
+from domain.services.UpdateCurrentService import UserUpdaterService
 
 class UpdateCurrentUserUseCase:
     

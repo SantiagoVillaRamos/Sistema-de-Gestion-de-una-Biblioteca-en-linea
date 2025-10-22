@@ -93,6 +93,7 @@ class UpdateUserCommand:
     name: Optional[str] = None
     new_email: Optional[str] = None
     new_password: Optional[str] = None
+    current_password: Optional[str] = None
 
 
 @dataclass(frozen=True)
