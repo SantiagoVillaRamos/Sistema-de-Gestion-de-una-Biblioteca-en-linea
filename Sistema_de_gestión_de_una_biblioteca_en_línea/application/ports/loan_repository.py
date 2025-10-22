@@ -25,3 +25,7 @@ class LoanRepository(ABC):
     @abstractmethod
     async def find_all_by_user(self, user_id: str) -> List[Loan]:
         pass
+    
+    @abstractmethod
+    async def find_all(self) -> List[Loan]:
+        pass

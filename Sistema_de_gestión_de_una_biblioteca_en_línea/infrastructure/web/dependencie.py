@@ -29,6 +29,7 @@ from application.use_cases.book.get_book_by_id_use_case import GetBookByIdUseCas
 from application.use_cases.book.delete_book_use_case import DeleteBookUseCase
 from application.use_cases.library.lend_book_use_case import LendBookUseCase
 from application.use_cases.library.return_book_use_case import ReturnBookUseCase
+from application.use_cases.library.get_loan_report_use_case import GetLoanReportUseCase
 from domain.models.factory.userFactory import UserFactory
 from domain.services.UpdateCurrentService import UserUpdaterService
 from fastapi import Depends, HTTPException, status
@@ -69,10 +70,17 @@ def get_library_facade() -> LibraryFacade:
         user_repo=repos.user_repo,
         notification_service=repos.notification_service
     )
+    get_loan_report_use_case = GetLoanReportUseCase(
+        loan_repo=repos.loan_repo,
+        user_repo=repos.user_repo,
+        book_repo=repos.book_repo,
+        author_repo=repos.author_repo
+    )
     
     return LibraryFacade(
         lend_book_use_case=lend_book_use_case,
-        return_book_use_case=return_book_use_case
+        return_book_use_case=return_book_use_case,
+        get_loan_report_use_case=get_loan_report_use_case
     )
 
 

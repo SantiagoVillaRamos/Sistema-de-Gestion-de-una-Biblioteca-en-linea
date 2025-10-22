@@ -25,3 +25,7 @@ class UserRepository(ABC):
     @abstractmethod
     async def delete(self, user: User) -> None:
         pass
+    
+    @abstractmethod
+    async def find_by_ids(self, user_ids: list[str]) -> list[User]:
+        pass

@@ -35,6 +35,7 @@ class AuthorInMemoryRepository(AuthorRepository):
                 return AuthorMapper.to_domain(data)
         return BusinessNotFoundError(name, f"El nombre no existe")
     
+    
     async def find_by_ids(self, author_ids: List[str]) -> List[Author]:
         
         # 1. Recuperar los datos de persistencia (diccionarios) para los IDs dados.

@@ -46,5 +46,7 @@ class UserInMemoryRepository(UserRepository):
             raise BusinessNotFoundError(user.user_id, "No se puede eliminar un usuario que no existe.")
         del self._users[user.user_id]
    
-        
+    async def find_by_ids(self, user_ids: list[str]) -> list[User]:
+        found_users = [ UserMapper.to_domain(self._users[user_id]) for user_id in user_ids if user_id in self._users ]
+        return found_users
         
