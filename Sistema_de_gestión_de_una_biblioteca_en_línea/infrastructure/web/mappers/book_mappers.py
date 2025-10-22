@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from infrastructure.web.model.book_models import CreateBookResponse, CreateBookRequest, GetBooksResponse, BookFullResponseDTO, AuthorResponseDTO, UpdateBookDTO
-from application.dto.book_command_dto import CreateBookCommand, UpdateBookDTOCommand
+from application.dto.book_command_dto import CreateBookCommand, UpdateBookDTOCommand, CreateBookResult
 from domain.models.book import Book 
 from domain.models.author import Author
 
@@ -27,14 +27,16 @@ class BookAPIMapper:
     # --- SALIDA (Mapeo de Entidad a Response) ---
     
     @staticmethod
-    def from_entity_to_create_response(new_book: Book) -> CreateBookResponse:
+    def from_entity_to_create_response(result: CreateBookResult) -> CreateBookResponse:
         """Convierte la Entidad Book a CreateBookResponse."""
+        book = result.book
+        
         return CreateBookResponse(
-            book_id=new_book.book_id,
-            isbn=new_book.isbn.value,
-            title=new_book.title.value,
-            author=new_book.author, 
-            description=new_book.description
+            book_id=book.book_id,
+            isbn=book.isbn.value,
+            title=book.title.value,
+            author=result.author_names, 
+            description=book.description
         )
 
     @staticmethod

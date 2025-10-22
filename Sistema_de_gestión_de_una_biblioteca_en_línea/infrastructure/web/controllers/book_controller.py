@@ -25,8 +25,8 @@ async def add_book(
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
     command = BookAPIMapper.to_create_command(request)
-    new_book = await facade.create_book(command)
-    return BookAPIMapper.from_entity_to_create_response(new_book)
+    book_result = await facade.create_book(command)
+    return BookAPIMapper.from_entity_to_create_response(book_result)
 
 
 

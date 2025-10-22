@@ -1,11 +1,10 @@
-
 from domain.models.book import Book
+from domain.models.author import Author
 from application.ports.book_repository import BookRepository
 from application.ports.author_repository import AuthorRepository
-from application.dto.book_command_dto import CreateBookCommand
+from application.dto.book_command_dto import CreateBookCommand, CreateBookResult
 from domain.models.factory.bookFactory import BookFactory
 from domain.models.exceptions.business_exception import BusinessNotFoundError 
-import asyncio
 from typing import List
 
 class CreateBookUseCase:
@@ -14,9 +13,9 @@ class CreateBookUseCase:
         self.book_repo = book_repository
         self.author_repo = author_repository
 
-    async def execute(self, command: CreateBookCommand) -> Book:
+    async def execute(self, command: CreateBookCommand) -> CreateBookResult:
         
-        await self._validate_authors_exist(command.author)
+        authors = await self._validate_authors_exist(command.author)
         
         new_book = BookFactory.create(
             isbn=command.isbn,
@@ -27,35 +26,34 @@ class CreateBookUseCase:
         )
         
         await self.book_repo.save(new_book)
+        author_names = self._extract_author_names(authors)
 
-        return new_book
+        return CreateBookResult(
+            book=new_book,
+            author_names=author_names
+        )
     
     
-    async def _validate_authors_exist(self, author_ids: List[str]) -> None:
+    async def _validate_authors_exist(self, author_ids: List[str]) -> List[Author]:
         """Valida la existencia de todos los autores de forma concurrente."""
         
         # 1. Crear una lista de tareas (consultas al repositorio)
-        author_tasks = [self.author_repo.find_by_id(author_id) for author_id in author_ids]
+        authors: List[Author] = await self.author_repo.find_by_ids(author_ids)
         
-        # 2. Ejecutar todas las tareas en paralelo. Retorna una lista de resultados (Author | None).
-        results = await asyncio.gather(*author_tasks, return_exceptions=True)
-        
-        # 3. Usamos list comprehension para identificar los IDs que fallaron.
-        non_existent_authors = [
-            author_id 
-            for author_id, result in zip(author_ids, results)
-            # Verificamos si el resultado fue una instancia de tu excepción
-            if isinstance(result, BusinessNotFoundError) 
-        ]
-        
-        if non_existent_authors:
-            # Construimos un mensaje consolidado de todos los errores.
-            ids_str = ", ".join(non_existent_authors)
+        if len(authors) != len(author_ids):
+            # Identificar cuáles IDs faltan
+            found_ids = {author.author_id for author in authors}
+            non_existent_ids = [id for id in author_ids if id not in found_ids]
             
-            # Lanzamos una única excepción con la información de todos los IDs.
+            ids_str = ", ".join(non_existent_ids)
             raise BusinessNotFoundError(
-                ids_str,  # business_id: la lista de IDs que fallaron
+                ids_str, 
                 f"No se pudieron encontrar los siguientes IDs de autor: {ids_str}."
             )
+            
+        return authors
     
-        
+    def _extract_author_names(self, authors: List[Author]) -> List[str]:
+        """Extrae los nombres de los autores de la lista de autores."""
+        return [author.name.value for author in authors]
+

@@ -13,6 +13,14 @@ class CreateBookCommand:
     author: List[str]
     description: str
     available_copies: int
+    
+
+@dataclass(frozen=True)
+class CreateBookResult:
+    """Contiene la entidad Book creada y los nombres de los autores enriquecidos."""
+    book: Book
+    author_names: List[str]    
+    
 
 @dataclass(frozen=True)
 class CreateBookResponse:
