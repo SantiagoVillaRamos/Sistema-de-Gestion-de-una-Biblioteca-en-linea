@@ -1,4 +1,4 @@
-from domain.models.book import Book
+
 from domain.models.author import Author
 from application.ports.book_repository import BookRepository
 from application.ports.author_repository import AuthorRepository

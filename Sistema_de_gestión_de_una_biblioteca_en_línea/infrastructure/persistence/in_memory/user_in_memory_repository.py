@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from application.ports.user_repository import UserRepository
 from domain.models.user import User
 from infrastructure.mapper_infrastructure.user_mapper import UserMapper
-
-from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
+from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError, BusinessUnauthorizedError
 
 class UserInMemoryRepository(UserRepository):
     
@@ -22,21 +21,21 @@ class UserInMemoryRepository(UserRepository):
         persistence_data = UserMapper.to_persistence(user)
         self._users[user.user_id] = persistence_data
 
+
     async def find_by_id(self, user_id: str) -> Optional[User]:
         persistence_data = self._users.get(user_id)
         if not persistence_data:
             raise BusinessNotFoundError(user_id, "Usuario no encontrado")
-        
-        # Usamos el mapper para convertir el diccionario de vuelta a un objeto de dominio.
         return UserMapper.to_domain(persistence_data)
+
 
     async def find_by_email(self, email: str) -> Optional[User]:
         for user_data in self._users.values():
             if user_data['email'] == email:
-                # Usamos el mapper para convertir el diccionario de vuelta a un objeto de dominio.
                 return UserMapper.to_domain(user_data)
-        return None
+        return BusinessUnauthorizedError("Usuario o contraseña incorrectos.")
     
+      
     async def find_all(self) -> list[User]:
         users = [ UserMapper.to_domain(user_data) for user_data in self._users.values() ]
         return users

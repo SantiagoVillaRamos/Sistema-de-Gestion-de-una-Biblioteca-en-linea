@@ -1,9 +1,12 @@
-from typing import Optional
+from typing import Optional, List, Dict
 from application.ports.user_repository import UserRepository
 from application.ports.loan_repository import LoanRepository
 from application.ports.author_repository import AuthorRepository
 from application.ports.book_repository import BookRepository
 from application.dto.user_command_dto import UserDetailsDTO
+from domain.models.loan import Loan
+from domain.models.book import Book
+from domain.models.author import Author
 
 
 class GetUserUseCase:
@@ -31,10 +34,10 @@ class GetUserUseCase:
             return UserDetailsDTO(user, [], {}, {})
 
         # 3. Obtener los libros asociados a los préstamos activos
-        books_map, books = await self._get_books(active_loans)
+        books_map = await self._get_books(active_loans)
         
         # 3.1 Obtener los autores asociados a los libros
-        authors_map = await self._get_authors(books)
+        authors_map = await self._get_authors(books_map.values())
         
         # 4. Devolver el DTO de Aplicación, conteniendo objetos de Dominio puros.
         return UserDetailsDTO(
@@ -44,16 +47,15 @@ class GetUserUseCase:
             loaned_authors_map=authors_map
         )
     
-    async def _get_books( self, active_loans: list) -> dict:
+    async def _get_books( self, active_loans: List[Loan]) -> Dict[str, Book]:
         """Helper para obtener los libros dados los préstamos activos."""
         
         book_ids = [loan.book_id for loan in active_loans]
         books = await self.book_repo.find_by_ids(book_ids)
-        books_map = {book.book_id: book for book in books}
-        return books_map, books
+        return {book.book_id: book for book in books}
     
     
-    async def _get_authors(self, books: list) -> dict:
+    async def _get_authors(self, books: List[Book]) -> Dict[str, Author]:
         """Helper para obtener los autores dados los libros."""
         
         author_ids = set()
@@ -61,5 +63,4 @@ class GetUserUseCase:
             author_ids.update(book.author)
         
         authors = await self.author_repository.find_by_ids(list(author_ids))
-        authors_map = {author.author_id: author for author in authors}
-        return authors_map
+        return {author.author_id: author for author in authors}
