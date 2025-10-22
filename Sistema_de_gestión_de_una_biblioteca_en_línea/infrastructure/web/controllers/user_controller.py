@@ -99,7 +99,6 @@ async def get_my_loan_history(
 )
 async def delete_user(
     user_id: str,
-    #Aplicar la dependencia de seguridad (ADMIN y no auto-eliminación)
     auth_check: Annotated[None, Depends(validate_admin_delete)], 
     facade: Annotated[UserFacade, Depends(get_user_facade)],
 ):

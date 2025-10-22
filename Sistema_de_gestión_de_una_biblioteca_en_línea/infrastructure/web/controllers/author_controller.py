@@ -17,7 +17,7 @@ router = APIRouter(
     "/",
     status_code=status.HTTP_201_CREATED,
     response_model=CreateAuthorResponse,
-    #dependencies=[Depends(admin_role_checker)]
+    dependencies=[Depends(admin_role_checker)]
 )
 async def add_author(
     request: CreateAuthorRequest,
@@ -61,7 +61,8 @@ async def get_author_details(
 async def update_author(
     author_id: str,
     request: UpdateAuthorRequest,
-    facade: Annotated[AuthorFacade, Depends(get_author_facade)]
+    facade: Annotated[AuthorFacade, Depends(get_author_facade)],
+    dependencies=[Depends(admin_role_checker)]
 ):
     command = AuthorAPIMapper.to_update_command(request)
     updated_author = await facade.update_author_data(author_id, command)
@@ -75,7 +76,8 @@ async def update_author(
 )
 async def delete_author(
     author_id: str,
-    facade: Annotated[AuthorFacade, Depends(get_author_facade)]
+    facade: Annotated[AuthorFacade, Depends(get_author_facade)],
+    dependencies=[Depends(admin_role_checker)]
 ):
     author_deleted = await facade.delete_author_data(author_id)
     

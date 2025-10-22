@@ -33,7 +33,7 @@ class UserInMemoryRepository(UserRepository):
         for user_data in self._users.values():
             if user_data['email'] == email:
                 return UserMapper.to_domain(user_data)
-        return BusinessUnauthorizedError("Usuario o contraseña incorrectos.")
+        return None
     
       
     async def find_all(self) -> list[User]:
