@@ -1,4 +1,5 @@
-from infrastructure.web.model.user_models import UserResponse, GetUserResponse, CreateUserRequest, LoanResponse, UserListResponse, UserListResponseItem, UpdateUserRequest
+from infrastructure.web.model.user_models import UserResponse, GetUserResponse, CreateUserRequest, LoanResponse, UserListResponse, UserListResponseItem, UpdateUserRequest, UserLoanHistoryResponse, LoanHistoryItemResponse
+from application.dto.user_command_dto import UserLoanHistoryDTO
 from application.dto.user_command_dto import CreateUserCommand, UpdateUserCommand
 from application.dto.user_command_dto import UserDetailsDTO
 from domain.models.user import User
@@ -130,3 +131,54 @@ class UserAPIMapper:
         
         return UserAPIMapper.from_entity_to_creation_response(user)
     
+
+    @staticmethod
+    def _map_loan_to_history_item(
+        loan: Loan, 
+        book_map: Dict[str, Book], 
+        authors_map: Dict[str, Author]
+    ) -> LoanHistoryItemResponse:
+        
+        book = book_map.get(loan.book_id)
+        
+        # Manejo de datos base del préstamo
+        book_title = book.title.value if book else "Título Desconocido"
+        authors_names = []
+        
+        if book:
+            authors_names = [
+                authors_map[author_id].name.value
+                for author_id in book.author
+                if author_id in authors_map
+            ]
+            
+        return LoanHistoryItemResponse(
+            loan_id=loan.id, 
+            book_title=book_title,
+            authors=authors_names,
+            loan_date=loan.loan_date,
+            due_date=loan.due_date.value,
+            is_active=loan.is_returned
+        )
+
+
+    @staticmethod
+    def from_loan_history_dto_to_response(history_dto: UserLoanHistoryDTO) -> UserLoanHistoryResponse:
+        """Mapea el DTO de historial de préstamos al DTO de respuesta HTTP."""
+        
+        # 1. Mapear cada entidad Loan al DTO de respuesta
+        loan_items = [
+            UserAPIMapper._map_loan_to_history_item(
+                loan, 
+                history_dto.loaned_books_map, 
+                history_dto.loaned_authors_map
+            ).model_dump() # Convertir a dict para anidación Pydantic
+            for loan in history_dto.loans
+        ]
+        
+        # 2. Construir la respuesta final
+        return UserLoanHistoryResponse(
+            user_id=history_dto.user.user_id,
+            user_name=history_dto.user.name,
+            loans=loan_items
+        )

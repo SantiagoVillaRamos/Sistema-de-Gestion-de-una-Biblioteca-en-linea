@@ -41,6 +41,21 @@ class UpdateUserRequest(BaseModel):
     email: Optional[EmailStr] = None
     password: Optional[str] = None
 
+
+class LoanHistoryItemResponse(BaseModel):
+    """Detalle enriquecido de un préstamo."""
+    loan_id: str
+    book_title: str
+    authors: List[str] 
+    loan_date: datetime
+    due_date: datetime
+    is_active: bool
+    
+class UserLoanHistoryResponse(BaseModel):
+    user_id: str
+    user_name: str
+    loans: List[LoanHistoryItemResponse]
+
     
 class LoanResponse(BaseModel):
     

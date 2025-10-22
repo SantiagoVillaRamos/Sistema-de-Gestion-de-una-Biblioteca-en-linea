@@ -41,6 +41,10 @@ class UserInMemoryRepository(UserRepository):
         users = [ UserMapper.to_domain(user_data) for user_data in self._users.values() ]
         return users
     
+    async def delete(self, user: User) -> None:
+        if user.user_id not in self._users:
+            raise BusinessNotFoundError(user.user_id, "No se puede eliminar un usuario que no existe.")
+        del self._users[user.user_id]
    
         
         

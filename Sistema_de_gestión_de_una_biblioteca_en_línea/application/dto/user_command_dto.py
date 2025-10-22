@@ -3,6 +3,7 @@ from typing import Dict
 from domain.models.user import User
 from domain.models.loan import Loan
 from domain.models.author import Author
+from domain.models.book import Book
 from datetime import datetime
 from typing import Literal, List, Optional  
 
@@ -109,3 +110,11 @@ class LoginUserResponse:
     DTO para los datos de salida del caso de uso de login de usuario.
     """
     token: str
+    
+@dataclass
+class UserLoanHistoryDTO:
+    """DTO de aplicación que lleva las entidades puras y mapas al Mapper."""
+    user: User
+    loans: List[Loan]
+    loaned_books_map: Dict[str, Book]
+    loaned_authors_map: Dict[str, Author]    

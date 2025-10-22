@@ -20,6 +20,8 @@ from application.use_cases.user.create_user_use_case import CreateUserUseCase
 from application.use_cases.user.get_user_use_case import GetUserUseCase
 from application.use_cases.user.get_all_users_use_case import GetAllUsersUseCase
 from application.use_cases.user.update_current_user_use_case import UpdateCurrentUserUseCase
+from application.use_cases.user.get_user_loan_history_use_case import GetUserLoanHistoryUseCase
+from application.use_cases.user.delete_user_use_case import DeleteUserUseCase
 from application.use_cases.book.create_book_use_case import CreateBookUseCase
 from application.use_cases.book.update_book_use_case import UpdateBookUseCase
 from application.use_cases.book.get_all_books_use_case import GetAllBooksUseCase
@@ -51,17 +53,27 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
 
 
 def get_library_facade() -> LibraryFacade:
-    return LibraryFacade(repos.book_repo, repos.user_repo, repos.loan_repo, repos.notification_service)
+    return LibraryFacade(
+        repos.book_repo, 
+        repos.user_repo, 
+        repos.loan_repo, 
+        repos.notification_service
+    )
 
 
 def get_user_facade() -> UserFacade:
-    user_factory = UserFactory(password_service=repos.password_service)
+    user_factory = UserFactory(
+        password_service=repos.password_service
+    )
     create_user_use_case = CreateUserUseCase(
         user_repository=repos.user_repo, 
         user_factory=user_factory
     )
     get_user_use_case = GetUserUseCase(
-        user_repo=repos.user_repo, loan_repo=repos.loan_repo, book_repo=repos.book_repo, author_repository=repos.author_repo
+        user_repo=repos.user_repo, 
+        loan_repo=repos.loan_repo, 
+        book_repo=repos.book_repo, 
+        author_repository=repos.author_repo
     )
     all_users_use_case = GetAllUsersUseCase(
         user_repository=repos.user_repo
@@ -70,15 +82,43 @@ def get_user_facade() -> UserFacade:
         user_repo=repos.user_repo,
         user_updater_service=repos.user_updated_service
     )
-    return UserFacade(create_user_use_case, get_user_use_case,all_users_use_case, update_current_user_uc)
+    get_user_loan_history_use_case = GetUserLoanHistoryUseCase(
+        user_repo=repos.user_repo,
+        loan_repo=repos.loan_repo,
+        book_repo=repos.book_repo,
+        author_repo=repos.author_repo
+    )
+    delete_user_use_case = DeleteUserUseCase(
+        user_repo=repos.user_repo
+    )
+    return UserFacade(
+        create_user_use_case, 
+        get_user_use_case,
+        all_users_use_case, 
+        update_current_user_uc, 
+        get_user_loan_history_use_case,
+        delete_user_use_case
+    )
 
 
 
 def get_book_facade() -> FacadeBook:
-    create_book_use_case = CreateBookUseCase(book_repository=repos.book_repo, author_repository=repos.author_repo)
-    update_book_use_case = UpdateBookUseCase(book_repository=repos.book_repo, author_repository=repos.author_repo)
-    get_all_books_use_case = GetAllBooksUseCase(book_repository=repos.book_repo, author_repository=repos.author_repo)
-    get_book_by_id_use_case = GetBookByIdUseCase(book_repository=repos.book_repo, author_repository=repos.author_repo)
+    create_book_use_case = CreateBookUseCase(
+        book_repository=repos.book_repo, 
+        author_repository=repos.author_repo
+    )
+    update_book_use_case = UpdateBookUseCase(
+        book_repository=repos.book_repo, 
+        author_repository=repos.author_repo
+    )
+    get_all_books_use_case = GetAllBooksUseCase(
+        book_repository=repos.book_repo, 
+        author_repository=repos.author_repo
+    )
+    get_book_by_id_use_case = GetBookByIdUseCase(
+        book_repository=repos.book_repo, 
+        author_repository=repos.author_repo
+    )
     delete_book_use_case = DeleteBookUseCase(book_repository=repos.book_repo)
     
     return FacadeBook(
@@ -91,14 +131,23 @@ def get_book_facade() -> FacadeBook:
 
 
 def get_author_facade() -> AuthorFacade:
-    create_author_use_case = CreateAuthorUseCase(author_repository=repos.author_repo)
-    get_all_authors_use_case = GetAllAuthorsUseCase(author_repository=repos.author_repo)
+    create_author_use_case = CreateAuthorUseCase(
+        author_repository=repos.author_repo
+    )
+    get_all_authors_use_case = GetAllAuthorsUseCase(
+        author_repository=repos.author_repo
+    )
     get_author_by_id_use_case = GetAuthorByIdUseCase(
         author_repository=repos.author_repo,
         book_repository=repos.book_repo
     )
-    update_data_author = UpdateAuthorUseCase(author_repository=repos.author_repo)
-    delete_author_data = DeleteAuthorUseCase(author_repository=repos.author_repo, book_repository=repos.book_repo)
+    update_data_author = UpdateAuthorUseCase(
+        author_repository=repos.author_repo
+    )
+    delete_author_data = DeleteAuthorUseCase(
+        author_repository=repos.author_repo, 
+        book_repository=repos.book_repo
+    )
     
     return AuthorFacade(
         create_use_case = create_author_use_case,

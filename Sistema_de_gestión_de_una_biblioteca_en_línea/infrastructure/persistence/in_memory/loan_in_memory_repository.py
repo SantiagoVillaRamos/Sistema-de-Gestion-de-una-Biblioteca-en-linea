@@ -30,3 +30,8 @@ class LoanInMemoryRepository(LoanRepository):
     async def find_active_loans_by_user(self, user_id: str) -> List[Loan]:
         active_loans_data = [data for data in self._loans.values() if data['user_id'] == user_id and not data['is_returned']]
         return [LoanMapper.to_domain(data) for data in active_loans_data]
+    
+    async def find_all_by_user(self, user_id: str) -> List[Loan]:
+        user_loans_data = [data for data in self._loans.values() if data['user_id'] == user_id]
+        return [LoanMapper.to_domain(data) for data in user_loans_data]
+    

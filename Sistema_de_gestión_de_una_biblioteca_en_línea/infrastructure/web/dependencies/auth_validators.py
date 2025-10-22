@@ -60,3 +60,26 @@ async def validate_admin_only(
             detail="Acceso denegado. Se requiere rol de administrador."
         )
     return None
+
+
+async def validate_admin_delete(
+    target_user_id: Annotated[str, Path(alias="user_id")], # ID del usuario a eliminar
+    current_user: Annotated[User, Depends(get_current_user)], # Usuario que hace la petición
+) -> None:
+    """Verifica si el usuario autenticado es un ADMIN y no está intentando eliminarse a sí mismo."""
+    
+    # 1. Verificar si el usuario actual es un ADMIN
+    if "ADMIN" not in current_user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acceso denegado. Se requiere rol de administrador para eliminar usuarios."
+        )
+
+    # 2. Verificar la regla de auto-eliminación
+    if current_user.user_id == target_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Un administrador no puede eliminarse a sí mismo."
+        )
+        
+    return None
