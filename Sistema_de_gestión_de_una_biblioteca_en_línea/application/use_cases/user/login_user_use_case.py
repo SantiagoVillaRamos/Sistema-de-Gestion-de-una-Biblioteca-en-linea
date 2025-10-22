@@ -1,7 +1,7 @@
 from application.ports.user_repository import UserRepository
 from domain.ports.PasswordService import PasswordService
 from application.ports.AuthService import AuthService
-from application.dto.user_command_dto import LoginUserCommand, LoginUserResponse
+from application.dto.user_command_dto import LoginUserCommand, LoginUserResponseToken
 from domain.models.exceptions.business_exception import BusinessUnauthorizedError
 
 
@@ -12,7 +12,7 @@ class LoginUserUseCase:
         self.password_service = password_service
         self.auth_service = auth_service
 
-    async def execute(self, command: LoginUserCommand) -> LoginUserResponse:
+    async def execute(self, command: LoginUserCommand) -> LoginUserResponseToken:
         
         user = await self.user_repository.find_by_email(command.email)
         if not user:
@@ -25,4 +25,4 @@ class LoginUserUseCase:
 
         token = self.auth_service.create_token(user_id=user.user_id, roles=user.roles)
 
-        return LoginUserResponse(token=token)
+        return LoginUserResponseToken(token=token)

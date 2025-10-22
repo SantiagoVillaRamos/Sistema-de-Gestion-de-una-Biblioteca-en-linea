@@ -106,7 +106,7 @@ class LoginUserCommand:
 
 
 @dataclass(frozen=True)
-class LoginUserResponse:
+class LoginUserResponseToken:
     """
     DTO para los datos de salida del caso de uso de login de usuario.
     """
