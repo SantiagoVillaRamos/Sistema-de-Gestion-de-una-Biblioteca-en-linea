@@ -51,8 +51,8 @@ class AuthorAPIMapper:
             ]
             
             # Llamar a un mapper auxiliar (si existe) o construir el DTO directamente
-            book_dto = BookAPIMapperResponse.from_entity_and_names(book, book_author_names)
-            book_instances.append(book_dto)
+            book_dto = BookAPIMapperResponse.from_entity_to_response(book, book_author_names)
+            book_instances.append(book_dto.model_dump())
             
         # 2. Construir la respuesta final.
         return AuthorDetailResponse(
