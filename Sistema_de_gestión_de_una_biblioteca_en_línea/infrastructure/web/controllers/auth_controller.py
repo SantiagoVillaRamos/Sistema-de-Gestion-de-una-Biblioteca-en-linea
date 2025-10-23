@@ -3,7 +3,6 @@ from typing import Annotated
 from application.facade.facade_auth import AuthFacade
 from infrastructure.web.dependencie import get_auth_facade, RoleChecker
 from infrastructure.web.models import LoginRequest, LoginResponse
-from application.dto.user_command_dto import LoginUserCommand
 from infrastructure.web.mappers.login_mapper import LoginMapper
 
 admin_role_checker = RoleChecker(["ADMIN"])
@@ -13,11 +12,11 @@ router = APIRouter(
     tags=["Authentication"]
 )
 
+
 @router.post(
     "/login",
     status_code=status.HTTP_200_OK,
-    response_model=LoginResponse,
-    
+    response_model=LoginResponse
 )
 async def login_for_access_token(
     request: LoginRequest,
