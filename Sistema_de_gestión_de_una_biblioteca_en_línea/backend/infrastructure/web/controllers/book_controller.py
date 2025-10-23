@@ -18,7 +18,7 @@ router = APIRouter(
     "/", 
     status_code=status.HTTP_201_CREATED,
     response_model=CreateBookResponse,
-    dependencies=[Depends(admin_role_checker)]
+    #dependencies=[Depends(admin_role_checker)]
 )
 async def add_book(
     request: CreateBookRequest,
@@ -61,7 +61,7 @@ async def get_book_details(
 @router.put(
     "/{book_id}", 
     response_model=GetBooksResponse,
-    dependencies=[Depends(admin_role_checker)]
+    #dependencies=[Depends(admin_role_checker)]
 )
 async def update_book(
     book_id: str,
@@ -69,15 +69,15 @@ async def update_book(
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
     command = BookAPIMapper.to_update_command(request)
-    book, author_names = await facade.update_book(book_id, command)
-    return BookAPIMapper.from_update_result_to_response(book, author_names)
+    book_result = await facade.update_book(book_id, command)
+    return BookAPIMapper.from_update_result_to_response(book_result)
     
 
 
 @router.delete(
     "/{book_id}", 
     response_model=BookMessage,
-    dependencies=[Depends(admin_role_checker)]
+    #dependencies=[Depends(admin_role_checker)]
 )
 async def delete_book(
     book_id: str,

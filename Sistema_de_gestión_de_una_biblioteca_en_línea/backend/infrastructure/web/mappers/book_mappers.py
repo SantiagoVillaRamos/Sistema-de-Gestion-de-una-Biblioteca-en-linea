@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from infrastructure.web.model.book_models import CreateBookResponse, CreateBookRequest, GetBooksResponse, BookFullResponseDTO, AuthorResponseDTO, UpdateBookDTO
-from application.dto.book_command_dto import CreateBookCommand, UpdateBookDTOCommand, CreateBookResult
+from application.dto.book_command_dto import CreateBookCommand, UpdateBookDTOCommand, CreateBookResult, UpdateBookResult, BookDetailsResponse
 from domain.models.book import Book 
 from domain.models.author import Author
 
@@ -63,7 +63,7 @@ class BookAPIMapper:
         ]
 
     @staticmethod
-    def from_full_details_to_response(response_dto: BookFullResponseDTO) -> BookFullResponseDTO:
+    def from_full_details_to_response(response_dto: BookDetailsResponse) -> BookFullResponseDTO:
         """Convierte la respuesta completa (Book + Authors) a BookFullResponseDTO."""
         
         # Uso del mapper interno para los autores
@@ -88,16 +88,21 @@ class BookAPIMapper:
         )
         
     @staticmethod
-    def from_update_result_to_response(book: Book, author_names: List[str]) -> GetBooksResponse:
-        """Convierte la tupla (Book, List[str]) del Caso de Uso a GetBooksResponse."""
+    def from_update_result_to_response(result_book: UpdateBookResult) -> GetBooksResponse:
+        """
+        Convierte un libro y una lista de nombres de autores en una respuesta GetBooksResponse.
+        """
+        author_name_values = [name.value for name in result_book.author_names]
+        book = result_book.book
         return GetBooksResponse(
+            
             isbn=book.isbn.value,
             title=book.title.value,
-            author_names=author_names,
+            author_names=author_name_values,
             description=book.description,
             available_copies=book.available_copies
         )
-        
+            
         
 class BookAPIMapperResponse:
     

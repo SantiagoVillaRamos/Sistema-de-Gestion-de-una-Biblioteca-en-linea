@@ -53,6 +53,13 @@ class UpdateBookDTOCommand:
     title: str
     description: str
     
+    
+@dataclass(frozen=True)
+class UpdateBookResult:
+    
+    book: Book
+    author_names: List[str]
+    
 
 @dataclass(frozen=True)
 class BookMessage:

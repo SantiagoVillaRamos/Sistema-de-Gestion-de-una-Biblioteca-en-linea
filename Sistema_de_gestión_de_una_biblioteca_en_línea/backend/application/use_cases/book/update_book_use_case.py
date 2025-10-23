@@ -1,5 +1,5 @@
 from application.ports.book_repository import BookRepository
-from application.dto.book_command_dto import UpdateBookDTOCommand
+from application.dto.book_command_dto import UpdateBookDTOCommand, UpdateBookResult
 from typing import Optional, List, Dict
 from domain.models.book import Book
 from domain.models.value_objects.title import Title
@@ -17,7 +17,7 @@ class UpdateBookUseCase:
         self.book_repository = book_repository
         self.author_repository = author_repository
 
-    async def execute(self, book_id: str, update_dto: UpdateBookDTOCommand) -> Optional[Book]:
+    async def execute(self, book_id: str, update_dto: UpdateBookDTOCommand) -> Optional[UpdateBookResult]:
         #1. Obtener la entidad
         book = await self.book_repository.find_by_id(book_id)
         
@@ -30,7 +30,10 @@ class UpdateBookUseCase:
         #4. Enriquecer y devolver el resultado
         author_name = await self._get_author_names(book.author)
         
-        return (book, author_name)
+        return UpdateBookResult(
+            book=book,
+            author_names=author_name
+        )
         
         
     def _apply_updates(self, book:Book, update_dto: UpdateBookDTOCommand) -> None:
