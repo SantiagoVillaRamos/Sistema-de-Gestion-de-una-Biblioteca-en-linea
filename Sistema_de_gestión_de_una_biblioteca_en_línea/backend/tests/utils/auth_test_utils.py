@@ -7,10 +7,11 @@ import pytest
 # -----------------------------------------------
 # CONFIGURACIÓN BASE    
 # -----------------------------------------------
-BASE_URL = "/users/"
+BASE_URL_USERS = "/users/"
 BASE_URL_LOGIN = "/auth/login"
 BASE_URL_AUTHORS = "/authors/"
 BASE_URL_BOOKS = "/books/"
+
 
 client = TestClient(app)
 # -----------------------------------------------
@@ -25,7 +26,7 @@ def create_user(client, name: str, email: str, password: str, user_type: str, ro
         "user_type": user_type,
         "roles": roles
     }
-    response = client.post(BASE_URL, json=user_data)
+    response = client.post(BASE_URL_USERS, json=user_data)
     assert response.status_code == 201, f"Fallo al crear usuario: {response.status_code} - {response.text}"
     return response.json()
 
@@ -50,7 +51,7 @@ def email_and_password_from_user_response() -> Dict[str, str]:
     }
 
 # -----------------------------------------------
-# FUNCIONES HELPER (PARA REDUCIR REPETICIÓN)
+# FUNCIONES HELPER 
 # -----------------------------------------------
 
 def create_unique_author(client, name_prefix: str = "Test Author") -> Dict[str, Any]:
