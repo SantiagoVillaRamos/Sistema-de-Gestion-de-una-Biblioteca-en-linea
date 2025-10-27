@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from infrastructure.persistence.models import AuthorModel, BookModel, UserModel, LoanModel
+
 from infrastructure.persistence.models import Base
 from infrastructure.web.app import app
 from infrastructure.persistence.repositories import SQLAlchemyAuthorRepository
@@ -64,3 +66,12 @@ def user_repository(db_session):
 @pytest.fixture
 def loan_repository(db_session):
     return SQLAlchemyLoanRepository(db_session)
+
+@pytest.fixture(autouse=True)
+def clean_db(db_session):
+    yield
+    db_session.query(AuthorModel).delete()
+    db_session.query(BookModel).delete()
+    db_session.query(UserModel).delete()
+    db_session.query(LoanModel).delete()
+    db_session.commit()

@@ -8,7 +8,6 @@ from infrastructure.web.mappers.author_api_mapper import AuthorAPIMapper
 admin_role_checker = RoleChecker(["ADMIN"])
 
 router = APIRouter(
-    prefix="/authors",
     tags=["Authors"]
 )
 
@@ -31,7 +30,8 @@ async def add_author(
 
 @router.get(
     "/", 
-    response_model=List[CreateAuthorResponse]
+    response_model=List[CreateAuthorResponse],
+    status_code=status.HTTP_200_OK,
 )
 async def get_all_authors(
     facade: Annotated[AuthorFacade, Depends(get_author_facade)]
@@ -43,7 +43,8 @@ async def get_all_authors(
 
 @router.get(
     "/{author_id}", 
-    response_model=AuthorDetailResponse
+    response_model=AuthorDetailResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def get_author_details(
     author_id: str,
@@ -56,7 +57,8 @@ async def get_author_details(
 
 @router.put(
     "/{author_id}", 
-    response_model=CreateAuthorResponse
+    response_model=CreateAuthorResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def update_author(
     author_id: str,
@@ -82,5 +84,5 @@ async def delete_author(
     author_deleted = await facade.delete_author_data(author_id)
     
     return AuthorMessage(
-        message=f"Autor '{author_deleted.name.value}' y todos sus datos han sido eliminados."
+        message=f"Autor eliminado, y todos sus datos han sido eliminados."
     )

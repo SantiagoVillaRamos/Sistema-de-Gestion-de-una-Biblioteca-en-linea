@@ -9,7 +9,6 @@ from infrastructure.web.mappers.book_mappers import BookAPIMapper
 admin_role_checker = RoleChecker(["ADMIN"])
 
 router = APIRouter(
-    prefix="/books",
     tags=["Books"]
 )
 
@@ -32,7 +31,8 @@ async def add_book(
 
 @router.get(
     "/",
-    response_model=List[GetBooksResponse]
+    response_model=List[GetBooksResponse],
+    status_code=status.HTTP_200_OK,
 )
 async def get_all_books(
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
@@ -47,7 +47,11 @@ async def get_all_books(
 
 
 
-@router.get("/{book_id}", response_model=BookFullResponseDTO)
+@router.get(
+    "/{book_id}", 
+    response_model=BookFullResponseDTO,
+    status_code=status.HTTP_200_OK,
+)
 async def get_book_details(
     book_id: str,
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
@@ -61,6 +65,7 @@ async def get_book_details(
 @router.put(
     "/{book_id}", 
     response_model=GetBooksResponse,
+    status_code=status.HTTP_200_OK,
     #dependencies=[Depends(admin_role_checker)]
 )
 async def update_book(
@@ -77,6 +82,7 @@ async def update_book(
 @router.delete(
     "/{book_id}", 
     response_model=BookMessage,
+    status_code=status.HTTP_200_OK,
     #dependencies=[Depends(admin_role_checker)]
 )
 async def delete_book(
