@@ -3,7 +3,7 @@ import uuid
 import pytest
 from typing import Dict, Any
 from main import app
-from domain.models.exceptions.business_exception import BusinessNotFoundError
+
 
 # -----------------------------------------------
 # CONFIGURACIÓN BASE

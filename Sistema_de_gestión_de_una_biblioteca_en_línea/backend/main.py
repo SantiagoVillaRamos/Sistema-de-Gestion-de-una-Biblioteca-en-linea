@@ -24,8 +24,8 @@ def create_app() -> FastAPI:
     # Registrar routers
     app.include_router(book_controller.router, prefix="/books",)
     app.include_router(library_controller.router)
-    app.include_router(user_controller.router)
-    app.include_router(auth_controller.router)
+    app.include_router(user_controller.router,prefix="/users")
+    app.include_router(auth_controller.router, prefix="/auth")
     app.include_router(author_controller.router, prefix="/authors")
     
     # Registrar manejadores de excepciones

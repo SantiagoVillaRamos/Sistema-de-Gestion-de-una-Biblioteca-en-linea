@@ -8,7 +8,6 @@ from infrastructure.web.mappers.login_mapper import LoginMapper
 admin_role_checker = RoleChecker(["ADMIN"])
 
 router = APIRouter(
-    prefix="/auth",
     tags=["Authentication"]
 )
 

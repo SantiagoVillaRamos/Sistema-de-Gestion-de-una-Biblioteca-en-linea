@@ -6,8 +6,6 @@ class MessageResponse(BaseModel):
     message: str
 
 
-
-
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str = Field(..., max_length=72)

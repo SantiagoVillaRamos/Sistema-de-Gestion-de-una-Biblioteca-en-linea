@@ -10,7 +10,6 @@ from domain.models.user import User
 
 
 router = APIRouter(
-    prefix="/users",
     tags=["Users"]
 )
 
