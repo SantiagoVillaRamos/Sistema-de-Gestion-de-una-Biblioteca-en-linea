@@ -1,3 +1,5 @@
+
+
 from fastapi import FastAPI
 import uvicorn
 from contextlib import asynccontextmanager
@@ -102,3 +104,5 @@ app = create_app()
 # Si el script se ejecuta directamente, arranca el servidor
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8009, reload=True)
+    
+    

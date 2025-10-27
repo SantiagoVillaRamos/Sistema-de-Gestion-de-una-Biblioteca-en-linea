@@ -7,7 +7,7 @@ from sqlalchemy.pool import StaticPool
 from infrastructure.persistence.models import AuthorModel, BookModel, UserModel, LoanModel
 
 from infrastructure.persistence.models import Base
-from infrastructure.web.app import app
+from main import app
 from infrastructure.persistence.repositories import SQLAlchemyAuthorRepository
 from infrastructure.persistence.repositories import SQLAlchemyBookRepository
 from infrastructure.persistence.repositories import SQLAlchemyUserRepository

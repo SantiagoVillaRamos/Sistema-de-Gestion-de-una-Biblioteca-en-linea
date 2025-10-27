@@ -17,7 +17,7 @@ router = APIRouter(
     "/", 
     status_code=status.HTTP_201_CREATED,
     response_model=CreateBookResponse,
-    #dependencies=[Depends(admin_role_checker)]
+    dependencies=[Depends(admin_role_checker)]
 )
 async def add_book(
     request: CreateBookRequest,
@@ -66,7 +66,7 @@ async def get_book_details(
     "/{book_id}", 
     response_model=GetBooksResponse,
     status_code=status.HTTP_200_OK,
-    #dependencies=[Depends(admin_role_checker)]
+    dependencies=[Depends(admin_role_checker)]
 )
 async def update_book(
     book_id: str,
@@ -83,7 +83,7 @@ async def update_book(
     "/{book_id}", 
     response_model=BookMessage,
     status_code=status.HTTP_200_OK,
-    #dependencies=[Depends(admin_role_checker)]
+    dependencies=[Depends(admin_role_checker)]
 )
 async def delete_book(
     book_id: str,

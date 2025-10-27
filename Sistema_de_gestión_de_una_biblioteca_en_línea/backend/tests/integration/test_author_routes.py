@@ -1,39 +1,39 @@
 from fastapi.testclient import TestClient
-import uuid
-import pytest
-from typing import Dict, Any
 from main import app
+
+from tests.utils.auth_test_utils import create_user, login_user, email_and_password_from_user_response, create_unique_author, _extract_id, BASE_URL_AUTHORS
 
 
 # -----------------------------------------------
 # CONFIGURACIÓN BASE
 # -----------------------------------------------
-BASE_URL = "/authors/"
+
 client = TestClient(app)
-
-# -----------------------------------------------
-# FUNCIONES HELPER
-# -----------------------------------------------
-def create_unique_author(client, name_prefix: str = "Test Author") -> Dict[str, Any]:
-    """Crea un autor único y devuelve su respuesta JSON."""
-    unique_name = f"{name_prefix}_{uuid.uuid4().hex[:8]}"
-    author_data = {
-        "name": unique_name,
-        "description": f"Description for {unique_name}"
-    }
-    response = client.post(BASE_URL, json=author_data)
-    assert response.status_code == 201, f"Fallo al crear autor: {response.status_code} - {response.text}"
-    return response.json()
-
-def _extract_id(obj: Dict[str, Any]) -> str:
-    """Extrae el ID de un objeto, tolerando diferentes nombres de key."""
-    return obj.get("author_id") or obj.get("id") or obj.get("authorId")
 
 # -----------------------------------------------
 # PRUEBAS REFACTORIZADAS
 # -----------------------------------------------
 def test_author_creation(client, clean_db):
     """Prueba la creación de un autor."""
+    
+    # crear un usuario admin para autenticación
+    admin_credentials = email_and_password_from_user_response()
+    create_user(
+        client,
+        name="Admin User",
+        email=admin_credentials["email"],
+        password=admin_credentials["password"],
+        user_type="student",
+        roles=["ADMIN"]
+    )
+    token = login_user(
+        client,
+        email=admin_credentials["email"],
+        password=admin_credentials["password"]
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+    client.headers.update(headers)
+    
     author_data = create_unique_author(client, "Test Author")
     
     assert author_data["name"].startswith("Test Author_")
@@ -46,10 +46,29 @@ def test_author_creation(client, clean_db):
 
 def test_get_authors(client, clean_db):
     """Prueba obtener todos los autores."""
+    
+    # crear un usuario admin para autenticación
+    admin_credentials = email_and_password_from_user_response()
+    create_user(
+        client,
+        name="Admin User",
+        email=admin_credentials["email"],
+        password=admin_credentials["password"],
+        user_type="student",
+        roles=["ADMIN"]
+    )
+    token = login_user(
+        client,
+        email=admin_credentials["email"],
+        password=admin_credentials["password"]
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+    client.headers.update(headers)
+    
     # Crear un autor para asegurar que hay datos
     create_unique_author(client, "List Author")
     
-    response = client.get(BASE_URL)
+    response = client.get(BASE_URL_AUTHORS)
     assert response.status_code == 200
     
     authors = response.json()
@@ -62,11 +81,30 @@ def test_get_authors(client, clean_db):
 
 def test_get_author_by_id(client, clean_db):
     """Prueba obtener un autor por su ID."""
+    
+    # crear un usuario admin para autenticación
+    admin_credentials = email_and_password_from_user_response()
+    create_user(
+        client,
+        name="Admin User",
+        email=admin_credentials["email"],
+        password=admin_credentials["password"],
+        user_type="student",
+        roles=["ADMIN"]
+    )
+    token = login_user(
+        client,
+        email=admin_credentials["email"],
+        password=admin_credentials["password"]
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+    client.headers.update(headers)
+    
     # Crear autor para prueba
     author_data = create_unique_author(client, "Single Author")
     author_id = _extract_id(author_data)
     
-    response = client.get(f"{BASE_URL}{author_id}")
+    response = client.get(f"{BASE_URL_AUTHORS}{author_id}")
     assert response.status_code == 200
     
     retrieved_author = response.json()
@@ -78,6 +116,25 @@ def test_get_author_by_id(client, clean_db):
 
 def test_update_author(client, clean_db):
     """Prueba actualizar un autor existente."""
+    
+    # crear un usuario admin para autenticación
+    admin_credentials = email_and_password_from_user_response()
+    create_user(
+        client,
+        name="Admin User",
+        email=admin_credentials["email"],
+        password=admin_credentials["password"],
+        user_type="student",
+        roles=["ADMIN"]
+    )
+    token = login_user(
+        client,
+        email=admin_credentials["email"],
+        password=admin_credentials["password"]
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+    client.headers.update(headers)
+    
     # Crear autor para actualizar
     author_data = create_unique_author(client, "Update Author")
     author_id = _extract_id(author_data)
@@ -88,7 +145,7 @@ def test_update_author(client, clean_db):
         "description": "Updated description"
     }
     
-    response = client.put(f"{BASE_URL}{author_id}", json=updated_data)
+    response = client.put(f"{BASE_URL_AUTHORS}{author_id}", json=updated_data)
     assert response.status_code == 200
     
     updated_author = response.json()
@@ -100,10 +157,28 @@ def test_update_author(client, clean_db):
 def test_delete_author(client, clean_db):
     """Prueba eliminar un autor."""
     
+    # crear un usuario admin para autenticación
+    admin_credentials = email_and_password_from_user_response()
+    create_user(
+        client,
+        name="Admin User",
+        email=admin_credentials["email"],
+        password=admin_credentials["password"],
+        user_type="student",
+        roles=["ADMIN"]
+    )
+    token = login_user(
+        client,
+        email=admin_credentials["email"],
+        password=admin_credentials["password"]
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+    client.headers.update(headers)
+    
     author_data = create_unique_author(client, "Delete Author")
     author_id = _extract_id(author_data)
 
-    delete_response = client.delete(f"{BASE_URL}{author_id}")
+    delete_response = client.delete(f"{BASE_URL_AUTHORS}{author_id}")
     assert delete_response.status_code == 200
     delete_message = delete_response.json()
     assert "message" in delete_message
