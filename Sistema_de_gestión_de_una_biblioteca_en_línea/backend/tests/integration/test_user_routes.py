@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from main import app
 
-from tests.utils.auth_test_utils import create_user, login_user, email_and_password_from_user_response
+from tests.utils.auth_test_utils import create_user, login_user, email_and_password_from_user_response, setup_login_successful
 
 
 # -----------------------------------------------
@@ -51,18 +51,7 @@ def test_create_user(client, clean_db):
 def test_get_users(client, clean_db):
     """Prueba obtener todos los usuarios."""
 
-    test_data = email_and_password_from_user_response()
-    
-    create_user(
-        client,
-        name="List User",
-        email=test_data["email"],
-        password=test_data["password"],
-        user_type="general",
-        roles=["ADMIN","professor"]
-    )
-    # Iniciar sesión para obtener el token
-    token = login_user(client, test_data["email"], test_data["password"])
+    token = setup_login_successful(client, clean_db)
     response = client.get(BASE_URL, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200, f"Fallo al obtener usuarios: {response.status_code} - {response.text}"
     
@@ -202,18 +191,7 @@ def test_update_user_me(client, clean_db):
 def test_get_my_loan_history(client, clean_db):
     """Prueba obtener el historial de préstamos del usuario actual."""
     
-    test_data = email_and_password_from_user_response()
-    
-    create_user(
-        client,
-        name="Loan History User",
-        email=test_data["email"],
-        password=test_data["password"],
-        user_type="general",
-        roles=["student"]
-    )
-    
-    token = login_user(client, test_data["email"], test_data["password"])
+    token = setup_login_successful(client, clean_db)
     
     response = client.get(
         f"{BASE_URL}me/loans",

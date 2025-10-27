@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from main import app
 
-from tests.utils.auth_test_utils import create_user, login_user, email_and_password_from_user_response, create_unique_author, _extract_id, BASE_URL_AUTHORS
+from tests.utils.auth_test_utils import create_unique_author, _extract_id, BASE_URL_AUTHORS, setup_login_successful
 
 
 # -----------------------------------------------
@@ -16,21 +16,7 @@ client = TestClient(app)
 def test_author_creation(client, clean_db):
     """Prueba la creación de un autor."""
     
-    # crear un usuario admin para autenticación
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     
@@ -47,21 +33,7 @@ def test_author_creation(client, clean_db):
 def test_get_authors(client, clean_db):
     """Prueba obtener todos los autores."""
     
-    # crear un usuario admin para autenticación
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     
@@ -82,21 +54,7 @@ def test_get_authors(client, clean_db):
 def test_get_author_by_id(client, clean_db):
     """Prueba obtener un autor por su ID."""
     
-    # crear un usuario admin para autenticación
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     
@@ -117,21 +75,7 @@ def test_get_author_by_id(client, clean_db):
 def test_update_author(client, clean_db):
     """Prueba actualizar un autor existente."""
     
-    # crear un usuario admin para autenticación
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     
@@ -157,21 +101,7 @@ def test_update_author(client, clean_db):
 def test_delete_author(client, clean_db):
     """Prueba eliminar un autor."""
     
-    # crear un usuario admin para autenticación
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     

@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from main import app
 
-from tests.utils.auth_test_utils import create_user, login_user, email_and_password_from_user_response, create_unique_author, create_book, _extract_id, BASE_URL_BOOKS
+from tests.utils.auth_test_utils import create_unique_author, create_book, _extract_id, BASE_URL_BOOKS, setup_login_successful
 
 # -----------------------------------------------
 # CLIENTE Y CONFIGURACIÓN BASE
@@ -14,21 +14,7 @@ client = TestClient(app)
 def test_book_creation(client, clean_db):
     """Prueba la creación de un libro usando los helpers."""
     
-    # crear un usuario admin para autenticación
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     
@@ -45,20 +31,7 @@ def test_book_creation(client, clean_db):
 def test_get_books(client, clean_db):
     """Prueba obtener todos los libros. Aseguramos que haya al menos uno."""
     
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     
@@ -79,20 +52,7 @@ def test_get_books(client, clean_db):
 def test_get_books_id(client, clean_db):
     """Prueba la obtención de un libro por su ID."""
     
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     
@@ -120,20 +80,7 @@ def test_get_books_id(client, clean_db):
 def test_update_book(client, clean_db):
     """Prueba actualizar un libro existente."""
     
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     
@@ -174,20 +121,7 @@ def test_update_book(client, clean_db):
 def test_delete_book(client, clean_db):
     """Prueba eliminar un libro."""
     
-    admin_credentials = email_and_password_from_user_response()
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
+    token = setup_login_successful(client, clean_db)
     headers = {"Authorization": f"Bearer {token}"}
     client.headers.update(headers)
     

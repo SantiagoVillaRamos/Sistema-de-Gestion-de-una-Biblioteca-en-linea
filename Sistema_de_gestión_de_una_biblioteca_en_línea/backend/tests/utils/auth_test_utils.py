@@ -28,6 +28,7 @@ def create_user(client, name: str, email: str, password: str, user_type: str, ro
     }
     response = client.post(BASE_URL_USERS, json=user_data)
     assert response.status_code == 201, f"Fallo al crear usuario: {response.status_code} - {response.text}"
+    
     return response.json()
 
 
@@ -49,6 +50,33 @@ def email_and_password_from_user_response() -> Dict[str, str]:
         "email": test_email,
         "password": test_password
     }
+
+
+
+def setup_login_successful(client, clean_db):
+    """Prueba de inicio de sesión exitoso."""
+    
+    # Primero, crear un usuario para iniciar sesión
+    admin_credentials = email_and_password_from_user_response()
+    create_user(
+        client,
+        name="Admin User",
+        email=admin_credentials["email"],
+        password=admin_credentials["password"],
+        user_type="student",
+        roles=["ADMIN"]
+    )
+    
+    response = login_user(
+        client,
+        email=admin_credentials["email"],
+        password=admin_credentials["password"]
+    )
+    assert response is not None
+    assert isinstance(response, str)
+    return response
+    
+    
 
 # -----------------------------------------------
 # FUNCIONES HELPER 

@@ -32,3 +32,4 @@ def test_login_successful(client, clean_db):
     assert isinstance(response, str)
     
     
+    
