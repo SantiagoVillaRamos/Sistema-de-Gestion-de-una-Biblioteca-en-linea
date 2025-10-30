@@ -1,32 +1,11 @@
 from fastapi.testclient import TestClient
-from main import app
-
-from tests.utils.auth_test_utils import create_user, login_user, email_and_password_from_user_response, setup_login_successful
+from tests.utils.auth_test_utils import create_user, login_user, generate_unique_credentials, setup_login_successful, BASE_URL_USERS
 
 
-# -----------------------------------------------
-# CONFIGURACIÓN BASE    
-# -----------------------------------------------
-BASE_URL = "/users/"
-client = TestClient(app)
-# -----------------------------------------------
-
-# -----------------------------------------------
-# PRUEBAS       
-# -----------------------------------------------
-def test_create_user(client, clean_db):
+def test_create_user(client: TestClient, create_user_prerequisites):
     """Prueba la creación de un usuario."""
     
-    test_data = email_and_password_from_user_response()
-    
-    user_data = create_user(
-        client,
-        name="Test User",
-        email=test_data["email"],
-        password=test_data["password"],
-        user_type="general",
-        roles=["student"]
-    )
+    user_data, test_data = create_user_prerequisites
     
     assert user_data["name"] == "Test User"
     assert user_data["email"] == test_data["email"]
@@ -48,11 +27,12 @@ def test_create_user(client, clean_db):
 
 
 
-def test_get_users(client, clean_db):
+def test_get_users(client: TestClient, admin_user_token: str):
     """Prueba obtener todos los usuarios."""
 
-    token = setup_login_successful(client, clean_db)
-    response = client.get(BASE_URL, headers={"Authorization": f"Bearer {token}"})
+    token = admin_user_token
+    response = client.get(BASE_URL_USERS, headers={"Authorization": f"Bearer {token}"})
+    
     assert response.status_code == 200, f"Fallo al obtener usuarios: {response.status_code} - {response.text}"
     
     reponse_data = response.json()
@@ -84,22 +64,15 @@ def test_get_users(client, clean_db):
     
     
     
-def test_get_user_by_id(client, clean_db):
+def test_get_user_by_id(client: TestClient, create_user_prerequisites):
     """Prueba obtener un usuario por su ID."""
     
-    test_data = email_and_password_from_user_response()
-
-    user_data = create_user(
-        client,
-        name="Single User",
-        email=test_data["email"],
-        password=test_data["password"],
-        user_type="general",
-        roles=["student"]
-    )
+    user_data, test_data = create_user_prerequisites
+    
     user_id = user_data["user_id"]
     token = login_user(client, test_data["email"], test_data["password"])
-    response = client.get(f"{BASE_URL}{user_id}", headers={"Authorization": f"Bearer {token}"})
+    
+    response = client.get(f"{BASE_URL_USERS}{user_id}", headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200, f"Fallo al obtener usuarios: {response.status_code} - {response.text}"
     
     retrieved_user = response.json()
@@ -137,19 +110,10 @@ def test_get_user_by_id(client, clean_db):
     assert all(isinstance(book["due_date"], str) for book in retrieved_user["loaned_books"])
     
 
-def test_update_user_me(client, clean_db):
+def test_update_user_me(client: TestClient, create_user_prerequisites):
     """Prueba actualizar el usuario actual."""
     
-    test_data = email_and_password_from_user_response()
-    
-    create_user(
-        client,
-        name="Update Me User",
-        email=test_data["email"],
-        password=test_data["password"],
-        user_type="general",
-        roles=["student"]
-    )
+    user_data, test_data = create_user_prerequisites
     
     token = login_user(client, test_data["email"], test_data["password"])
     
@@ -161,7 +125,7 @@ def test_update_user_me(client, clean_db):
     }
     
     response = client.put(
-        f"{BASE_URL}me",
+        f"{BASE_URL_USERS}me",
         json=updated_info,
         headers={"Authorization": f"Bearer {token}"}
     )
@@ -170,7 +134,7 @@ def test_update_user_me(client, clean_db):
     
     updated_user = response.json()
     
-    assert updated_user["name"] == "Update Me User"
+    assert updated_user["name"] == "Test User"
     assert updated_user["email"] == f"updated_{test_data['email']}"
     assert updated_user["user_type"] == "general"
     assert updated_user["roles"] == ["student"]
@@ -188,13 +152,13 @@ def test_update_user_me(client, clean_db):
     assert isinstance(updated_user["roles"], list)
    
 
-def test_get_my_loan_history(client, clean_db):
+def test_get_my_loan_history(client: TestClient, admin_user_token):
     """Prueba obtener el historial de préstamos del usuario actual."""
     
-    token = setup_login_successful(client, clean_db)
+    token = admin_user_token
     
     response = client.get(
-        f"{BASE_URL}me/loans",
+        f"{BASE_URL_USERS}me/loans",
         headers={"Authorization": f"Bearer {token}"}
     )
     
@@ -226,25 +190,16 @@ def test_get_my_loan_history(client, clean_db):
 
 
 
-def test_delete_user_not_allowed(client, clean_db):
+def test_delete_user_not_allowed(client: TestClient, create_user_prerequisites):
     """Prueba que la eliminación de un usuario no esté permitida."""
     
-    test_data = email_and_password_from_user_response()
-    
-    user_data = create_user(
-        client,
-        name="Delete User",
-        email=test_data["email"],
-        password=test_data["password"],
-        user_type="general",
-        roles=["student"]
-    )
+    user_data, test_data = create_user_prerequisites
     
     user_id = user_data["user_id"]
     token = login_user(client, test_data["email"], test_data["password"])
     
     response = client.delete(
-        f"{BASE_URL}{user_id}",
+        f"{BASE_URL_USERS}{user_id}",
         headers={"Authorization": f"Bearer {token}"}
     )
     
@@ -252,11 +207,12 @@ def test_delete_user_not_allowed(client, clean_db):
     assert "Acceso denegado. Se requiere rol de administrador para eliminar usuarios." in response.text
     
     
-def test_delete_user_successful(client, clean_db):
+    
+def test_delete_user_successful(client: TestClient, clean_db):
     """Prueba que la eliminación de un usuario SÍ esté permitida para un usuario administrador."""
     
-    admin_data = email_and_password_from_user_response()
-    target_data = email_and_password_from_user_response()
+    admin_data = generate_unique_credentials()
+    target_data = generate_unique_credentials()
     
     create_user(
         client,
@@ -280,14 +236,14 @@ def test_delete_user_successful(client, clean_db):
     admin_token = login_user(client, admin_data["email"], admin_data["password"])
     
     response = client.delete(
-        f"{BASE_URL}{target_user_id}",
+        f"{BASE_URL_USERS}{target_user_id}",
         headers={"Authorization": f"Bearer {admin_token}"}
     )
     
     assert response.status_code == 204, f"Fallo al eliminar usuario: {response.status_code} - {response.text}"
     
     check_response = client.get(
-        f"{BASE_URL}{target_user_id}",
+        f"{BASE_URL_USERS}{target_user_id}",
         headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert check_response.status_code == 404, "El usuario debería haber sido eliminado pero aún existe."

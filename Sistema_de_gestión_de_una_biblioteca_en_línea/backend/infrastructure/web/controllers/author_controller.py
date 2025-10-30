@@ -83,7 +83,7 @@ async def delete_author(
     facade: Annotated[AuthorFacade, Depends(get_author_facade)],
     
 ):
-    author_deleted = await facade.delete_author_data(author_id)
+    await facade.delete_author_data(author_id)
     
     return AuthorMessage(
         message=f"Autor eliminado, y todos sus datos han sido eliminados."

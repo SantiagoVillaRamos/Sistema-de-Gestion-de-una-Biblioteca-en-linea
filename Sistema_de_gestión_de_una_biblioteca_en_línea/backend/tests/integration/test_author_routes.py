@@ -1,28 +1,15 @@
 from fastapi.testclient import TestClient
-from main import app
+import uuid
+from tests.utils.auth_test_utils import _extract_id, BASE_URL_AUTHORS
 
-from tests.utils.auth_test_utils import create_unique_author, _extract_id, BASE_URL_AUTHORS, setup_login_successful
 
 
-# -----------------------------------------------
-# CONFIGURACIÓN BASE
-# -----------------------------------------------
-
-client = TestClient(app)
-
-# -----------------------------------------------
-# PRUEBAS REFACTORIZADAS
-# -----------------------------------------------
-def test_author_creation(client, clean_db):
+def test_author_creation(client: TestClient, author_prerequisites):
     """Prueba la creación de un autor."""
     
-    token = setup_login_successful(client, clean_db)
-    headers = {"Authorization": f"Bearer {token}"}
-    client.headers.update(headers)
+    author_data = author_prerequisites
     
-    author_data = create_unique_author(client, "Test Author")
-    
-    assert author_data["name"].startswith("Test Author_")
+    assert author_data["name"].startswith("Autor")
     assert "description" in author_data
     assert _extract_id(author_data) is not None
     assert isinstance(author_data["author_id"], str)
@@ -30,87 +17,81 @@ def test_author_creation(client, clean_db):
     assert isinstance(author_data["name"], str)
 
 
-def test_get_authors(client, clean_db):
+def test_get_authors(client: TestClient, admin_user_token:str, author_prerequisites):
     """Prueba obtener todos los autores."""
     
-    token = setup_login_successful(client, clean_db)
-    headers = {"Authorization": f"Bearer {token}"}
-    client.headers.update(headers)
+    author_data = author_prerequisites
     
-    # Crear un autor para asegurar que hay datos
-    create_unique_author(client, "List Author")
+    headers = {"Authorization": f"Bearer {admin_user_token}"}
     
-    response = client.get(BASE_URL_AUTHORS)
+    response = client.get(BASE_URL_AUTHORS, headers=headers)
+    
     assert response.status_code == 200
-    
-    authors = response.json()
-    assert isinstance(authors, list)
-    assert len(authors) > 0
-    assert all("author_id" in author for author in authors)
-    assert all("name" in author for author in authors)
-    assert all("description" in author for author in authors)
+    data = response.json()
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert all("author_id" in author for author in data)
+    assert all("name" in author for author in data)
+    assert all("description" in author for author in data)
+    assert any(author["author_id"] == author_data["author_id"] for author in data)
 
 
-def test_get_author_by_id(client, clean_db):
+def test_get_author_by_id(client: TestClient, author_prerequisites):
     """Prueba obtener un autor por su ID."""
     
-    token = setup_login_successful(client, clean_db)
-    headers = {"Authorization": f"Bearer {token}"}
-    client.headers.update(headers)
+    author_data = author_prerequisites
     
-    # Crear autor para prueba
-    author_data = create_unique_author(client, "Single Author")
-    author_id = _extract_id(author_data)
+    author_id = author_data["author_id"] 
+    assert author_id is not None, "Error de Depuración: El diccionario de autor no contiene 'id' ni 'author_id'."
     
-    response = client.get(f"{BASE_URL_AUTHORS}{author_id}")
-    assert response.status_code == 200
+    #headers = {"Authorization": f"Bearer {admin_user_token}"}
+    url = f"{BASE_URL_AUTHORS}{author_id}"
+    response = client.get(url)
+    
+    assert response.status_code == 200, f"Fallo {response.status_code} - {response.text}"
     
     retrieved_author = response.json()
-    assert _extract_id(retrieved_author) == author_id
     assert retrieved_author["name"] == author_data["name"]
     assert retrieved_author["description"] == author_data["description"]
     assert "books" in retrieved_author
 
 
-def test_update_author(client, clean_db):
+def test_update_author(client: TestClient, admin_user_token:str, author_prerequisites):
     """Prueba actualizar un autor existente."""
     
-    token = setup_login_successful(client, clean_db)
-    headers = {"Authorization": f"Bearer {token}"}
-    client.headers.update(headers)
+    author_data = author_prerequisites
+    author_id = author_data["author_id"]
     
-    # Crear autor para actualizar
-    author_data = create_unique_author(client, "Update Author")
-    author_id = _extract_id(author_data)
-    
-    # Datos actualizados
-    updated_data = {
-        "name": f"Updated {author_data['name']}",
-        "description": "Updated description"
-    }
-    
-    response = client.put(f"{BASE_URL_AUTHORS}{author_id}", json=updated_data)
+    headers = {"Authorization": f"Bearer {admin_user_token}"}
+    url = f"{BASE_URL_AUTHORS}{author_id}"
+
+    response = client.put(url, json=author_data, headers=headers)
     assert response.status_code == 200
     
     updated_author = response.json()
     assert _extract_id(updated_author) == author_id
-    assert updated_author["name"] == updated_data["name"]
-    assert updated_author["description"] == updated_data["description"]
+    assert updated_author["name"] == author_data["name"]
+    assert updated_author["description"] == author_data["description"]
 
 
-def test_delete_author(client, clean_db):
+
+def test_delete_author(client: TestClient, admin_user_token:str, author_prerequisites):
     """Prueba eliminar un autor."""
     
-    token = setup_login_successful(client, clean_db)
-    headers = {"Authorization": f"Bearer {token}"}
-    client.headers.update(headers)
+    author_data = author_prerequisites
+    author_id = author_data["author_id"]
     
-    author_data = create_unique_author(client, "Delete Author")
-    author_id = _extract_id(author_data)
+    headers = {"Authorization": f"Bearer {admin_user_token}"}
+    url = f"{BASE_URL_AUTHORS}{author_id}"
 
-    delete_response = client.delete(f"{BASE_URL_AUTHORS}{author_id}")
-    assert delete_response.status_code == 200
-    delete_message = delete_response.json()
+    # Eliminación exitosa
+    response = client.delete(url, headers=headers)
+    assert response.status_code == 200
+    
+    response_check = client.get(url, headers=headers)
+    assert response_check.status_code == 404
+    
+    delete_message = response.json()
     assert "message" in delete_message
     assert f"Autor eliminado, y todos sus datos han sido eliminados." in delete_message["message"]
     

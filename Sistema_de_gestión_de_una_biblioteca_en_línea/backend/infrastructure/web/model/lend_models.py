@@ -18,13 +18,9 @@ class LoanedBookResponse(BaseModel):
 class LoanResponse(BaseModel):
     
     message: str
-    
-    # Datos del préstamo
     loan_id: str
     loan_date: datetime
     due_date: datetime
-    
-    # Datos enriquecidos (Sub-modelos)
     user: LoanedUserResponse
     book: LoanedBookResponse
 

@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from main import app
 
-from tests.utils.auth_test_utils import create_user, login_user, email_and_password_from_user_response
+from tests.utils.auth_test_utils import create_user, login_user, generate_unique_credentials
 
 
 Client = TestClient(app)
@@ -13,7 +13,7 @@ def test_login_successful(client, clean_db):
     """Prueba de inicio de sesión exitoso."""
     
     # Primero, crear un usuario para iniciar sesión
-    admin_credentials = email_and_password_from_user_response()
+    admin_credentials = generate_unique_credentials()
     create_user(
         client,
         name="Admin User",

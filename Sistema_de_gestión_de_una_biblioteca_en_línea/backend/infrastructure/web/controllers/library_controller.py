@@ -11,13 +11,12 @@ from typing import Annotated, List
 admin_role_checker = RoleChecker(["ADMIN"])
 
 router = APIRouter(
-    prefix="/library",
     tags=["Library"]
 )
 
 
 @router.post(
-    "/books/lend", 
+    "/lend", 
     status_code=status.HTTP_201_CREATED,
     response_model=LoanResponse,
     dependencies=[Depends(admin_role_checker)]
@@ -33,7 +32,7 @@ async def lend_book(
 
 
 @router.post(
-    "/books/return", 
+    "/return", 
     status_code=status.HTTP_200_OK,
     response_model=ReturnBookResponse,
     dependencies=[Depends(admin_role_checker)]

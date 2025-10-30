@@ -37,7 +37,6 @@ async def add_book(
 async def get_all_books(
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
-    
     enriched_books = await facade.get_all_books()
     return [
         BookAPIMapper.from_enriched_dict_to_response(book)
@@ -56,7 +55,6 @@ async def get_book_details(
     book_id: str,
     facade: Annotated[FacadeBook, Depends(get_book_facade)]
 ):
-    
     response_dto = await facade.get_book_by_id(book_id) 
     return BookAPIMapper.from_full_details_to_response(response_dto)
    

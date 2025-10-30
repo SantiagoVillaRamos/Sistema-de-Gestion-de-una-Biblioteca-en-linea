@@ -89,7 +89,7 @@ class SQLAlchemyUserRepository:
                 user_id=str(db_user.id),
                 name=db_user.name,
                 email=Email(db_user.email),  
-                password=Password(db_user.hashed_password),  
+                password=Password(db_user.password),  
                 user_type=db_user.user_type,
                 roles=db_user.roles.split(",") if db_user.roles else [], 
                 is_active=db_user.is_active
