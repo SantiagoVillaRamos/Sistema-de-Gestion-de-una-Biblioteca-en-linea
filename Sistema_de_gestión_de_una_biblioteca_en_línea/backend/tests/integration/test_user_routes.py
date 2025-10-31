@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from tests.utils.auth_test_utils import create_user, login_user, generate_unique_credentials, setup_login_successful, BASE_URL_USERS
+from tests.utils.auth_test_utils import create_user, login_user, generate_unique_credentials, BASE_URL_USERS
 
 
 def test_create_user(client: TestClient, create_user_prerequisites):

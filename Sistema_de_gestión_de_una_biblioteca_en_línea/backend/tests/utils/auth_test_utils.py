@@ -16,7 +16,7 @@ BASE_URL_LOAN = "/library/books"
 
 
 # -----------------------------------------------
-# FUNCIONES HELPER (PARÁ REDUCIR REPETICIÓN) USER
+# FUNCIONES HELPER (PARÁ REDUCIR REPETICIÓN)
 # -----------------------------------------------
 def create_user(client: TestClient, name: str, email: str, password: str, user_type: str, roles: list) -> Dict[str, Any]:
     """Crea un usuario y devuelve su respuesta JSON."""
@@ -53,37 +53,6 @@ def generate_unique_credentials() -> Dict[str, str]:
         "password": test_password
     }
 
-
-
-def setup_login_successful(client, clean_db):
-    """Prueba de inicio de sesión exitoso."""
-    
-    admin_credentials = {
-        "email": f"admin_setup_{uuid.uuid4().hex[:8]}@gmail.com",
-        "password": "AdminSetupPassword123"
-    }
-    create_user(
-        client,
-        name="Admin User",
-        email=admin_credentials["email"],
-        password=admin_credentials["password"],
-        user_type="student",
-        roles=["ADMIN"]
-    )
-    
-    token = login_user(
-        client,
-        email=admin_credentials["email"],
-        password=admin_credentials["password"]
-    )
-    assert token is not None
-    assert isinstance(token, str)
-    return token
-    
-    
-# -----------------------------------------------
-# FUNCIONES HELPER 
-# -----------------------------------------------
 
 def create_unique_author(client: TestClient, token: str, name_prefix: str = "Test Author") -> Dict[str, Any]:
     """Crea un autor único y devuelve su respuesta JSON."""

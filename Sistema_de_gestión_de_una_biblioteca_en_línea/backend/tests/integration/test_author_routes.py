@@ -44,7 +44,6 @@ def test_get_author_by_id(client: TestClient, author_prerequisites):
     author_id = author_data["author_id"] 
     assert author_id is not None, "Error de Depuración: El diccionario de autor no contiene 'id' ni 'author_id'."
     
-    #headers = {"Authorization": f"Bearer {admin_user_token}"}
     url = f"{BASE_URL_AUTHORS}{author_id}"
     response = client.get(url)
     
