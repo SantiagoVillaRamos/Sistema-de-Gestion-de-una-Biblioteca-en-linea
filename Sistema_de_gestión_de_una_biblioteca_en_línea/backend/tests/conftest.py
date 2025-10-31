@@ -6,10 +6,23 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from typing import Dict, Any, List
 from unittest.mock import MagicMock, AsyncMock
+from datetime import datetime, timedelta
 
 from application.dto.user_command_dto import CreateUserCommand
 from application.ports.user_repository import UserRepository
+from application.ports.loan_repository import LoanRepository
+from application.ports.book_repository import BookRepository
+from application.ports.author_repository import AuthorRepository
 from domain.models.factory.userFactory import UserFactory
+from domain.models.author import Author
+from domain.models.book import Book
+from domain.models.loan import Loan
+from domain.models.user import User
+from domain.models.value_objects.isbn import ISBN
+from domain.models.value_objects.title import Title
+from domain.models.value_objects.author.author_name import AuthorName
+from domain.models.value_objects.author.author_description import AuthorDescription
+from domain.models.value_objects.due_date import DueDate
 
 from infrastructure.persistence.models import AuthorModel, BookModel, UserModel, LoanModel
 
@@ -204,14 +217,40 @@ def create_user_prerequisites(client: TestClient):
 
 
 @pytest.fixture
+def existing_user() -> User:
+    """Fixture para un objeto User ya existente."""
+    return User(
+        user_id=str(uuid.uuid4()),
+        name="Elena García",
+        email="elena.g@gmail.com",
+        password="hashed_password",
+        user_type="general",
+        roles=["ADMIN"],
+        is_active=True
+    )
+
+
+@pytest.fixture
 def use_case_dependencies():
     """
     Fixture que proporciona mocks de las dependencias.
     Devuelve una tupla (mock_repo, mock_factory).
     """
-    mock_repo = AsyncMock(spec=UserRepository)
+    mock_user_repo = AsyncMock(spec=UserRepository)
+    mock_loan_repo = AsyncMock(spec=LoanRepository)
+    mock_book_repo = AsyncMock(spec=BookRepository)
+    mock_author_repo = AsyncMock(spec=AuthorRepository)
     mock_factory = MagicMock(spec=UserFactory)
-    return mock_repo, mock_factory
+    
+    return {
+        'user_repo': mock_user_repo,
+        'loan_repo': mock_loan_repo,
+        'book_repo': mock_book_repo,
+        'author_repo': mock_author_repo,
+        'user_factory': mock_factory
+    }
+
+
 
 @pytest.fixture
 def create_user_command() -> CreateUserCommand:
@@ -223,3 +262,35 @@ def create_user_command() -> CreateUserCommand:
         user_type="general",
         roles=["ADMIN"],
     )
+    
+    
+@pytest.fixture
+def loan_and_book_data(existing_user) -> tuple:
+    """
+    Fixture que proporciona datos complejos de préstamos, libros y autores
+    para simular el flujo completo.
+    Returns: (loans_list, books_list, authors_list)
+    """
+    # Autores
+    author_j_r_r = Author(str(uuid.uuid4()), AuthorName(value="J.R.R. Tolkien"), AuthorDescription(value="Breve descripcion del libro RAMDOM"))
+    author_a_c = Author(str(uuid.uuid4()), AuthorName(value="Arthur C. Clarke"), AuthorDescription(value="Breve descripcion del libro RAMDOM"))
+    authors_list = [author_j_r_r, author_a_c]
+    
+    # Libros
+    book_ring = Book(str(uuid.uuid4()), ISBN(value="978-0132350884"), Title(value="The Lord of the Rings"), [author_j_r_r.author_id], "Descripcion que es RAMDOM", 5)
+    book_odyssey = Book(str(uuid.uuid4()), ISBN(value="978-0132350885"), Title(value="2001: A Space Odyssey"), [author_a_c.author_id], "Descripcion que es RAMDOM", 4)
+    books_list = [book_ring, book_odyssey]
+    
+    # CLAVE: Definir instancias de datetime y DueDate
+    loan_date_1 = datetime.now() - timedelta(days=5)
+    due_date_1 = DueDate(loan_date_1 + timedelta(days=10))
+
+    loan_date_2 = datetime.now() - timedelta(days=1)
+    due_date_2 = DueDate(loan_date_2 + timedelta(days=14))
+    
+    # Préstamos Activos
+    loan_1 = Loan(str(uuid.uuid4()), book_ring.book_id, existing_user.user_id, loan_date=loan_date_1, due_date=due_date_1)
+    loan_2 = Loan(str(uuid.uuid4()), book_odyssey.book_id, existing_user.user_id, loan_date=loan_date_2, due_date=due_date_2)
+    loans_list = [loan_1, loan_2]
+    
+    return loans_list, books_list, authors_list

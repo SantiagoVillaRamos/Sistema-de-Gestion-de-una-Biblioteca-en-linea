@@ -10,3 +10,5 @@ class GetAllUsersUseCase:
     async def execute(self) -> List[User]:
        
         return await self.user_repo.find_all()
+    
+    
