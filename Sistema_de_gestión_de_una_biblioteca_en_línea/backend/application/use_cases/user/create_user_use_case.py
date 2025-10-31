@@ -1,7 +1,8 @@
 from application.ports.user_repository import UserRepository
+from domain.models.factory.userFactory import UserFactory
 from domain.models.user import User
 from application.dto.user_command_dto import CreateUserCommand
-from domain.models.factory.userFactory import UserFactory
+
 
 class CreateUserUseCase:
 
@@ -22,3 +23,4 @@ class CreateUserUseCase:
         await self.user_repo.save(new_user)
         
         return new_user
+    

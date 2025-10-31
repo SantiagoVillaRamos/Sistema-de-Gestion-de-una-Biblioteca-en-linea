@@ -5,6 +5,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from typing import Dict, Any, List
+from unittest.mock import MagicMock, AsyncMock
+
+from application.dto.user_command_dto import CreateUserCommand
+from application.ports.user_repository import UserRepository
+from domain.models.factory.userFactory import UserFactory
 
 from infrastructure.persistence.models import AuthorModel, BookModel, UserModel, LoanModel
 
@@ -198,3 +203,23 @@ def create_user_prerequisites(client: TestClient):
     return user_data, test_data
 
 
+@pytest.fixture
+def use_case_dependencies():
+    """
+    Fixture que proporciona mocks de las dependencias.
+    Devuelve una tupla (mock_repo, mock_factory).
+    """
+    mock_repo = AsyncMock(spec=UserRepository)
+    mock_factory = MagicMock(spec=UserFactory)
+    return mock_repo, mock_factory
+
+@pytest.fixture
+def create_user_command() -> CreateUserCommand:
+    """Fixture que proporciona un comando estándar para crear un usuario."""
+    return CreateUserCommand(
+        name="John Doe",
+        email="john.doe@gmail.com",
+        password="securepassword123",
+        user_type="general",
+        roles=["ADMIN"],
+    )
