@@ -31,6 +31,7 @@ from application.use_cases.library.lend_book_use_case import LendBookUseCase
 from application.use_cases.library.return_book_use_case import ReturnBookUseCase
 from application.use_cases.library.get_loan_report_use_case import GetLoanReportUseCase
 from domain.models.factory.userFactory import UserFactory
+from domain.models.factory.bookFactory import BookFactory
 from domain.services.UpdateCurrentService import UserUpdaterService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -49,6 +50,8 @@ class Repositories:
     user_updated_service = UserUpdaterService(password_service=password_service)
     
     auth_service = JwtAuthService(secret_key="a_very_secret_key")
+    
+    book_factory = BookFactory()
     
 repos = Repositories()
 
@@ -128,7 +131,8 @@ def get_user_facade() -> UserFacade:
 def get_book_facade() -> FacadeBook:
     create_book_use_case = CreateBookUseCase(
         book_repository=repos.book_repo, 
-        author_repository=repos.author_repo
+        author_repository=repos.author_repo, 
+        book_factory=repos.book_factory
     )
     update_book_use_case = UpdateBookUseCase(
         book_repository=repos.book_repo, 

@@ -2,7 +2,7 @@ from typing import Dict, Optional
 from application.ports.user_repository import UserRepository
 from domain.models.user import User
 from infrastructure.mapper_infrastructure.user_mapper import UserMapper
-from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError, BusinessUnauthorizedError
+from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
 
 class UserInMemoryRepository(UserRepository):
     

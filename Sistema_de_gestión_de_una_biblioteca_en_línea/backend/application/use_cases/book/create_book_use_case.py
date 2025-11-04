@@ -9,15 +9,16 @@ from typing import List
 
 class CreateBookUseCase:
     
-    def __init__(self, book_repository: BookRepository, author_repository:AuthorRepository):
+    def __init__(self, book_repository: BookRepository, author_repository:AuthorRepository, book_factory:BookFactory):
         self.book_repo = book_repository
         self.author_repo = author_repository
+        self.book_factory = book_factory
 
     async def execute(self, command: CreateBookCommand) -> CreateBookResult:
         
         authors = await self._validate_authors_exist(command.author)
         
-        new_book = BookFactory.create(
+        new_book = self.book_factory.create(
             isbn=command.isbn,
             title=command.title,
             author=command.author,

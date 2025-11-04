@@ -11,3 +11,5 @@ class DeleteUserUseCase:
         
         user = await self.user_repo.find_by_id(user_id)
         await self.user_repo.delete(user)
+        
+        

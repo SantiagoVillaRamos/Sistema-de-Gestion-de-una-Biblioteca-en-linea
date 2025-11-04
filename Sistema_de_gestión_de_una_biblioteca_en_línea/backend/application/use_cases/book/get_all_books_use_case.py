@@ -4,7 +4,9 @@ from domain.models.book import Book
 from domain.models.author import Author
 from application.ports.author_repository import AuthorRepository
 
+
 class GetAllBooksUseCase:
+    
     def __init__(self, book_repository: BookRepository, author_repository: AuthorRepository):
         self.author_repository = author_repository
         self.book_repository = book_repository
@@ -64,3 +66,5 @@ class GetAllBooksUseCase:
             })
 
         return enriched_books
+    
+    

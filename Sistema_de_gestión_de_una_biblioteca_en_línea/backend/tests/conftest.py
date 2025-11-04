@@ -7,13 +7,14 @@ from sqlalchemy.pool import StaticPool
 from typing import Dict, Any, List
 from unittest.mock import MagicMock, AsyncMock
 from datetime import datetime, timedelta
-
-from application.dto.user_command_dto import CreateUserCommand
+from application.dto.book_command_dto import CreateBookCommand
+from application.dto.user_command_dto import CreateUserCommand, UpdateUserCommand
 from application.ports.user_repository import UserRepository
 from application.ports.loan_repository import LoanRepository
 from application.ports.book_repository import BookRepository
 from application.ports.author_repository import AuthorRepository
 from domain.models.factory.userFactory import UserFactory
+from domain.models.factory.bookFactory import BookFactory
 from domain.models.author import Author
 from domain.models.book import Book
 from domain.models.loan import Loan
@@ -23,6 +24,7 @@ from domain.models.value_objects.title import Title
 from domain.models.value_objects.author.author_name import AuthorName
 from domain.models.value_objects.author.author_description import AuthorDescription
 from domain.models.value_objects.due_date import DueDate
+from domain.services.UpdateCurrentService import UserUpdaterService
 
 from infrastructure.persistence.models import AuthorModel, BookModel, UserModel, LoanModel
 
@@ -38,6 +40,8 @@ from tests.utils.auth_test_utils import create_book, create_user, generate_uniqu
 
 # Crear base de datos en memoria para pruebas
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+
+# los fixture proporcionan datos que se pueden utilizar en las pruebas.
 
 @pytest.fixture(scope="session")
 def engine():
@@ -229,6 +233,29 @@ def existing_user() -> User:
         is_active=True
     )
 
+@pytest.fixture
+def existing_author() -> Author:
+    """Fixture para un objeto User ya existente."""
+    return Author(
+        author_id=str(uuid.uuid4()),
+        name=AuthorName("Robert C. Martin"),
+        description=AuthorDescription("Este es un AUTORAZO del desarrollo de software")
+    )
+
+
+@pytest.fixture
+def existing_book(existing_author) -> Book:
+    """Fixture para un objeto User ya existente."""
+    return Book(
+        book_id=str(uuid.uuid4()),
+        isbn=ISBN("978-0132350884"),
+        title=Title("Clean Code"),
+        author=[existing_author.author_id],
+        description="Breve descripcion del libro Clean Code",
+        available_copies=5,
+    )
+
+
 
 @pytest.fixture
 def use_case_dependencies():
@@ -241,13 +268,17 @@ def use_case_dependencies():
     mock_book_repo = AsyncMock(spec=BookRepository)
     mock_author_repo = AsyncMock(spec=AuthorRepository)
     mock_factory = MagicMock(spec=UserFactory)
+    mock_factory_book = MagicMock(spec=BookFactory)
+    mock_update_service = MagicMock(spec=UserUpdaterService)
     
     return {
         'user_repo': mock_user_repo,
         'loan_repo': mock_loan_repo,
         'book_repo': mock_book_repo,
         'author_repo': mock_author_repo,
-        'user_factory': mock_factory
+        'user_factory': mock_factory,
+        'book_factory': mock_factory_book,
+        'user_updater_service': mock_update_service
     }
 
 
@@ -262,6 +293,33 @@ def create_user_command() -> CreateUserCommand:
         user_type="general",
         roles=["ADMIN"],
     )
+    
+    
+@pytest.fixture
+def update_user_command(existing_user) -> UpdateUserCommand:
+    """Fixture que proporciona un comando estándar para actualiazar un usuario."""
+
+    return UpdateUserCommand(
+        user_id = existing_user.user_id,
+        name="Pardo Camilo",
+        new_email="Pardo_camilo@gmail.com",
+        new_password="securepassword123567",
+        current_password=existing_user.password
+    )
+    
+
+@pytest.fixture
+def create_book_command(existing_author) -> CreateBookCommand:
+    """Fixture que proporciona un comando estándar para crear un usuario."""
+    return CreateBookCommand(
+        
+        isbn=ISBN("978-0132350885"),
+        title=Title("Clean Arquitecture"),
+        author=[existing_author.author_id],
+        description="Breve descripcion del libro Clean Code",
+        available_copies=5,
+    )
+
     
     
 @pytest.fixture
@@ -291,6 +349,53 @@ def loan_and_book_data(existing_user) -> tuple:
     # Préstamos Activos
     loan_1 = Loan(str(uuid.uuid4()), book_ring.book_id, existing_user.user_id, loan_date=loan_date_1, due_date=due_date_1)
     loan_2 = Loan(str(uuid.uuid4()), book_odyssey.book_id, existing_user.user_id, loan_date=loan_date_2, due_date=due_date_2)
+    loans_list = [loan_1, loan_2]
+    
+    return loans_list, books_list, authors_list
+
+
+@pytest.fixture
+def loan_history_data(existing_user) -> tuple:
+    """
+    Fixture que proporciona datos complejos para el historial de préstamos: 
+    Activos (sin returned_date) e Históricos (con returned_date).
+    Returns: (loans_list, books_list, authors_list)
+    """
+    
+    fixed_now = datetime.now()
+    
+    author_j_r_r = Author(str(uuid.uuid4()), AuthorName(value="J.R.R. Tolkien"), AuthorDescription(value="Breve descripcion del libro RAMDOM"))
+    author_a_c = Author(str(uuid.uuid4()), AuthorName(value="Arthur C. Clarke"), AuthorDescription(value="Breve descripcion del libro RAMDOM"))
+    authors_list = [author_j_r_r, author_a_c]
+    
+    book_ring = Book(str(uuid.uuid4()), ISBN(value="978-0132350884"), Title(value="The Lord of the Rings"), [author_j_r_r.author_id], "Descripcion que es RAMDOM", 5)
+    book_odyssey = Book(str(uuid.uuid4()), ISBN(value="978-0132350885"), Title(value="2001: A Space Odyssey"), [author_a_c.author_id], "Descripcion que es RAMDOM", 4)
+    books_list = [book_ring, book_odyssey]
+    
+    loan_date_1 = fixed_now - timedelta(days=20)
+    due_date_1 = DueDate(fixed_now + timedelta(days=10))
+
+    loan_date_2 = fixed_now - timedelta(days=15)
+    due_date_2 = DueDate(fixed_now + timedelta(days=5))
+    
+    # Préstamo 1: Histórico (ya devuelto)
+    loan_1 = Loan(
+        id=str(uuid.uuid4()), 
+        book_id=book_ring.book_id,
+        user_id=existing_user.user_id,
+        loan_date=loan_date_1, 
+        due_date=due_date_1,
+        is_returned=True
+    )
+    # Préstamo 2: Activo (no devuelto)
+    loan_2 = Loan(
+        id=str(uuid.uuid4()), 
+        book_id=book_odyssey.book_id, 
+        user_id=existing_user.user_id, 
+        loan_date=loan_date_2, 
+        due_date=due_date_2,
+        is_returned=False
+    )
     loans_list = [loan_1, loan_2]
     
     return loans_list, books_list, authors_list

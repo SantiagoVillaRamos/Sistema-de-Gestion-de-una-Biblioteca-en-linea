@@ -67,3 +67,5 @@ class GetUserLoanHistoryUseCase:
         authors_map = {author.author_id: author for author in authors}
         
         return books_map, authors_map
+    
+    

@@ -103,3 +103,4 @@ async def delete_user(
 ):
     await facade.delete_user(user_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
