@@ -7,6 +7,7 @@ from sqlalchemy.pool import StaticPool
 from typing import Dict, Any, List
 from unittest.mock import MagicMock, AsyncMock
 from datetime import datetime, timedelta
+from application.dto.author_command_dto import UpdateAuthorCommand
 from application.dto.book_command_dto import CreateBookCommand
 from application.dto.user_command_dto import CreateUserCommand, UpdateUserCommand
 from application.ports.user_repository import UserRepository
@@ -15,6 +16,7 @@ from application.ports.book_repository import BookRepository
 from application.ports.author_repository import AuthorRepository
 from domain.models.factory.userFactory import UserFactory
 from domain.models.factory.bookFactory import BookFactory
+from domain.models.factory.authorFactory import AuthorFactory
 from domain.models.author import Author
 from domain.models.book import Book
 from domain.models.loan import Loan
@@ -241,6 +243,16 @@ def existing_author() -> Author:
         name=AuthorName("Robert C. Martin"),
         description=AuthorDescription("Este es un AUTORAZO del desarrollo de software")
     )
+    
+
+@pytest.fixture
+def another_author() -> Author:
+    """Fixture para un segundo autor (Co-Autor)."""
+    return Author(
+        author_id=str(uuid.uuid4()),
+        name=AuthorName("Micah Martin"),
+        description=AuthorDescription("Co-autor de Clean Code")
+    )
 
 
 @pytest.fixture
@@ -269,6 +281,7 @@ def use_case_dependencies():
     mock_author_repo = AsyncMock(spec=AuthorRepository)
     mock_factory = MagicMock(spec=UserFactory)
     mock_factory_book = MagicMock(spec=BookFactory)
+    mock_author_factory = MagicMock(spec=AuthorFactory)
     mock_update_service = MagicMock(spec=UserUpdaterService)
     
     return {
@@ -278,6 +291,7 @@ def use_case_dependencies():
         'author_repo': mock_author_repo,
         'user_factory': mock_factory,
         'book_factory': mock_factory_book,
+        'author_factory': mock_author_factory,
         'user_updater_service': mock_update_service
     }
 
@@ -305,6 +319,15 @@ def update_user_command(existing_user) -> UpdateUserCommand:
         new_email="Pardo_camilo@gmail.com",
         new_password="securepassword123567",
         current_password=existing_user.password
+    )
+    
+    
+@pytest.fixture
+def update_author_command() -> UpdateAuthorCommand:
+    """Fixture que proporciona un comando estándar para actualizar un autor."""
+    return UpdateAuthorCommand(
+        name="Martin Fowler",
+        description="Autor de Refactoring"
     )
     
 
@@ -399,3 +422,26 @@ def loan_history_data(existing_user) -> tuple:
     loans_list = [loan_1, loan_2]
     
     return loans_list, books_list, authors_list
+
+
+@pytest.fixture
+def existing_books_for_author(existing_author, another_author) -> List[Book]:
+    """Fixture que devuelve libros escritos por el autor principal (algunos co-escritos)."""
+    book1 = Book(
+        book_id=str(uuid.uuid4()),
+        isbn=ISBN("978-0132350884"),
+        title=Title("Clean Code"),
+        author=[existing_author.author_id, another_author.author_id], 
+        description="...",
+        available_copies=5
+    )
+    book2 = Book(
+        book_id=str(uuid.uuid4()),
+        isbn=ISBN("978-0134494166"),
+        title=Title("Clean Architecture"),
+        author=[existing_author.author_id], 
+        description="...",
+        available_copies=3
+    )
+    return [book1, book2]
+

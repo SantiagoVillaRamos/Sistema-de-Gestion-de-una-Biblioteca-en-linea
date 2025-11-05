@@ -5,12 +5,13 @@ from domain.models.factory.authorFactory import AuthorFactory
 
 class CreateAuthorUseCase:
     
-    def __init__(self, author_repository: AuthorRepository):
+    def __init__(self, author_repository: AuthorRepository, author_factory:AuthorFactory):
         self.author_repo = author_repository
-
+        self.author_factory = author_factory
+        
     async def execute(self, command: CreateAuthorCommand) -> Author:
         
-        new_author: Author = AuthorFactory.create(
+        new_author: Author = self.author_factory.create(
             name=command.name,
             description=command.description
         )

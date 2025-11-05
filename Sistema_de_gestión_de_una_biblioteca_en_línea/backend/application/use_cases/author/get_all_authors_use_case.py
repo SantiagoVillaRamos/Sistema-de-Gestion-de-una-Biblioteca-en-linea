@@ -10,3 +10,5 @@ class GetAllAuthorsUseCase:
     async def execute(self) -> List[Author]:
         
         return await self.author_repo.get_all()
+    
+    
