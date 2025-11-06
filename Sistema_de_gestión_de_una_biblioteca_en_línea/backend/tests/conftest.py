@@ -6,7 +6,10 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from typing import Dict, Any, List
 from unittest.mock import MagicMock, AsyncMock
-from datetime import datetime, timedelta
+
+from datetime import datetime, timedelta, timezone
+from freezegun import freeze_time
+
 from application.dto.author_command_dto import UpdateAuthorCommand
 from application.dto.library_command_dto import LendBookCommand
 from application.dto.book_command_dto import CreateBookCommand
@@ -563,6 +566,44 @@ def existing_books_for_author(existing_author, other_author) -> List[Book]:
 
 #---------------------------------------------------------------------------
 
+# Define una zona horaria fija para todas las pruebas
+TEST_TZ = timezone(timedelta(hours=-5)) 
+A_DAY = timedelta(days=1)
 
+
+@pytest.fixture
+def current_time():
+    """Hora de referencia para simular el 'ahora'."""
+    return datetime(2025, 1, 15, 10, 0, 0, tzinfo=TEST_TZ)
+
+@pytest.fixture
+def future_due_date_dt(current_time):
+    """datetime en el futuro."""
+    return current_time + A_DAY
+
+@pytest.fixture
+def past_due_date_dt(current_time):
+    """datetime en el pasado."""
+    return current_time - A_DAY
+
+@pytest.fixture
+def valid_loan_date(current_time):
+    """Fecha de préstamo (un poco antes de la hora actual)."""
+    return current_time - timedelta(hours=1)
+
+# --- Fixture para un préstamo válido (usa freez_time) ---
+@pytest.fixture
+def valid_loan(current_time, future_due_date_dt, valid_loan_date, existing_user, existing_book) -> Loan:
+    """Crea un préstamo válido."""
+    with freeze_time(current_time):
+        due_date = DueDate(future_due_date_dt)
+        return Loan(
+            id=str(uuid.uuid4()),
+            book_id=existing_book.book_id,
+            user_id=existing_user.user_id,
+            loan_date=valid_loan_date,
+            due_date=due_date,
+            is_returned=False
+        )
 
 

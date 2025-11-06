@@ -13,6 +13,7 @@ dnspython==2.8.0
 email-validator==2.3.0
 exceptiongroup==1.3.0
 fastapi==0.116.1
+freezegun==1.5.5
 greenlet==3.2.4
 h11==0.16.0
 httpcore==1.0.9
@@ -32,6 +33,8 @@ PyJWT==2.10.1
 pytest==8.4.2
 pytest-asyncio==1.2.0
 pytest-cov==7.0.0
+python-dateutil==2.9.0.post0
+six==1.17.0
 sniffio==1.3.1
 SQLAlchemy==2.0.44
 SQLAlchemy-Utils==0.42.0

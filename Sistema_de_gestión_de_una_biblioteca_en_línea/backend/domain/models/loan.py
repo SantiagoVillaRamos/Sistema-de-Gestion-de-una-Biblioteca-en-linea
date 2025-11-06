@@ -29,11 +29,13 @@ class Loan:
     def return_loan(self) -> None:
         
         if self.is_returned:
-            raise BusinessConflictError(self.id)
+            raise BusinessConflictError(self.id, "El préstamo ya fue devuelto.")
         self.is_returned = True
 
 
     def is_overdue(self) -> bool:
-        return not self.is_returned and datetime.now() > self.due_date.value
+        # Comparar con la hora actual, asegurando la zona horaria para comparación
+        now_aware = datetime.now(self.due_date.value.tzinfo) 
+        return not self.is_returned and now_aware > self.due_date.value
     
     
