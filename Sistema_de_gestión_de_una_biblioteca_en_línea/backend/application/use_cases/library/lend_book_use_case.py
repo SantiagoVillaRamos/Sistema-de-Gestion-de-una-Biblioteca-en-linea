@@ -7,6 +7,7 @@ from application.ports.notification_service import NotificationService
 from domain.services.lending_service import LendingService
 from domain.models.book import Book
 
+
 class LendBookUseCase:  
     
     def __init__(
@@ -15,14 +16,15 @@ class LendBookUseCase:
         user_repo: UserRepository, 
         loan_repo: LoanRepository,
         notification_service: NotificationService,
-        author_repos: AuthorRepository
+        author_repos: AuthorRepository,
+        lending_service: LendingService
     ):
         self._book_repo = book_repo
         self._user_repo = user_repo
         self._loan_repo = loan_repo
         self._notification_service = notification_service
         self._author_repo = author_repos
-        self._lending_service = LendingService()
+        self._lending_service = lending_service
 
     async def execute(self, command: LendBookCommand) -> LendBookResult:
         # 1. Orquestación: Cargar los datos desde la persistencia

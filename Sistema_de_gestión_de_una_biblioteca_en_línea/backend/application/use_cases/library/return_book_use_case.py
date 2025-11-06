@@ -17,13 +17,14 @@ class ReturnBookUseCase:
         loan_repo: LoanRepository, 
         book_repo: BookRepository,
         user_repo: UserRepository,
-        notification_service: NotificationService
+        notification_service: NotificationService,
+        returning_service: ReturningService
     ):
         self._loan_repo = loan_repo
         self._book_repo = book_repo
         self._user_repo = user_repo
         self._notification_service = notification_service
-        self._returning_service = ReturningService()
+        self._returning_service = returning_service
 
     async def execute(self, command: ReturnBookCommand) -> ReturnBookResponse:
         # 1. Orquestación: Cargar los datos desde la persistencia
@@ -49,3 +50,4 @@ class ReturnBookUseCase:
             message="Libro devuelto exitosamente.",
             penalty_charged=penalty
         )
+

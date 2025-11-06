@@ -2,8 +2,7 @@ from domain.models.book import Book
 from domain.models.user import User
 from domain.models.loan import Loan
 from dataclasses import dataclass
-from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 @dataclass(frozen=True)
 class LendBookCommand:

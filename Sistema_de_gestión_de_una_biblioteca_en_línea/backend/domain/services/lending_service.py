@@ -26,3 +26,5 @@ class LendingService:
         
         new_loan = LoanFactory.create_loan(book.book_id, user.user_id)
         return new_loan
+    
+    

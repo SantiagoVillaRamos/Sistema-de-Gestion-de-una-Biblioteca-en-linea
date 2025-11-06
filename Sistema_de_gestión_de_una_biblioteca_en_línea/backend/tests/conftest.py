@@ -8,12 +8,14 @@ from typing import Dict, Any, List
 from unittest.mock import MagicMock, AsyncMock
 from datetime import datetime, timedelta
 from application.dto.author_command_dto import UpdateAuthorCommand
+from application.dto.library_command_dto import LendBookCommand
 from application.dto.book_command_dto import CreateBookCommand
 from application.dto.user_command_dto import CreateUserCommand, UpdateUserCommand
 from application.ports.user_repository import UserRepository
 from application.ports.loan_repository import LoanRepository
 from application.ports.book_repository import BookRepository
 from application.ports.author_repository import AuthorRepository
+from application.ports.notification_service import NotificationService
 from domain.models.factory.userFactory import UserFactory
 from domain.models.factory.bookFactory import BookFactory
 from domain.models.factory.authorFactory import AuthorFactory
@@ -26,7 +28,10 @@ from domain.models.value_objects.title import Title
 from domain.models.value_objects.author.author_name import AuthorName
 from domain.models.value_objects.author.author_description import AuthorDescription
 from domain.models.value_objects.due_date import DueDate
+
 from domain.services.UpdateCurrentService import UserUpdaterService
+from domain.services.lending_service import LendingService
+from domain.services.returning_service import ReturningService
 
 from infrastructure.persistence.models import AuthorModel, BookModel, UserModel, LoanModel
 
@@ -222,6 +227,7 @@ def create_user_prerequisites(client: TestClient):
     return user_data, test_data
 
 
+
 @pytest.fixture
 def existing_user() -> User:
     """Fixture para un objeto User ya existente."""
@@ -234,6 +240,22 @@ def existing_user() -> User:
         roles=["ADMIN"],
         is_active=True
     )
+    
+
+@pytest.fixture
+def other_user() -> User:
+    """Fixture para un objeto User ya existente."""
+    return User(
+        user_id=str(uuid.uuid4()),
+        name="Santiago Villa",
+        email="santiago.g@gmail.com",
+        password="santiago_hashed_password",
+        user_type="general",
+        roles=[""],
+        is_active=True
+    )
+    
+
 
 @pytest.fixture
 def existing_author() -> Author:
@@ -246,12 +268,12 @@ def existing_author() -> Author:
     
 
 @pytest.fixture
-def another_author() -> Author:
+def other_author() -> Author:
     """Fixture para un segundo autor (Co-Autor)."""
     return Author(
         author_id=str(uuid.uuid4()),
-        name=AuthorName("Micah Martin"),
-        description=AuthorDescription("Co-autor de Clean Code")
+        name=AuthorName("Martin Lutero"),
+        description=AuthorDescription("Escritor de la era del oscurantismo.")
     )
 
 
@@ -268,6 +290,45 @@ def existing_book(existing_author) -> Book:
     )
 
 
+@pytest.fixture
+def other_book(existing_author, other_author) -> Book:
+    """Fixture para un objeto User ya existente."""
+    return Book(
+        book_id=str(uuid.uuid4()),
+        isbn=ISBN("978-0132350877"),
+        title=Title("Clean Arquitecture"),
+        author=[existing_author.author_id, other_author.author_id],
+        description="Breve descripcion del libro Clean Arquitecture",
+        available_copies=5,
+    )
+
+
+
+@pytest.fixture
+def expected_loan(existing_user, existing_book) -> Loan:
+    """Fixture para el objeto Loan que el servicio de préstamo debe generar."""
+    return Loan(
+        id=str(uuid.uuid4()),
+        user_id=existing_user.user_id,
+        book_id=existing_book.book_id,
+        loan_date=datetime.now(),
+        due_date=datetime.now() + timedelta(days=14)
+    )
+    
+
+@pytest.fixture
+def overdue_loan(other_user, other_book) -> Loan:
+    """Fixture para el objeto Loan que el servicio de préstamo debe generar."""
+    return Loan(
+        id=str(uuid.uuid4()),
+        user_id=other_user.user_id,
+        book_id=other_book.book_id,
+        loan_date=datetime.now(),
+        due_date=datetime.now() + timedelta(days=14)
+    )
+    
+
+
 
 @pytest.fixture
 def use_case_dependencies():
@@ -279,6 +340,10 @@ def use_case_dependencies():
     mock_loan_repo = AsyncMock(spec=LoanRepository)
     mock_book_repo = AsyncMock(spec=BookRepository)
     mock_author_repo = AsyncMock(spec=AuthorRepository)
+    mock_notification_service = AsyncMock(spec=NotificationService)
+    
+    mock_lending_service = MagicMock(spec=LendingService) 
+    mock_return_service = MagicMock(spec=ReturningService)
     mock_factory = MagicMock(spec=UserFactory)
     mock_factory_book = MagicMock(spec=BookFactory)
     mock_author_factory = MagicMock(spec=AuthorFactory)
@@ -289,6 +354,9 @@ def use_case_dependencies():
         'loan_repo': mock_loan_repo,
         'book_repo': mock_book_repo,
         'author_repo': mock_author_repo,
+        'notification_service': mock_notification_service,
+        'lending_service': mock_lending_service,
+        'returning_service': mock_return_service,
         'user_factory': mock_factory,
         'book_factory': mock_factory_book,
         'author_factory': mock_author_factory,
@@ -343,7 +411,21 @@ def create_book_command(existing_author) -> CreateBookCommand:
         available_copies=5,
     )
 
+
+@pytest.fixture
+def lend_book_command(existing_user, existing_book) -> LendBookCommand:
+    """Fixture para el comando de préstamo."""
+    return LendBookCommand(
+        user_id=existing_user.user_id,
+        book_id=existing_book.book_id
+    )
+
     
+@pytest.fixture
+def active_loans() -> List[Loan]:
+    """Fixture para préstamos activos del usuario (vacío para éxito)."""
+    return []
+
     
 @pytest.fixture
 def loan_and_book_data(existing_user) -> tuple:
@@ -425,13 +507,13 @@ def loan_history_data(existing_user) -> tuple:
 
 
 @pytest.fixture
-def existing_books_for_author(existing_author, another_author) -> List[Book]:
+def existing_books_for_author(existing_author, other_author) -> List[Book]:
     """Fixture que devuelve libros escritos por el autor principal (algunos co-escritos)."""
     book1 = Book(
         book_id=str(uuid.uuid4()),
         isbn=ISBN("978-0132350884"),
         title=Title("Clean Code"),
-        author=[existing_author.author_id, another_author.author_id], 
+        author=[existing_author.author_id, other_author.author_id], 
         description="...",
         available_copies=5
     )

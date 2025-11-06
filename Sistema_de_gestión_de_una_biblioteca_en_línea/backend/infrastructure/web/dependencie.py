@@ -34,6 +34,8 @@ from domain.models.factory.userFactory import UserFactory
 from domain.models.factory.bookFactory import BookFactory
 from domain.models.factory.authorFactory import AuthorFactory
 from domain.services.UpdateCurrentService import UserUpdaterService
+from domain.services.lending_service import LendingService
+from domain.services.returning_service import ReturningService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
@@ -54,6 +56,8 @@ class Repositories:
     
     book_factory = BookFactory()
     author_factory = AuthorFactory()
+    lending_service = LendingService()
+    returning_service = ReturningService()
     
 repos = Repositories()
 
@@ -67,13 +71,15 @@ def get_library_facade() -> LibraryFacade:
         user_repo=repos.user_repo,
         loan_repo=repos.loan_repo,
         notification_service=repos.notification_service,
-        author_repos=repos.author_repo
+        author_repos=repos.author_repo,
+        lending_service=repos.lending_service
     )
     return_book_use_case = ReturnBookUseCase(
         loan_repo=repos.loan_repo,
         book_repo=repos.book_repo,
         user_repo=repos.user_repo,
-        notification_service=repos.notification_service
+        notification_service=repos.notification_service,
+        returning_service=repos.returning_service
     )
     get_loan_report_use_case = GetLoanReportUseCase(
         loan_repo=repos.loan_repo,

@@ -192,7 +192,7 @@ async def test_get_all_author_successfully(use_case_dependencies):
 async def test_get_author_By_Id_succcessfully(
     use_case_dependencies, 
     existing_author, 
-    another_author, 
+    other_author, 
     existing_books_for_author
 ):
     
@@ -204,10 +204,10 @@ async def test_get_author_By_Id_succcessfully(
     author_id_to_find = existing_author.author_id
     
     # Lista de todos los autores involucrados (principal + co-autor)
-    all_authors_list = [existing_author, another_author]
+    all_authors_list = [existing_author, other_author]
     
     # El set de IDs que el Use Case debe calcular
-    expected_ids_set = {existing_author.author_id, another_author.author_id}
+    expected_ids_set = {existing_author.author_id, other_author.author_id}
     
     # El mapa que el Use Case debe devolver
     expected_author_map = {a.author_id: a for a in all_authors_list}
