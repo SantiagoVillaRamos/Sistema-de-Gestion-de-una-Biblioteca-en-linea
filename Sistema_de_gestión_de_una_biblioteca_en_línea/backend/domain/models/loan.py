@@ -5,6 +5,7 @@ from domain.models.value_objects.due_date import DueDate
 
 from domain.models.exceptions.business_exception import BusinessNotFoundError, BusinessConflictError
 
+
 @dataclass
 class Loan:
     
