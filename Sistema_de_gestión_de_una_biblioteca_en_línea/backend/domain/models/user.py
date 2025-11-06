@@ -20,6 +20,7 @@ class User:
         
         if not self.name or not self.name.strip():
             raise BusinessNotFoundError(self.name, "El nombre no puede estar vacío.")
+        self.name = self.name.strip()
 
     def activate(self) -> None:
         self.is_active = True

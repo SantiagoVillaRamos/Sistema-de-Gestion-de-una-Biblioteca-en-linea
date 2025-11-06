@@ -33,6 +33,9 @@ from domain.services.UpdateCurrentService import UserUpdaterService
 from domain.services.lending_service import LendingService
 from domain.services.returning_service import ReturningService
 
+from domain.models.value_objects.email import Email
+from domain.models.value_objects.password import Password
+
 from infrastructure.persistence.models import AuthorModel, BookModel, UserModel, LoanModel
 
 from infrastructure.persistence.models import Base
@@ -232,15 +235,23 @@ def create_user_prerequisites(client: TestClient):
 
 #---------------------------------------------------------------------------
 
+@pytest.fixture
+def valid_email() -> Email:
+    return Email(address="usuario.prueba@gmail.com")
 
 @pytest.fixture
-def existing_user() -> User:
+def valid_password() -> Password:
+    return Password(hashed="random-hash-string-1234")
+
+
+@pytest.fixture
+def existing_user(valid_email: Email, valid_password: Password) -> User:
     """Fixture para un objeto User ya existente."""
     return User(
         user_id=str(uuid.uuid4()),
         name="Elena García",
-        email="elena.g@gmail.com",
-        password="hashed_password",
+        email=valid_email,
+        password=valid_password,
         user_type="general",
         roles=["ADMIN"],
         is_active=True
