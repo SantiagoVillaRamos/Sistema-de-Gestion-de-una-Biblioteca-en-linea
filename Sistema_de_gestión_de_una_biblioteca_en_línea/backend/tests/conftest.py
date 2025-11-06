@@ -296,6 +296,23 @@ def existing_book(existing_author) -> Book:
 
 
 @pytest.fixture
+def unavailable_book(other_author) -> Book:
+    """Fixture para crear un libro con cero copias disponibles."""
+    # Nota: para evitar que __post_init__ falle al crear 0 copias,
+    # lo creamos con 1 y luego simulamos que se presta.
+    book = Book(
+        book_id=str(uuid.uuid4()),
+        isbn=ISBN("1234567890"),
+        title=Title("Last Copy"),
+        author=[other_author.author_id],
+        description="Breve descripcion del libro Last Copy",
+        available_copies=1
+    )
+    book.lend() 
+    return book
+
+
+@pytest.fixture
 def other_book(existing_author, other_author) -> Book:
     """Fixture para un objeto User ya existente."""
     return Book(

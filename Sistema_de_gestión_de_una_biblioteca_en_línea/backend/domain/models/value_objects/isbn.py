@@ -29,3 +29,5 @@ class ISBN:
         Hace que el objeto sea hasheable, necesario para sets y diccionarios.
         """
         return hash(self.value)
+    
+    
