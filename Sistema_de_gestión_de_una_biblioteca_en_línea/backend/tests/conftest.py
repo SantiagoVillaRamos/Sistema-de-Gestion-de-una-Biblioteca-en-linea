@@ -110,6 +110,9 @@ def clean_db(db_session):
     db_session.query(LoanModel).delete()
     db_session.commit()
     
+    
+#---------------------------------------------------------------------------    
+    
 
 @pytest.fixture(scope="function")
 def admin_credentials_data() -> Dict[str, str]:
@@ -227,6 +230,8 @@ def create_user_prerequisites(client: TestClient):
     return user_data, test_data
 
 
+#---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def existing_user() -> User:
@@ -328,6 +333,7 @@ def overdue_loan(other_user, other_book) -> Loan:
     )
     
 
+#---------------------------------------------------------------------------
 
 
 @pytest.fixture
@@ -526,4 +532,9 @@ def existing_books_for_author(existing_author, other_author) -> List[Book]:
         available_copies=3
     )
     return [book1, book2]
+
+#---------------------------------------------------------------------------
+
+
+
 

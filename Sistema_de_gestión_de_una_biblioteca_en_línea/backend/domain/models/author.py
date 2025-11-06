@@ -21,3 +21,5 @@ class Author:
     #helper que devuelve el valor primitivo para el uso de la capa de Aplicación
     def get_name_value(self) -> str:
         return self.name.value
+    
+    

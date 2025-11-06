@@ -21,3 +21,5 @@ class AuthorDescription:
             
         # Guardar el valor limpio
         object.__setattr__(self, 'value', cleaned_value)
+        
+        

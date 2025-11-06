@@ -16,3 +16,5 @@ class AuthorName:
             
         # Estandarizar el valor (ej. limpiar espacios, capitalizar)
         object.__setattr__(self, 'value', self.value.strip().title())
+        
+        
