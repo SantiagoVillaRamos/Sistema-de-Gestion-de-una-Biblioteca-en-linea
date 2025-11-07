@@ -4,12 +4,13 @@ from domain.ports.user_repository import UserRepository
 from domain.ports.book_repository import BookRepository
 from domain.ports.author_repository import AuthorRepository
 from application.dto.library_command_dto import LoanReportData
+from application.ports.library.get_loan_report import GetLoanReport
 from domain.models.loan import Loan
 from domain.models.user import User
 from domain.models.book import Book
 from domain.models.author import Author
 
-class GetLoanReportUseCase:
+class GetLoanReportUseCase(GetLoanReport):
     """Caso de uso para generar un informe de todos los préstamos con sus datos relacionados."""
     
     def __init__(
@@ -24,7 +25,7 @@ class GetLoanReportUseCase:
         self._book_repo = book_repo
         self._author_repo = author_repo
 
-    async def execute(self) -> List[LoanReportData]:
+    async def get_loan_report(self) -> List[LoanReportData]:
         """Genera un informe de todos los préstamos con sus datos relacionados."""
         all_loans = await self._get_all_loans()
         user_map, book_map, author_map = await self._load_related_data(all_loans)

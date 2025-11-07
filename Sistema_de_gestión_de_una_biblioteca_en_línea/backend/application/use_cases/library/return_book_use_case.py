@@ -4,9 +4,9 @@ from domain.ports.user_repository import UserRepository
 from domain.ports.notification_service import NotificationService
 from application.dto.library_command_dto import ReturnBookCommand, ReturnBookResponse
 from domain.services.returning_service import ReturningService
+from application.ports.library.return_book import ReturnBook
 
-
-class ReturnBookUseCase:
+class ReturnBookUseCase(ReturnBook):
     """
     Caso de Uso para devolver un libro. Orquesta el proceso de carga,
     validación de dominio y persistencia.
@@ -26,7 +26,7 @@ class ReturnBookUseCase:
         self._notification_service = notification_service
         self._returning_service = returning_service
 
-    async def execute(self, command: ReturnBookCommand) -> ReturnBookResponse:
+    async def return_book(self, command: ReturnBookCommand) -> ReturnBookResponse:
         # 1. Orquestación: Cargar los datos desde la persistencia
         loan = await self._loan_repo.find_by_id(command.loan_id)
         book = await self._book_repo.find_by_id(loan.book_id)

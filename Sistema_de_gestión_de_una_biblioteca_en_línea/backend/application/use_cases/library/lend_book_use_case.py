@@ -6,9 +6,10 @@ from application.dto.library_command_dto import LendBookCommand, LendBookResult
 from domain.ports.notification_service import NotificationService
 from domain.services.lending_service import LendingService
 from domain.models.book import Book
+from application.ports.library.lend_book import LendBook
 
 
-class LendBookUseCase:  
+class LendBookUseCase(LendBook):  
     
     def __init__(
         self, 
@@ -26,7 +27,7 @@ class LendBookUseCase:
         self._author_repo = author_repos
         self._lending_service = lending_service
 
-    async def execute(self, command: LendBookCommand) -> LendBookResult:
+    async def lend_book(self, command: LendBookCommand) -> LendBookResult:
         # 1. Orquestación: Cargar los datos desde la persistencia
         user = await self._user_repo.find_by_id(command.user_id)
         book = await self._book_repo.find_by_id(command.book_id)

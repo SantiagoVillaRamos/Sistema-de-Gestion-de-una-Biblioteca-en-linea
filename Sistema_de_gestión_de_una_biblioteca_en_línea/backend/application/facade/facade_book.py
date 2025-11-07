@@ -10,6 +10,7 @@ from application.dto.book_command_dto import CreateBookCommand, UpdateBookDTOCom
 from domain.models.book import Book
 
 class FacadeBook:
+    
     def __init__(
         self,
         create_book_use_case: CreaterBook,
