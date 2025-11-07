@@ -4,14 +4,14 @@ from application.dto.author_command_dto import UpdateAuthorCommand
 from domain.models.value_objects.author.author_name import AuthorName
 from domain.models.value_objects.author.author_description import AuthorDescription
 from domain.ports.author_repository import AuthorRepository
+from application.ports.author.update_author import UpdateAuthor
 
-
-class UpdateAuthorUseCase:
+class UpdateAuthorUseCase(UpdateAuthor):
     
     def __init__(self, author_repository: AuthorRepository):
         self.author_repo = author_repository
 
-    async def execute(self, author_id: str, command: UpdateAuthorCommand) -> Author:
+    async def update_author(self, author_id: str, command: UpdateAuthorCommand) -> Author:
         # 1. Cargar el Agregado Raíz
         author: Author = await self.author_repo.find_by_id(author_id)
         

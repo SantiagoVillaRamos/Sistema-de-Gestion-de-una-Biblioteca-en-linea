@@ -4,15 +4,16 @@ from typing import Dict, List
 from domain.ports.book_repository import BookRepository
 from domain.ports.author_repository import AuthorRepository
 from application.dto.author_command_dto import GetAuthorDetailsResult
+from application.ports.author.get_author_by_id import GetAuthorByID
 
-class GetAuthorByIdUseCase:
+class GetAuthorByIdUseCase(GetAuthorByID):
     
     def __init__(self, author_repository: AuthorRepository, book_repository: BookRepository):
         self.author_repo = author_repository
         self.book_repo = book_repository
 
 
-    async def execute(self, author_id: str) -> GetAuthorDetailsResult: 
+    async def get_author_by_id(self, author_id: str) -> GetAuthorDetailsResult: 
         
         # 1. Obtener la entidad principal
         author = await self.author_repo.find_by_id(author_id)

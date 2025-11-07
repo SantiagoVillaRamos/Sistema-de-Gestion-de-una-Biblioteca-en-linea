@@ -2,14 +2,15 @@ from domain.models.exceptions.business_exception import BusinessConflictError
 from domain.ports.author_repository import AuthorRepository
 from domain.ports.book_repository import BookRepository
 from domain.models.author import Author
+from application.ports.author.delete_author import DeleteAuthor
 
-class DeleteAuthorUseCase:
+class DeleteAuthorUseCase(DeleteAuthor):
     
     def __init__(self, author_repository: AuthorRepository, book_repository: BookRepository):
         self.author_repo = author_repository
         self.book_repo = book_repository
 
-    async def execute(self, author_id: str) -> Author:
+    async def delete_author(self, author_id: str) -> Author:
         # 1. Cargar el Agregado Raíz (para obtener el nombre antes de eliminar)
         author_to_delete: Author = await self.author_repo.find_by_id(author_id)
         
