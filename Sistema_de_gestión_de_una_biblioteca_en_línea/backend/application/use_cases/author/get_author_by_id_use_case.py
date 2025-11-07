@@ -1,8 +1,8 @@
 from domain.models.author import Author
 from domain.models.book import Book 
 from typing import Dict, List
-from application.ports.book_repository import BookRepository
-from application.ports.author_repository import AuthorRepository
+from domain.ports.book_repository import BookRepository
+from domain.ports.author_repository import AuthorRepository
 from application.dto.author_command_dto import GetAuthorDetailsResult
 
 class GetAuthorByIdUseCase:

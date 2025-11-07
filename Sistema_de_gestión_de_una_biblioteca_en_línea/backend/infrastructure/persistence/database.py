@@ -8,7 +8,9 @@ engine = create_engine(
     SQLALCHEMY_DATABASE_URL, 
     connect_args={"check_same_thread": False}
 )
-
+# 2. Configurar la Sesión
+# SessionLocal se usa para crear sesiones de base de datos individuales
+# Nota: Se usa autocommit=False y autoflush=False para gestión manual de transacciones
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
@@ -19,3 +21,5 @@ def get_db():
         yield db
     finally:
         db.close()
+        
+        

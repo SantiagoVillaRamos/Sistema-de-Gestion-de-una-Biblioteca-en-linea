@@ -1,5 +1,5 @@
-from application.ports.book_repository import BookRepository
-from application.ports.author_repository import AuthorRepository
+from domain.ports.book_repository import BookRepository
+from domain.ports.author_repository import AuthorRepository
 from domain.models.book import Book
 from domain.models.author import Author
 from application.dto.book_command_dto import BookDetailsResponse

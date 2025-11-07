@@ -1,18 +1,18 @@
-from application.ports.user_repository import UserRepository
+from domain.ports.user_repository import UserRepository
 from domain.ports.PasswordService import PasswordService
-from application.ports.AuthService import AuthService
+from domain.ports.AuthService import AuthService
 from application.dto.user_command_dto import LoginUserCommand, LoginUserResponseToken
 from domain.models.exceptions.business_exception import BusinessUnauthorizedError
+from application.ports.auth.auth_user import Auth
 
-
-class LoginUserUseCase:
+class LoginUserUseCase(Auth):
 
     def __init__(self, user_repository: UserRepository, password_service: PasswordService, auth_service: AuthService):
         self.user_repository = user_repository
         self.password_service = password_service
         self.auth_service = auth_service
 
-    async def execute(self, command: LoginUserCommand) -> LoginUserResponseToken:
+    async def auth(self, command: LoginUserCommand) -> LoginUserResponseToken:
         
         user = await self.user_repository.find_by_email(command.email)
         if not user:

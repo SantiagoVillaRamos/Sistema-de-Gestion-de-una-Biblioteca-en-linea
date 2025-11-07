@@ -1,5 +1,5 @@
 from typing import Dict, Optional, List
-from application.ports.author_repository import AuthorRepository
+from domain.ports.author_repository import AuthorRepository
 from domain.models.author import Author
 from infrastructure.mapper_infrastructure.author_mapper import AuthorMapper
 from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError

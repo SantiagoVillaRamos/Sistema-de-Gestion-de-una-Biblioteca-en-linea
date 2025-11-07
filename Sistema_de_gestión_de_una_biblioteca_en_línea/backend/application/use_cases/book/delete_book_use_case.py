@@ -1,4 +1,4 @@
-from application.ports.book_repository import BookRepository
+from domain.ports.book_repository import BookRepository
 from domain.models.book import Book
 
 class DeleteBookUseCase:

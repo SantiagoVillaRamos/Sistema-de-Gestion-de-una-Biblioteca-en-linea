@@ -1,5 +1,5 @@
 from typing import Dict, Optional, List
-from application.ports.book_repository import BookRepository
+from domain.ports.book_repository import BookRepository
 from domain.models.book import Book
 from domain.models.value_objects.isbn import ISBN
 from infrastructure.mapper_infrastructure.book_mapper import BookMapper

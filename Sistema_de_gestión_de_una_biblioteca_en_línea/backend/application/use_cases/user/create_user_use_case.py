@@ -1,16 +1,16 @@
-from application.ports.user_repository import UserRepository
+from domain.ports.user_repository import UserRepository
 from domain.models.factory.userFactory import UserFactory
 from domain.models.user import User
 from application.dto.user_command_dto import CreateUserCommand
+from application.ports.user.user_creater import UserCreate
 
-
-class CreateUserUseCase:
+class CreateUserUseCase(UserCreate):
 
     def __init__(self, user_repository: UserRepository, user_factory: UserFactory):
         self.user_repo = user_repository
         self.user_factory = user_factory
 
-    async def execute(self, command: CreateUserCommand) -> User:
+    async def create(self, command: CreateUserCommand) -> User:
         
         new_user = self.user_factory.create(
             name=command.name,

@@ -1,6 +1,6 @@
 from domain.models.exceptions.business_exception import BusinessConflictError
-from application.ports.author_repository import AuthorRepository
-from application.ports.book_repository import BookRepository
+from domain.ports.author_repository import AuthorRepository
+from domain.ports.book_repository import BookRepository
 from domain.models.author import Author
 
 class DeleteAuthorUseCase:

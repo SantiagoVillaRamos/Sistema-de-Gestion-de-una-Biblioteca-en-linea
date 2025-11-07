@@ -1,9 +1,9 @@
-from application.ports.book_repository import BookRepository
+from domain.ports.book_repository import BookRepository
 from application.dto.book_command_dto import UpdateBookDTOCommand, UpdateBookResult
 from typing import Optional, List, Dict
 from domain.models.book import Book
 from domain.models.value_objects.title import Title
-from application.ports.author_repository import AuthorRepository
+from domain.ports.author_repository import AuthorRepository
 from dataclasses import asdict
 
 _VO_MAPPING: Dict[str, type] = {

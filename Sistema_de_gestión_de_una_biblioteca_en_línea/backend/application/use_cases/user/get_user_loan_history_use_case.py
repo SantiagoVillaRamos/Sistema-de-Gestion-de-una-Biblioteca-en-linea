@@ -1,19 +1,18 @@
 
 from typing import List, Dict, Tuple
 from domain.models.user import User
-from application.ports.loan_repository import LoanRepository
-from application.ports.book_repository import BookRepository
-from application.ports.author_repository import AuthorRepository
-from application.ports.user_repository import UserRepository
+from domain.ports.loan_repository import LoanRepository
+from domain.ports.book_repository import BookRepository
+from domain.ports.author_repository import AuthorRepository
+from domain.ports.user_repository import UserRepository
 from application.dto.user_command_dto import UserLoanHistoryDTO
 from domain.models.loan import Loan
 from domain.models.book import Book
 from domain.models.author import Author
+from application.ports.user.get_user_loaner import GetUserLoaner
 
 
-
-
-class GetUserLoanHistoryUseCase:
+class GetUserLoanHistoryUseCase(GetUserLoaner):
     
     def __init__(
         self, 
@@ -27,7 +26,7 @@ class GetUserLoanHistoryUseCase:
         self.book_repo = book_repo
         self.author_repo = author_repo
 
-    async def execute(self, user_id: str) -> UserLoanHistoryDTO:
+    async def get_user_loan(self, user_id: str) -> UserLoanHistoryDTO:
         
         # 1. Obtener el usuario
         user = await self.user_repo.find_by_id(user_id)

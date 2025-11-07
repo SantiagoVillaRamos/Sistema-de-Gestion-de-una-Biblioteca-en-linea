@@ -1,5 +1,5 @@
 from domain.models.author import Author
-from application.ports.author_repository import AuthorRepository
+from domain.ports.author_repository import AuthorRepository
 from application.dto.author_command_dto import CreateAuthorCommand
 from domain.models.factory.authorFactory import AuthorFactory
 

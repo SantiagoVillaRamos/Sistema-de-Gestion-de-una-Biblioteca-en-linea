@@ -3,7 +3,7 @@ from domain.models.author import Author
 from application.dto.author_command_dto import UpdateAuthorCommand
 from domain.models.value_objects.author.author_name import AuthorName
 from domain.models.value_objects.author.author_description import AuthorDescription
-from application.ports.author_repository import AuthorRepository
+from domain.ports.author_repository import AuthorRepository
 
 
 class UpdateAuthorUseCase:

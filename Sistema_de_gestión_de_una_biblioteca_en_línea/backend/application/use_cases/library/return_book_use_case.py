@@ -1,7 +1,7 @@
-from application.ports.loan_repository import LoanRepository
-from application.ports.book_repository import BookRepository
-from application.ports.user_repository import UserRepository
-from application.ports.notification_service import NotificationService
+from domain.ports.loan_repository import LoanRepository
+from domain.ports.book_repository import BookRepository
+from domain.ports.user_repository import UserRepository
+from domain.ports.notification_service import NotificationService
 from application.dto.library_command_dto import ReturnBookCommand, ReturnBookResponse
 from domain.services.returning_service import ReturningService
 

@@ -1,15 +1,16 @@
 from typing import Optional, List, Dict
-from application.ports.user_repository import UserRepository
-from application.ports.loan_repository import LoanRepository
-from application.ports.author_repository import AuthorRepository
-from application.ports.book_repository import BookRepository
+from domain.ports.user_repository import UserRepository
+from domain.ports.loan_repository import LoanRepository
+from domain.ports.author_repository import AuthorRepository
+from domain.ports.book_repository import BookRepository
 from application.dto.user_command_dto import UserDetailsDTO
 from domain.models.loan import Loan
 from domain.models.book import Book
 from domain.models.author import Author
+from application.ports.user.get_user import GetUser
 
 
-class GetUserUseCase:
+class GetUserUseCase(GetUser):
     
     def __init__(
         self, 
@@ -23,7 +24,7 @@ class GetUserUseCase:
         self.book_repo = book_repo
         self.author_repository = author_repository
 
-    async def execute(self, user_id: str) -> Optional[UserDetailsDTO]:
+    async def get_user(self, user_id: str) -> Optional[UserDetailsDTO]:
         
         user = await self.user_repo.find_by_id(user_id)
             

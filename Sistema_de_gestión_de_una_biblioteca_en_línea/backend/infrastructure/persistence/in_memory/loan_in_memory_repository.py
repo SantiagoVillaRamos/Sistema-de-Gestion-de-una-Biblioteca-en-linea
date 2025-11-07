@@ -1,5 +1,5 @@
 from typing import Dict, Optional, List
-from application.ports.loan_repository import LoanRepository
+from domain.ports.loan_repository import LoanRepository
 from domain.models.loan import Loan
 from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
 from infrastructure.mapper_infrastructure.loan_mapper import LoanMapper

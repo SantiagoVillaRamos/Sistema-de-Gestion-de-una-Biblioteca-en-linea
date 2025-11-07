@@ -213,7 +213,7 @@ async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)])
         
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
+            detail="No autenticado",
             headers={"WWW-Authenticate": "Bearer"},
         )
     try:
@@ -222,7 +222,7 @@ async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)])
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
+                detail="No se pudieron validar las credenciales",
                 headers={"WWW-Authenticate": "Bearer"},
             )
     except Exception as e: 
@@ -236,7 +236,7 @@ async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)])
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
+            detail="No se pudieron validar las credenciales",
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user

@@ -1,7 +1,7 @@
 
 from domain.models.author import Author
-from application.ports.book_repository import BookRepository
-from application.ports.author_repository import AuthorRepository
+from domain.ports.book_repository import BookRepository
+from domain.ports.author_repository import AuthorRepository
 from application.dto.book_command_dto import CreateBookCommand, CreateBookResult
 from domain.models.factory.bookFactory import BookFactory
 from domain.models.exceptions.business_exception import BusinessNotFoundError 

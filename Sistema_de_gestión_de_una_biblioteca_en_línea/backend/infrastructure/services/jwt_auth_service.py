@@ -1,7 +1,7 @@
 import jwt
 from datetime import datetime, timedelta, timezone
 from typing import Any
-from application.ports.AuthService import AuthService
+from domain.ports.AuthService import AuthService
 from domain.models.exceptions.business_exception import BusinessUnauthorizedError
 
 class JwtAuthService(AuthService):

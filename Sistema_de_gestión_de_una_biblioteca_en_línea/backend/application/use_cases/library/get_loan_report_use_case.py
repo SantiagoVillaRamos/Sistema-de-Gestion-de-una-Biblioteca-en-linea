@@ -1,8 +1,8 @@
 from typing import List, Dict
-from application.ports.loan_repository import LoanRepository
-from application.ports.user_repository import UserRepository
-from application.ports.book_repository import BookRepository
-from application.ports.author_repository import AuthorRepository
+from domain.ports.loan_repository import LoanRepository
+from domain.ports.user_repository import UserRepository
+from domain.ports.book_repository import BookRepository
+from domain.ports.author_repository import AuthorRepository
 from application.dto.library_command_dto import LoanReportData
 from domain.models.loan import Loan
 from domain.models.user import User

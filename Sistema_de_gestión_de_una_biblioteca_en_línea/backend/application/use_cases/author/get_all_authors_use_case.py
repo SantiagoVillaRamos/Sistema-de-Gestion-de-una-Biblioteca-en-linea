@@ -1,6 +1,6 @@
 from typing import List
 from domain.models.author import Author
-from application.ports.author_repository import AuthorRepository
+from domain.ports.author_repository import AuthorRepository
 
 class GetAllAuthorsUseCase:
     

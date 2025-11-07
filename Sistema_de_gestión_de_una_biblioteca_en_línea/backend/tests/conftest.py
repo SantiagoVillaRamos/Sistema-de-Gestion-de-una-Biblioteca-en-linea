@@ -14,11 +14,11 @@ from application.dto.author_command_dto import UpdateAuthorCommand
 from application.dto.library_command_dto import LendBookCommand
 from application.dto.book_command_dto import CreateBookCommand
 from application.dto.user_command_dto import CreateUserCommand, UpdateUserCommand
-from application.ports.user_repository import UserRepository
-from application.ports.loan_repository import LoanRepository
-from application.ports.book_repository import BookRepository
-from application.ports.author_repository import AuthorRepository
-from application.ports.notification_service import NotificationService
+from domain.ports.user_repository import UserRepository
+from domain.ports.loan_repository import LoanRepository
+from domain.ports.book_repository import BookRepository
+from domain.ports.author_repository import AuthorRepository
+from domain.ports.notification_service import NotificationService
 from domain.models.factory.userFactory import UserFactory
 from domain.models.factory.bookFactory import BookFactory
 from domain.models.factory.authorFactory import AuthorFactory

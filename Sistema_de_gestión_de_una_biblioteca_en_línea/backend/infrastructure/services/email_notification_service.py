@@ -1,4 +1,4 @@
-from application.ports.notification_service import NotificationService
+from domain.ports.notification_service import NotificationService
 from domain.models.user import User
 from domain.models.loan import Loan
 from domain.models.book import Book

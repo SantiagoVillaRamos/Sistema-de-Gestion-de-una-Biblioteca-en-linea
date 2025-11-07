@@ -1,10 +1,12 @@
 
-from domain.models.user import User
+from application.ports.user.user_updater import UserUpdater
 from application.dto.user_command_dto import UpdateUserCommand
-from application.ports.user_repository import UserRepository 
+from domain.ports.user_repository import UserRepository 
 from domain.services.UpdateCurrentService import UserUpdaterService
+from domain.models.user import User
 
-class UpdateCurrentUserUseCase:
+
+class UpdateCurrentUserUseCase(UserUpdater):
     
     def __init__(
         self, 
@@ -15,7 +17,7 @@ class UpdateCurrentUserUseCase:
         self.user_updater_service = user_updater_service
         
 
-    async def execute(self, command: UpdateUserCommand) -> User:
+    async def update(self, command: UpdateUserCommand) -> User:
         
         user = await self.user_repo.find_by_id(command.user_id)
         
