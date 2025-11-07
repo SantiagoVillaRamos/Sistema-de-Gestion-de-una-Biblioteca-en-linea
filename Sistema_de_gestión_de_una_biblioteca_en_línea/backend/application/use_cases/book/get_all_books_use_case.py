@@ -3,15 +3,15 @@ from domain.ports.book_repository import BookRepository
 from domain.models.book import Book
 from domain.models.author import Author
 from domain.ports.author_repository import AuthorRepository
+from application.ports.book.get_all_books import GetAllBooks
 
-
-class GetAllBooksUseCase:
+class GetAllBooksUseCase(GetAllBooks):
     
     def __init__(self, book_repository: BookRepository, author_repository: AuthorRepository):
         self.author_repository = author_repository
         self.book_repository = book_repository
 
-    async def execute(self) -> List[Dict]:
+    async def get_all_books(self) -> List[Dict]:
         
         books: List[Book] = await self.book_repository.get_all()
         

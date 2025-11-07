@@ -5,19 +5,20 @@ from domain.models.book import Book
 from domain.models.value_objects.title import Title
 from domain.ports.author_repository import AuthorRepository
 from dataclasses import asdict
+from application.ports.book.update_book import UpdateBook
 
 _VO_MAPPING: Dict[str, type] = {
     'title': Title 
 }
 
 
-class UpdateBookUseCase:
+class UpdateBookUseCase(UpdateBook):
     
     def __init__(self, book_repository: BookRepository, author_repository: AuthorRepository):
         self.book_repository = book_repository
         self.author_repository = author_repository
 
-    async def execute(self, book_id: str, update_dto: UpdateBookDTOCommand) -> Optional[UpdateBookResult]:
+    async def update_book(self, book_id: str, update_dto: UpdateBookDTOCommand) -> Optional[UpdateBookResult]:
         #1. Obtener la entidad
         book = await self.book_repository.find_by_id(book_id)
         

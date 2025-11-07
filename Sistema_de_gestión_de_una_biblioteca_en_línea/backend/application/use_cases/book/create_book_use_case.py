@@ -6,15 +6,16 @@ from application.dto.book_command_dto import CreateBookCommand, CreateBookResult
 from domain.models.factory.bookFactory import BookFactory
 from domain.models.exceptions.business_exception import BusinessNotFoundError 
 from typing import List
+from application.ports.book.create_book import CreaterBook
 
-class CreateBookUseCase:
+class CreateBookUseCase(CreaterBook):
     
     def __init__(self, book_repository: BookRepository, author_repository:AuthorRepository, book_factory:BookFactory):
         self.book_repo = book_repository
         self.author_repo = author_repository
         self.book_factory = book_factory
 
-    async def execute(self, command: CreateBookCommand) -> CreateBookResult:
+    async def create_book(self, command: CreateBookCommand) -> CreateBookResult:
         
         authors = await self._validate_authors_exist(command.author)
         

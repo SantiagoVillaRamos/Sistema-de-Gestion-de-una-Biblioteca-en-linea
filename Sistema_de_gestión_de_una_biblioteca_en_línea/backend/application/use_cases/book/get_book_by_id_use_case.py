@@ -3,15 +3,16 @@ from domain.ports.author_repository import AuthorRepository
 from domain.models.book import Book
 from domain.models.author import Author
 from application.dto.book_command_dto import BookDetailsResponse
+from application.ports.book.get_book_by_id import GetBookById
 from typing import List
 
-class GetBookByIdUseCase:
+class GetBookByIdUseCase(GetBookById):
     
     def __init__(self, book_repository: BookRepository, author_repository: AuthorRepository):
         self.book_repository = book_repository
         self.author_repository = author_repository
 
-    async def execute(self, book_id: str) -> BookDetailsResponse:
+    async def get_book_by_id(self, book_id: str) -> BookDetailsResponse:
         
         book: Book = await self.book_repository.find_by_id(book_id)
         
