@@ -11,7 +11,11 @@ class UserUpdaterService:
         self.password_service = password_service
         
     def update_user_data(self, user: User, command):
+        
         self._validate_name(command.name)
+        
+        if command.name:
+            self._name(user, command.name)
         
         if self._is_sensitive_change(command):
             self._validate_current_password(user, command.current_password)
@@ -28,6 +32,7 @@ class UserUpdaterService:
         if name is not None:
             if not name.strip():
                 raise BusinessError("El nombre de usuario no puede estar vacío.")
+        
             
     def _is_sensitive_change(self, command):
         return command.new_email or command.new_password
@@ -38,6 +43,9 @@ class UserUpdaterService:
         
         if not self.password_service.verify_password(current_password, user.password.hashed):
             raise BusinessError("La contraseña actual es incorrecta.")
+            
+    def _name(self, user:User, new_name):
+        user.name = new_name
             
     def _update_email(self, user: User, new_email):
         new_email_vo = Email(new_email)
