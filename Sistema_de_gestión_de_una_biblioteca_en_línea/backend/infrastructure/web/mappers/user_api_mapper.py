@@ -6,7 +6,7 @@ from domain.models.user import User
 from domain.models.loan import Loan
 from domain.models.author import Author
 from domain.models.book import Book
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 class UserAPIMapper:
     
@@ -34,36 +34,43 @@ class UserAPIMapper:
         
         
     @staticmethod
-    def _map_loan_to_response(loan: Loan, book_map: Dict[str, Book], authors_map: Dict[str, Author]) -> LoanResponse:
+    def _map_loan_to_response(loan: Loan, loaned_books_map: Dict[str, Book], loaned_authors_map: Dict[str, Author]) -> LoanResponse:
         """Helper para mapear una entidad Loan a su DTO de respuesta, enriqueciendo con Book."""
         
-        book = book_map.get(loan.book_id)
+        book = loaned_books_map.get(loan.book_id)
+        # Extraer la fecha de vencimiento de forma segura
+        due_date_value = loan.due_date.value if loan.due_date is not None and hasattr(loan.due_date, 'value') else None
         
-        book_title = "Título no disponible"
-        due_date_value = None
+        
+        if book is None:
+            return LoanResponse(
+                message="Préstamo activo. Advertencia: El libro asociado ha sido eliminado.",
+                loan_id=loan.id, 
+                book_title=f"[LIBRO ELIMINADO - ID: {loan.book_id}]",
+                description="El libro original de este préstamo fue eliminado del sistema. La información bibliográfica no está disponible.",
+                authors=["N/A"],
+                loan_date=loan.loan_date,
+                due_date=due_date_value 
+            )
+        
+        book_title = book.title.value if hasattr(book.title, 'value') else "Título desconocido"
+        description_value = book.description if book.description else "Sin descripción."
 
-        if loan.book_id in book_map:
-            book_title = book_map[loan.book_id].title.value # <-- Extrae VO
-        
-        if loan.due_date is not None:
-            due_date_value = loan.due_date.value # <-- Extrae VO
-        
+        # 3. Mapeo de autores (seguro, solo si book.author existe)
         book_authors_names = []
-        if book and book.author:
-            # Iteramos sobre los IDs de autor del libro (book.author)
-            # y mapeamos el ID al nombre usando el authors_map
+        if book.author:
+            # Iteramos sobre los IDs de autor del libro y obtenemos el nombre
             book_authors_names = [
-                authors_map[author_id].name.value # <--- Extraemos el Objeto de Valor (VO) del nombre
+                loaned_authors_map.get(author_id).name.value
                 for author_id in book.author
-                if author_id in authors_map 
-            ]   
-        
+                if loaned_authors_map.get(author_id) is not None and hasattr(loaned_authors_map.get(author_id).name, 'value')
+            ]
              
         return LoanResponse(
             message="Préstamo activo",
             loan_id=loan.id, 
             book_title=book_title,
-            description=book_map[loan.book_id].description,
+            description=description_value,
             authors=book_authors_names,
             loan_date=loan.loan_date,
             due_date=due_date_value 
@@ -86,15 +93,18 @@ class UserAPIMapper:
             instance.model_dump()
             for instance in loan_instances
         ]
+        # Crear y devolver la respuesta final
+        user_email_address = details.user.email.address if hasattr(details.user.email, 'address') else "Email no disponible"
         
         # 2. Crear el DTO final del usuario
         return GetUserResponse(
             user_id=details.user.user_id,
             name=details.user.name,
-            email=details.user.email.address, # <-- Extrae VO
+            email=user_email_address,
             is_active=details.user.is_active,
             loaned_books=loaned_books_list_as_dicts
         )    
+        
     
     @staticmethod
     def from_entity_list_to_response(users: List[User]) -> UserListResponse:

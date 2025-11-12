@@ -21,6 +21,7 @@ class CreateBookResponse(BaseModel):
     
 class GetBooksResponse(BaseModel):
     
+    book_id: str
     isbn: str
     title: str
     author_names: List[str]

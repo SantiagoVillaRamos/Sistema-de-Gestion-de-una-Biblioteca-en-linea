@@ -43,6 +43,7 @@ class BookAPIMapper:
     def from_enriched_dict_to_response(book: Dict[str, Any]) -> GetBooksResponse:
         """Convierte el diccionario enriquecido de GetAllBooksUseCase a GetBooksResponse."""
         return GetBooksResponse(
+            book_id=book['book_id'],
             isbn=book['isbn'],
             title=book['title'],
             author_names=book['author_names'], 
@@ -95,7 +96,7 @@ class BookAPIMapper:
         author_name_values = [name.value for name in result_book.author_names]
         book = result_book.book
         return GetBooksResponse(
-            
+            book_id=book.book_id,
             isbn=book.isbn.value,
             title=book.title.value,
             author_names=author_name_values,
@@ -116,6 +117,7 @@ class BookAPIMapperResponse:
         names = author_names if author_names is not None else []
         
         return GetBooksResponse(
+            book_id=book.book_id,
             isbn=book.isbn.value,
             title=book.title.value,
             author_names=names,

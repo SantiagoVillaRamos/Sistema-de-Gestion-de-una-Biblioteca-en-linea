@@ -58,6 +58,7 @@ class GetAllBooksUseCase(GetAllBooks):
             
             # Devolver un diccionario simple para facilitar el mapeo en el controlador
             enriched_books.append({
+                "book_id": book.book_id,
                 "isbn": book.isbn.value,
                 "title": book.title.value,
                 "author_names": author_names,
