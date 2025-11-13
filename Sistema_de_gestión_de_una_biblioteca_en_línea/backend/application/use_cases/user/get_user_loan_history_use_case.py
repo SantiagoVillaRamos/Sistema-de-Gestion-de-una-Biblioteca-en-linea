@@ -10,7 +10,6 @@ from domain.models.loan import Loan
 from domain.models.book import Book
 from domain.models.author import Author
 from application.ports.user.get_user_loaner import GetUserLoaner
-from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
 
 
 class GetUserLoanHistoryUseCase(GetUserLoaner):

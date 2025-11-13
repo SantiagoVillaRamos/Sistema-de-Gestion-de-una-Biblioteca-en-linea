@@ -8,7 +8,7 @@ from domain.models.loan import Loan
 from domain.models.book import Book
 from domain.models.author import Author
 from application.ports.user.get_user import GetUser
-from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 
 class GetUserUseCase(GetUser):

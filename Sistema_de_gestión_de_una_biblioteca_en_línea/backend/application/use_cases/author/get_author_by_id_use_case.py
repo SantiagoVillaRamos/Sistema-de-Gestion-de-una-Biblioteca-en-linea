@@ -5,6 +5,7 @@ from domain.ports.book_repository import BookRepository
 from domain.ports.author_repository import AuthorRepository
 from application.dto.author_command_dto import GetAuthorDetailsResult
 from application.ports.author.get_author_by_id import GetAuthorByID
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 class GetAuthorByIdUseCase(GetAuthorByID):
     
@@ -17,6 +18,9 @@ class GetAuthorByIdUseCase(GetAuthorByID):
         
         # 1. Obtener la entidad principal
         author = await self.author_repo.find_by_id(author_id)
+        if not author:
+            raise BusinessNotFoundError(author_id, "No existe el ID.")
+       
         # 2. Obtener las entidades relacionadas
         books = await self.book_repo.find_by_author_id(author_id)
         # 3. Obtener el mapa de TODOS los autores relacionados (para enriquecer nombres)

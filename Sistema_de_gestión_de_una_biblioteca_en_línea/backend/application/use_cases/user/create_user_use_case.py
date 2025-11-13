@@ -13,7 +13,7 @@ class CreateUserUseCase(UserCreate):
 
     async def create(self, command: CreateUserCommand) -> User:
         
-        existing_user = await self.user_repo.find_by_email((command.email))
+        existing_user = await self.user_repo.find_by_email(command.email)
         if existing_user:
             raise BusinessConflictError(command.email, "El usuario con este email ya existe")
         

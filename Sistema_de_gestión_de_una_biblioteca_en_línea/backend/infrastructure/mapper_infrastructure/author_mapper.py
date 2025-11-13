@@ -1,4 +1,6 @@
 from domain.models.author import Author
+from domain.models.value_objects.author.author_name import AuthorName  
+from domain.models.value_objects.author.author_description import AuthorDescription
 
 class AuthorMapper:
     
@@ -9,8 +11,8 @@ class AuthorMapper:
         """
         return {
             "author_id": author.author_id,
-            "name": author.name,
-            "description": author.description
+            "name": author.name.value,
+            "description": author.description.value
         }
 
     @staticmethod
@@ -18,8 +20,11 @@ class AuthorMapper:
         """
         Convierte un diccionario de persistencia a un objeto de dominio Author.
         """
+        if author_data is None:
+            return None
+        
         return Author(
             author_id=author_data['author_id'],
-            name=author_data['name'],
-            description=author_data['description']
+            name=AuthorName(author_data['name']),
+            description=AuthorDescription(author_data['description'])
         )

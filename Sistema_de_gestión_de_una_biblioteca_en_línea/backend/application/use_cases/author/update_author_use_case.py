@@ -5,6 +5,7 @@ from domain.models.value_objects.author.author_name import AuthorName
 from domain.models.value_objects.author.author_description import AuthorDescription
 from domain.ports.author_repository import AuthorRepository
 from application.ports.author.update_author import UpdateAuthor
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 class UpdateAuthorUseCase(UpdateAuthor):
     
@@ -12,10 +13,12 @@ class UpdateAuthorUseCase(UpdateAuthor):
         self.author_repo = author_repository
 
     async def update_author(self, author_id: str, command: UpdateAuthorCommand) -> Author:
-        # 1. Cargar el Agregado Raíz
-        author: Author = await self.author_repo.find_by_id(author_id)
         
-        # 2. Preparar los nuevos VOs solo si los datos están presentes
+        author: Author = await self.author_repo.find_by_id(author_id)
+        if not author:
+            raise BusinessNotFoundError(author_id, "No existe el ID.")
+        
+        # Preparar los nuevos VOs solo si los datos están presentes
         new_name_vo = author.name
         new_description_vo = author.description
         
@@ -26,10 +29,8 @@ class UpdateAuthorUseCase(UpdateAuthor):
         if command.description is not None:
             new_description_vo = AuthorDescription(value=command.description)
 
-        # 3. Llamar al método de Dominio (update_profile)
         author.update_profile(new_name=new_name_vo, new_description=new_description_vo)
-        
-        # 4. Persistir los cambios
+       
         await self.author_repo.update(author) 
         
         return author

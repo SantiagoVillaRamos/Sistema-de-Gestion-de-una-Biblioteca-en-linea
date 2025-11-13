@@ -2,7 +2,6 @@ from typing import Dict, Optional, List
 from domain.ports.author_repository import AuthorRepository
 from domain.models.author import Author
 from infrastructure.mapper_infrastructure.author_mapper import AuthorMapper
-from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
 
 
 class AuthorInMemoryRepository(AuthorRepository):
@@ -11,16 +10,12 @@ class AuthorInMemoryRepository(AuthorRepository):
         self._authors: Dict[str, dict] = {}
 
     async def save(self, author: Author) -> None:
-        author_exists = any(a['name'] == author.name for a in self._authors.values())
-        if author_exists:
-            raise BusinessConflictError(author.name.value, "El autor con este nombre ya existe")
         persistence_data = AuthorMapper.to_persistence(author)
         self._authors[author.author_id] = persistence_data
+        
 
     async def find_by_id(self, author_id: str) -> Optional[Author]:
         persistence_data = self._authors.get(author_id)
-        if not persistence_data:
-            raise BusinessNotFoundError(author_id, "El ID no existe")
         return AuthorMapper.to_domain(persistence_data)
     
 
@@ -33,7 +28,7 @@ class AuthorInMemoryRepository(AuthorRepository):
         for data in self._authors.values():
             if data['name'] == name:
                 return AuthorMapper.to_domain(data)
-        return BusinessNotFoundError(name, f"El nombre no existe")
+        return None
     
     
     async def find_by_ids(self, author_ids: List[str]) -> List[Author]:
@@ -56,15 +51,10 @@ class AuthorInMemoryRepository(AuthorRepository):
         return domain_authors
 
     async def update(self, author: Author) -> None:
-        if author.author_id not in self._authors:
-            raise BusinessNotFoundError(author.author_id, "El autor no existe y no se puede actualizar")
-        
-        # Actualizar los datos de persistencia con la nueva información del autor.
+
         updated_data = AuthorMapper.to_persistence(author)
         self._authors[author.author_id] = updated_data
 
 
     async def delete(self, author_id: str) -> None:
-        if author_id not in self._authors:
-            raise BusinessNotFoundError(author_id, "El autor no existe para ser eliminado.")
         del self._authors[author_id]

@@ -3,6 +3,7 @@ from domain.ports.author_repository import AuthorRepository
 from domain.ports.book_repository import BookRepository
 from domain.models.author import Author
 from application.ports.author.delete_author import DeleteAuthor
+from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
 
 class DeleteAuthorUseCase(DeleteAuthor):
     
@@ -11,10 +12,11 @@ class DeleteAuthorUseCase(DeleteAuthor):
         self.book_repo = book_repository
 
     async def delete_author(self, author_id: str) -> Author:
-        # 1. Cargar el Agregado Raíz (para obtener el nombre antes de eliminar)
+       
         author_to_delete: Author = await self.author_repo.find_by_id(author_id)
-        
-        # 2. VERIFICACIÓN DE LÓGICA DE NEGOCIO
+        if not author_to_delete:
+            raise BusinessNotFoundError(author_id, "El ID no existe.")
+
         await self._count_books_by_author(author_id, author_to_delete)
         await self.author_repo.delete(author_id)
         
