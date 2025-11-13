@@ -7,6 +7,7 @@ from domain.ports.notification_service import NotificationService
 from domain.services.lending_service import LendingService
 from domain.models.book import Book
 from application.ports.library.lend_book import LendBook
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 
 class LendBookUseCase(LendBook):  
@@ -28,22 +29,29 @@ class LendBookUseCase(LendBook):
         self._lending_service = lending_service
 
     async def lend_book(self, command: LendBookCommand) -> LendBookResult:
-        # 1. Orquestación: Cargar los datos desde la persistencia
+        
+        # Orquestación: Cargar los datos desde la persistencia
         user = await self._user_repo.find_by_id(command.user_id)
+        if not user:
+            raise BusinessNotFoundError(command.user_id, "El ID no existe.")
+        
         book = await self._book_repo.find_by_id(command.book_id)
+        if not book:
+            raise BusinessNotFoundError(command.book_id, "El ID no existe.")
+        
         active_loans = await self._loan_repo.find_active_loans_by_user(user.user_id)
         
-        # 2. Lógica de Dominio: Delegar las reglas de negocio al servicio de dominio
+        #Lógica de Dominio: Delegar las reglas de negocio al servicio de dominio
         new_loan = self._lending_service.lend_book(user, book, active_loans)
 
-        # 3. Orquestación: Persistir los cambios
+        #Persistir los cambios
         await self._book_repo.update(book)
         await self._loan_repo.save(new_loan)
 
-        # 4. Orquestación: Enviar notificación
+        # Enviar notificación
         await self._notification_service.send_loan_notification(user, book, new_loan)
-        # 5. Preparar el resultado
-        author_names = await self._get_author_names(book.author, book)
+        # Preparar el resultado
+        author_names = await self._get_author_names(book.author)
         
         return LendBookResult(
             loan=new_loan,
@@ -52,10 +60,9 @@ class LendBookUseCase(LendBook):
             author_names=author_names,
         )
         
-    async def _get_author_names(self, author_ids: list[str], book:Book ) -> list[str]:
+    async def _get_author_names(self, author_ids: list[str]) -> list[str]:
         
-        author_ids = book.author
-        authors = await self._author_repo.find_by_ids(author_ids)
-        author_names = [author.name.value for author in authors]
+        response_authors_ids = await self._author_repo.find_by_ids(author_ids)
+        author_names = [author.name.value for author in response_authors_ids]
         return author_names
         

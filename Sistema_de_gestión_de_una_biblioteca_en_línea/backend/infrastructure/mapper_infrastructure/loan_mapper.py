@@ -22,4 +22,8 @@ class LoanMapper:
         """
         Convierte un diccionario de persistencia a un objeto de dominio Loan.
         """
+        
+        if loan_data is None:
+            return None
+        
         return Loan(**loan_data)

@@ -5,6 +5,7 @@ from domain.ports.notification_service import NotificationService
 from application.dto.library_command_dto import ReturnBookCommand, ReturnBookResponse
 from domain.services.returning_service import ReturningService
 from application.ports.library.return_book import ReturnBook
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 class ReturnBookUseCase(ReturnBook):
     """
@@ -27,22 +28,25 @@ class ReturnBookUseCase(ReturnBook):
         self._returning_service = returning_service
 
     async def return_book(self, command: ReturnBookCommand) -> ReturnBookResponse:
-        # 1. Orquestación: Cargar los datos desde la persistencia
+    
         loan = await self._loan_repo.find_by_id(command.loan_id)
+        if not loan:
+            raise BusinessNotFoundError(command.loan_id, "El  ID no existe.")
+        
         book = await self._book_repo.find_by_id(loan.book_id)
         user = await self._user_repo.find_by_id(loan.user_id)
         
-        # 2. Lógica de Dominio: Delegar las reglas de negocio al servicio de dominio
+        # Lógica de Dominio: Delegar las reglas de negocio al servicio de dominio
         penalty = self._returning_service.return_book(user, loan, book)
         
-        # 3. Orquestación: Persistir los cambios
+        # Orquestación: Persistir los cambios
         await self._loan_repo.update(loan)
         await self._book_repo.update(book)
 
-        # 4. Orquestación: Enviar notificación
+        # Orquestación: Enviar notificación
         await self._notification_service.send_return_notification(user, book)
         
-        # 5. Orquestación: Enviar notificación de multa si aplica
+        # Orquestación: Enviar notificación de multa si aplica
         if penalty > 0:
             await self._notification_service.send_penalty_notification(user, book, penalty)
         

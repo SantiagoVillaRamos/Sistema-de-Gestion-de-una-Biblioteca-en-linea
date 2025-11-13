@@ -9,7 +9,6 @@ from infrastructure.mapper_infrastructure.book_mapper import BookMapper
 class BookInMemoryRepository(BookRepository):
     
     def __init__(self):
-        # Almacenamos diccionarios, no objetos Book directamente.
         self._books: Dict[str, dict] = {}
 
     async def save(self, book: Book) -> None:

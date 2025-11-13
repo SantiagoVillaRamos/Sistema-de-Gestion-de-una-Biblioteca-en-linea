@@ -27,13 +27,10 @@ class GetLoanReportUseCase(GetLoanReport):
 
     async def get_loan_report(self) -> List[LoanReportData]:
         """Genera un informe de todos los préstamos con sus datos relacionados."""
-        all_loans = await self._get_all_loans()
+        
+        all_loans = await self._loan_repo.find_all()
         user_map, book_map, author_map = await self._load_related_data(all_loans)
         return self._assemble_report_data(all_loans, user_map, book_map, author_map)
-
-
-    async def _get_all_loans(self) -> List[Loan]:
-        return await self._loan_repo.find_all()
 
 
     async def _load_related_data(self, all_loans: List[Loan]) -> tuple[Dict[str, User], Dict[str, Book], Dict[str, Author]]:
