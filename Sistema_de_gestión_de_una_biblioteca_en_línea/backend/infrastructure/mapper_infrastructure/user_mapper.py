@@ -14,6 +14,10 @@ class UserMapper:
         """Convierte un diccionario de datos de persistencia a un objeto de dominio User."""
         # Al reconstruir, el password ya está hasheado. Lo pasamos directamente.
         # El Value Object Password se usa para hashear, no para almacenar un hash.
+        
+        if persistence_data is None:
+            return None
+        
         return User(
             user_id=persistence_data['user_id'],
             name=persistence_data['name'],
@@ -37,3 +41,5 @@ class UserMapper:
             "roles": domain_user.roles,
             "is_active": domain_user.is_active,
         }
+        
+        

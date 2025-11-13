@@ -3,6 +3,7 @@ from domain.models.factory.userFactory import UserFactory
 from domain.models.user import User
 from application.dto.user_command_dto import CreateUserCommand
 from application.ports.user.user_creater import UserCreate
+from domain.models.exceptions.business_exception import BusinessConflictError
 
 class CreateUserUseCase(UserCreate):
 
@@ -12,7 +13,11 @@ class CreateUserUseCase(UserCreate):
 
     async def create(self, command: CreateUserCommand) -> User:
         
-        new_user = self.user_factory.create(
+        existing_user = await self.user_repo.find_by_email((command.email))
+        if existing_user:
+            raise BusinessConflictError(command.email, "El usuario con este email ya existe")
+        
+        new_user = self.user_factory.create_user_factory(
             name=command.name,
             email=command.email,
             password=command.password,

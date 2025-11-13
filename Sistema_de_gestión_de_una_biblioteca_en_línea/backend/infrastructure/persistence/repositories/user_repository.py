@@ -24,33 +24,33 @@ from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 
 
-# --- REPOSITORIO DE USUARIO (Ejemplo Simplificado) ---
-class SQLAlchemyUserRepository(UserRepository): # CORREGIDO: Hereda del Puerto
+# --- REPOSITORIO DE USUARIO ---
+class SQLAlchemyUserRepository(UserRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def _map_to_domain(self, db_user: UserModel) -> Optional[User]:
         if not db_user:
             return None
-        # Mapeo usando los Objetos de Valor del Dominio
+        
         return User(
             user_id=db_user.id,
             name=db_user.name,
             email=Email(db_user.email),
-            password=Password(db_user.password_hash), # Asumo que Password maneja el hash internamente 
+            password=Password(db_user.password_hash),
             user_type=db_user.user_type,
             roles=db_user.roles.split(",") if db_user.roles else [],
             is_active=db_user.is_active
         )
 
-    async def save(self, user: User) -> None: # CORREGIDO: Async (Usado para crear/actualizar)
+    async def save(self, user: User) -> None: 
         db_user = await self.session.get(UserModel, user.user_id)
         
         if db_user:
             # Actualización
             db_user.name = user.name
             db_user.email = str(user.email)
-            db_user.password_hash = str(user.password) # El Agregado User debe proveer el HASH aquí
+            db_user.password_hash = str(user.password)
             db_user.user_type = user.user_type
             db_user.roles = ",".join(user.roles)
             db_user.is_active = user.is_active
@@ -101,3 +101,5 @@ class SQLAlchemyUserRepository(UserRepository): # CORREGIDO: Hereda del Puerto
         result = await self.session.execute(stmt)
         db_users = result.scalars().all()
         return [await self._map_to_domain(u) for u in db_users]
+    
+    

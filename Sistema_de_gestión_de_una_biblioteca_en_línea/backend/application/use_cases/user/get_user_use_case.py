@@ -8,6 +8,7 @@ from domain.models.loan import Loan
 from domain.models.book import Book
 from domain.models.author import Author
 from application.ports.user.get_user import GetUser
+from domain.models.exceptions.business_exception import BusinessConflictError, BusinessNotFoundError
 
 
 class GetUserUseCase(GetUser):
@@ -27,6 +28,8 @@ class GetUserUseCase(GetUser):
     async def get_user(self, user_id: str) -> Optional[UserDetailsDTO]:
         
         user = await self.user_repo.find_by_id(user_id)
+        if not user:
+            raise BusinessNotFoundError(user_id, "No existe el ID.")
             
         active_loans = await self.loan_repo.find_active_loans_by_user(user_id)
         

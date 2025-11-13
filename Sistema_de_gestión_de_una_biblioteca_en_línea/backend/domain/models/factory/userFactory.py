@@ -9,7 +9,7 @@ class UserFactory:
     def __init__(self, password_service: PasswordService):
         self.password_service = password_service
 
-    def create(self, name: str, email: str, password: str, roles: list[str] = None, user_type: str = "general") -> User:
+    def create_user_factory(self, name: str, email: str, password: str, roles: list[str] = None, user_type: str = "general") -> User:
         
         user_id = str(uuid.uuid4())
         email_vo = Email(email)
