@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 from domain.models.book import Book
+from domain.models.value_objects.isbn import ISBN
+from domain.models.value_objects.title import Title
 
 
 class BookRepository(ABC):
@@ -21,6 +23,14 @@ class BookRepository(ABC):
     
     @abstractmethod
     async def find_by_ids(self, book_ids: List[str]) -> List[Book]:
+        pass
+    
+    @abstractmethod
+    async def find_by_isbn(self, isbn: ISBN) -> Optional[Book]:
+        pass
+    
+    @abstractmethod
+    async def find_by_title(self, title: Title) -> Optional[Book]:
         pass
 
     @abstractmethod

@@ -5,6 +5,7 @@ from domain.models.author import Author
 from application.dto.book_command_dto import BookDetailsResponse
 from application.ports.book.get_book_by_id import GetBookById
 from typing import List
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 class GetBookByIdUseCase(GetBookById):
     
@@ -14,7 +15,9 @@ class GetBookByIdUseCase(GetBookById):
 
     async def get_book_by_id(self, book_id: str) -> BookDetailsResponse:
         
-        book: Book = await self.book_repository.find_by_id(book_id)
+        book = await self.book_repository.find_by_id(book_id)
+        if not book:
+            raise BusinessNotFoundError(book_id, "El ID no existe.")
         
         authors: List[Author] = await self._find_authores_for_book(book)
        

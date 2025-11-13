@@ -24,6 +24,10 @@ class BookMapper:
         """
         Convierte un diccionario de persistencia a un objeto de dominio Book.
         """
+        
+        if book_data is None:
+            return None
+        
         return Book(
             book_id=book_data['book_id'],
             isbn=ISBN(book_data['isbn']),

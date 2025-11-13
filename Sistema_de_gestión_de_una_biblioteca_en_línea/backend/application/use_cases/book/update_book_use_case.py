@@ -6,6 +6,7 @@ from domain.models.value_objects.title import Title
 from domain.ports.author_repository import AuthorRepository
 from dataclasses import asdict
 from application.ports.book.update_book import UpdateBook
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 
 _VO_MAPPING: Dict[str, type] = {
     'title': Title 
@@ -19,16 +20,17 @@ class UpdateBookUseCase(UpdateBook):
         self.author_repository = author_repository
 
     async def update_book(self, book_id: str, update_dto: UpdateBookDTOCommand) -> Optional[UpdateBookResult]:
-        #1. Obtener la entidad
+       
         book = await self.book_repository.find_by_id(book_id)
+        if not book:
+            raise BusinessNotFoundError(book_id, "El ID no existe.")
         
-        #2. Aplicar la logica de actualizacion
+        # Aplicar la logica de actualizacion
         self._apply_updates(book, update_dto)
         
-        # 3. Persistir el cambio
         await self.book_repository.update(book)
         
-        #4. Enriquecer y devolver el resultado
+        # Enriquecer y devolver el resultado
         author_name = await self._get_author_names(book.author)
         
         return UpdateBookResult(

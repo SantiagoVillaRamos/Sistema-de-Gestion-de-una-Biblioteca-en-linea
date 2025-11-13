@@ -4,7 +4,7 @@ from domain.ports.book_repository import BookRepository
 from domain.ports.author_repository import AuthorRepository
 from application.dto.book_command_dto import CreateBookCommand, CreateBookResult
 from domain.models.factory.bookFactory import BookFactory
-from domain.models.exceptions.business_exception import BusinessNotFoundError 
+from domain.models.exceptions.business_exception import BusinessNotFoundError
 from typing import List
 from application.ports.book.create_book import CreaterBook
 
@@ -19,6 +19,14 @@ class CreateBookUseCase(CreaterBook):
         
         authors = await self._validate_authors_exist(command.author)
         
+        response_ISBN = await self.book_repo.find_by_isbn(command.isbn)
+        if response_ISBN:
+            raise BusinessNotFoundError(command.isbn, "El libro con este ISBN ya existe.")
+        
+        response_Title = await self.book_repo.find_by_title(command.title)
+        if response_Title:
+            raise BusinessNotFoundError(command.title, "El titulo ya existe.")
+        
         new_book = self.book_factory.create(
             isbn=command.isbn,
             title=command.title,
@@ -28,7 +36,7 @@ class CreateBookUseCase(CreaterBook):
         )
         
         await self.book_repo.save(new_book)
-        author_names = self._extract_author_names(authors)
+        author_names = [author.name.value for author in authors]
 
         return CreateBookResult(
             book=new_book,
@@ -55,7 +63,4 @@ class CreateBookUseCase(CreaterBook):
             
         return authors
     
-    def _extract_author_names(self, authors: List[Author]) -> List[str]:
-        """Extrae los nombres de los autores de la lista de autores."""
-        return [author.name.value for author in authors]
 
