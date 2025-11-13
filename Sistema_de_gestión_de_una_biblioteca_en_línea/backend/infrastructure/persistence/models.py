@@ -8,6 +8,7 @@ class AuthorModel(Base):
     
     id = Column(String, primary_key=True, index=True)
     name = Column(String, index=True)
+    description = Column(String, nullable=True) 
     books = relationship("BookModel", back_populates="author")
 
 class BookModel(Base):
@@ -46,3 +47,4 @@ class LoanModel(Base):
     return_date = Column(DateTime, nullable=True)
     user = relationship("UserModel", back_populates="loans")
     book = relationship("BookModel", back_populates="loans")
+    
