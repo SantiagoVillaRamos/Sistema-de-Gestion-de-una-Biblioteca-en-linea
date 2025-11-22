@@ -19,7 +19,7 @@ class User:
     def __post_init__(self):
         
         if not self.name or not self.name.strip():
-            raise BusinessNotFoundError(self.name, "El nombre no puede estar vacío.")
+            raise BusinessNotFoundError(self.name, "Name cannot be empty.")
         self.name = self.name.strip()
 
     def activate(self) -> None:
@@ -27,5 +27,3 @@ class User:
 
     def deactivate(self) -> None:
         self.is_active = False
-        
-    

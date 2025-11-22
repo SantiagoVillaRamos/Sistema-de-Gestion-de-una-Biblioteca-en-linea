@@ -19,13 +19,13 @@ class LibraryFacade:
         self._get_loan_report_use_case = get_loan_report_use_case
 
     async def lend_book(self, command: LendBookCommand) -> LendBookResult:
-        return await self._lend_book_use_case.lend_book(command)
+        return await self._lend_book_use_case.execute(command)
 
     async def return_book(self, command: ReturnBookCommand) -> ReturnBookResponse:
         return await self._return_book_use_case.return_book(command)
     
     async def get_loan_report_facade(self):
-        return await self._get_loan_report_use_case.get_loan_report()
+        return await self._get_loan_report_use_case.execute()
         
 
     

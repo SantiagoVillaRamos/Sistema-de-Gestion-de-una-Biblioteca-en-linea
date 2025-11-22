@@ -34,11 +34,13 @@ class AuthorMapper:
             )
         else:
             db_author = persistence_data
-            return Author(
+            author = Author(
                 author_id=db_author.id,
                 name=AuthorName(db_author.name),
                 description=AuthorDescription(db_author.description if hasattr(db_author, 'description') else None) 
-            )    
+            )
+            print(f"DEBUG: AuthorMapper.to_domain created author: {author}, name type: {type(author.name)}")
+            return author    
         
     @staticmethod
     def to_db_model(domain_author: Author, db_model: Optional[AuthorModel] = None) -> AuthorModel:

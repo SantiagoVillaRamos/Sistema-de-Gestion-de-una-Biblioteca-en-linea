@@ -43,10 +43,10 @@ from infrastructure.persistence.models import AuthorModel, BookModel, UserModel,
 
 from infrastructure.persistence.models import Base
 from main import app
-from infrastructure.persistence.repositories import SQLAlchemyAuthorRepository
-from infrastructure.persistence.repositories import SQLAlchemyBookRepository
-from infrastructure.persistence.repositories import SQLAlchemyUserRepository
-from infrastructure.persistence.repositories import SQLAlchemyLoanRepository
+from infrastructure.persistence.repositories.author_repository import SQLAlchemyAuthorRepository
+from infrastructure.persistence.repositories.book_repository import SQLAlchemyBookRepository
+from infrastructure.persistence.repositories.user_repository import SQLAlchemyUserRepository
+from infrastructure.persistence.repositories.loan_repository import SQLAlchemyLoanRepository
 from infrastructure.persistence.database import get_db
 
 from tests.utils.auth_test_utils import create_book, create_user, generate_unique_credentials, login_user, create_unique_author

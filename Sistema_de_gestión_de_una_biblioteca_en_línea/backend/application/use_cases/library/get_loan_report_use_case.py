@@ -25,7 +25,7 @@ class GetLoanReportUseCase(GetLoanReport):
         self._book_repo = book_repo
         self._author_repo = author_repo
 
-    async def get_loan_report(self) -> List[LoanReportData]:
+    async def execute(self) -> List[LoanReportData]:
         """Genera un informe de todos los préstamos con sus datos relacionados."""
         
         all_loans = await self._loan_repo.find_all()

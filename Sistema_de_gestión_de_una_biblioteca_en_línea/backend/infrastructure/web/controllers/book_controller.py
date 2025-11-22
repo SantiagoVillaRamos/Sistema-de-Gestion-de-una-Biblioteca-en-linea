@@ -89,5 +89,5 @@ async def delete_book(
 ):
     await facade.delete_book(book_id)
     return BookMessage(
-        message=f"Libro Eliminado"
+        message=f"Book Deleted"
     )

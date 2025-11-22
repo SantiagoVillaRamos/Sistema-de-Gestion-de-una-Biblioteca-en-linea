@@ -58,7 +58,7 @@ def test_title_creation_failure_spaces_only():
 
 def test_book_creation_failure_zero_copies():
     """Prueba que la creación del libro falla si available_copies es 0."""
-    with pytest.raises(BusinessNotFoundError, match="No hay copias disponibles"):
+    with pytest.raises(BusinessNotFoundError, match="No copies available"):
         Book(
             book_id=str(uuid4()),
             isbn=ISBN("1234567890"),
@@ -78,7 +78,7 @@ def test_book_lend_success(existing_book: Book):
 def test_book_lend_failure_no_copies(unavailable_book: Book):
     """Prueba que lend falla si no hay copias disponibles (copias = 0)."""
     assert unavailable_book.available_copies == 0
-    with pytest.raises(BusinessNotFoundError, match="No hay copias disponibles"):
+    with pytest.raises(BusinessNotFoundError, match="No copies available"):
         unavailable_book.lend()
 
 def test_book_return_book_success(unavailable_book: Book):
@@ -97,7 +97,3 @@ def test_book_is_available(existing_book: Book, unavailable_book: Book):
     # Libro sin copias
     assert unavailable_book.available_copies == 0
     assert unavailable_book.is_available() is False
-
-
-
-

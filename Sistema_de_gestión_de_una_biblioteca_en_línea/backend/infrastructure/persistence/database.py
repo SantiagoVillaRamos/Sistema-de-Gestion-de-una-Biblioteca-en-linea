@@ -3,14 +3,10 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from infrastructure.core.config import settings
 
-# SQLALCHEMY_DATABASE_URL = "sqlite:///./biblioteca.db"
 
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, 
-    connect_args={"check_same_thread": False}
-)
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 # 2. Configurar la Sesión
 # SessionLocal se usa para crear sesiones de base de datos individuales
 # Nota: Se usa autocommit=False y autoflush=False para gestión manual de transacciones

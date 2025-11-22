@@ -118,24 +118,30 @@ def test_get_loan_report(client: TestClient, loan_prerequisites: dict):
     
     assert isinstance(response_get_loan_report, list)
     
-    assert all("loan_id" in loan_id for loan_id in response_get_loan_report)
-    assert all("loan_date" in loan_date for loan_date in response_get_loan_report)
-    assert all("due_date" in due_date for due_date in response_get_loan_report)
-    assert all("user_id" in user_id for user_id in response_get_loan_report)
-    assert all("user_name" in user_name for user_name in response_get_loan_report)
-    assert all("user_email" in user_email for user_email in response_get_loan_report)
-    assert all("book_id" in book_id for book_id in response_get_loan_report)
-    assert all("book_title" in book_title for book_title in response_get_loan_report)
-    assert all("book_description" in book_description for book_description in response_get_loan_report)
-    assert all("book_authors" in book_authors for book_authors in response_get_loan_report)
+    assert all("loan_id" in item for item in response_get_loan_report)
+    assert all("loan_date" in item for item in response_get_loan_report)
+    assert all("due_date" in item for item in response_get_loan_report)
     
-    assert all(isinstance(loan_id["loan_id"], str) for loan_id in response_get_loan_report)
-    assert all(isinstance(loan_date["loan_date"], str) for loan_date in response_get_loan_report)
-    assert all(isinstance(due_date["due_date"], str) for due_date in response_get_loan_report)
-    assert all(isinstance(user_id["user_id"], str) for user_id in response_get_loan_report)
-    assert all(isinstance(user_name["user_name"], str) for user_name in response_get_loan_report)
-    assert all(isinstance(user_email["user_email"], str) for user_email in response_get_loan_report)
-    assert all(isinstance(book_id["book_id"], str) for book_id in response_get_loan_report)
-    assert all(isinstance(book_title["book_title"], str) for book_title in response_get_loan_report)
-    assert all(isinstance(book_description["book_description"], str) for book_description in response_get_loan_report)
-    assert all(isinstance(book_authors["book_authors"], list) for book_authors in response_get_loan_report)
+    # Check nested User object
+    assert all("user" in item for item in response_get_loan_report)
+    assert all("user_id" in item["user"] for item in response_get_loan_report)
+    assert all("name" in item["user"] for item in response_get_loan_report)
+    assert all("email" in item["user"] for item in response_get_loan_report)
+    
+    # Check nested Book object
+    assert all("book" in item for item in response_get_loan_report)
+    assert all("book_id" in item["book"] for item in response_get_loan_report)
+    assert all("title" in item["book"] for item in response_get_loan_report)
+    assert all("authors" in item["book"] for item in response_get_loan_report)
+    
+    assert all(isinstance(item["loan_id"], str) for item in response_get_loan_report)
+    assert all(isinstance(item["loan_date"], str) for item in response_get_loan_report)
+    assert all(isinstance(item["due_date"], str) for item in response_get_loan_report)
+    
+    assert all(isinstance(item["user"]["user_id"], str) for item in response_get_loan_report)
+    assert all(isinstance(item["user"]["name"], str) for item in response_get_loan_report)
+    assert all(isinstance(item["user"]["email"], str) for item in response_get_loan_report)
+    
+    assert all(isinstance(item["book"]["book_id"], str) for item in response_get_loan_report)
+    assert all(isinstance(item["book"]["title"], str) for item in response_get_loan_report)
+    assert all(isinstance(item["book"]["authors"], list) for item in response_get_loan_report)

@@ -18,13 +18,13 @@ class Book:
     def __post_init__(self):
         
         if self.available_copies <= 0:
-            raise BusinessNotFoundError(self.available_copies, "No hay copias disponibles")
+            raise BusinessNotFoundError(self.available_copies, "No copies available")
 
 
     def lend(self) -> None:
         
         if self.available_copies <= 0:
-            raise BusinessNotFoundError(self.available_copies, "No hay copias disponibles")
+            raise BusinessNotFoundError(self.available_copies, "No copies available")
         self.available_copies -= 1
 
 

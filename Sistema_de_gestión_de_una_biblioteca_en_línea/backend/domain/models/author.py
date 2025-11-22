@@ -13,12 +13,12 @@ class Author:
 
     def update_profile(self, new_name: AuthorName, new_description: AuthorDescription) -> None:
         """
-        Método que representa la intención de negocio de actualizar el perfil del autor.
+        Method representing the business intention to update the author's profile.
         """
         self.name = new_name
         self.description = new_description
         
-    #helper que devuelve el valor primitivo para el uso de la capa de Aplicación
+    # Helper that returns the primitive value for use by the Application layer
     def get_name_value(self) -> str:
         return self.name.value
     

@@ -6,5 +6,5 @@ from application.dto.library_command_dto import LoanReportData
 class GetLoanReport(ABC):
     
     @abstractmethod
-    async def get_loan_report(self) -> List[LoanReportData]:
+    async def execute(self) -> List[LoanReportData]:
         pass

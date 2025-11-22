@@ -28,7 +28,7 @@ class LendBookUseCase(LendBook):
         self._author_repo = author_repos
         self._lending_service = lending_service
 
-    async def lend_book(self, command: LendBookCommand) -> LendBookResult:
+    async def execute(self, command: LendBookCommand) -> LendBookResult:
         
         # Orquestación: Cargar los datos desde la persistencia
         user = await self._user_repo.find_by_id(command.user_id)
@@ -63,6 +63,7 @@ class LendBookUseCase(LendBook):
     async def _get_author_names(self, author_ids: list[str]) -> list[str]:
         
         response_authors_ids = await self._author_repo.find_by_ids(author_ids)
+        for author in response_authors_ids:
+            print(f"DEBUG: LendBookUseCase author: {author}, name type: {type(author.name)}")
         author_names = [author.name.value for author in response_authors_ids]
         return author_names
-        
