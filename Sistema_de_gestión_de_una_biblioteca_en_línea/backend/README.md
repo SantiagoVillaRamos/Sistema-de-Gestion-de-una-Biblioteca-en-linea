@@ -7,19 +7,21 @@
 ## Setup Instructions
 
 ### 1. Create Environment File
-Create a `.env` file in the `backend` directory with the following content:
+Copy the example environment file and configure it with your credentials:
 
-```env
-POSTGRES_HOST=db
-POSTGRES_PORT=5432
-POSTGRES_DB=library_db
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-
-JWT_SECRET_KEY=supersecretkey_change_this_in_production
-JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+**Windows (PowerShell):**
+```powershell
+Copy-Item .env.example .env
 ```
+
+**Linux/Mac:**
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` and update the values:
+- `POSTGRES_PASSWORD`: Set a secure password
+- `JWT_SECRET_KEY`: Generate a secure random key (e.g., using `openssl rand -hex 32`)
 
 ### 2. Start the Services
 From the `backend` directory, run:

@@ -3,6 +3,8 @@ from domain.ports.PasswordService import PasswordService
 from domain.models.value_objects.email import Email
 from domain.models.value_objects.password import Password
 from domain.models.user import User
+from infrastructure.services.password_policy_validator import PasswordPolicyValidator
+
 
 class UserFactory:
     
@@ -10,9 +12,19 @@ class UserFactory:
         self.password_service = password_service
 
     def create_user_factory(self, name: str, email: str, password: str, roles: list[str] = None, user_type: str = "general") -> User:
+        """
+        Create a new user with validated password.
         
+        🔒 SECURITY: Enforces password policy before user creation.
+        
+        Raises:
+            ValueError: If password doesn't meet security requirements
+        """
         user_id = str(uuid.uuid4())
         email_vo = Email(email)
+        
+        # 🔒 SECURITY: Validate password strength
+        PasswordPolicyValidator.validate_or_raise(password)
         
         hashed_password_str = self.password_service.hash_password(password)
         password_vo = Password(hashed_password_str)

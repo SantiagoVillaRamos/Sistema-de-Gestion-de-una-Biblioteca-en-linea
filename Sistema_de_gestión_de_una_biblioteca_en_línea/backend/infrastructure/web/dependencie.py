@@ -6,6 +6,7 @@ from application.facade.facade_library import LibraryFacade
 from infrastructure.services.email_notification_service import EmailNotificationService
 from infrastructure.services.passlib_password_service import PasslibPasswordService
 from infrastructure.services.jwt_auth_service import JwtAuthService
+from infrastructure.services.token_blacklist_service import TokenBlacklistService
 from application.facade.facade_user import UserFacade
 from application.facade.facade_book import FacadeBook
 from application.facade.facade_author import AuthorFacade
@@ -40,6 +41,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
 from domain.models.user import User
+from infrastructure.core.config import settings
 
 # Instancias de repositorios (simulando un Singleton)
 class Repositories:
@@ -52,7 +54,14 @@ class Repositories:
     password_service = PasslibPasswordService()
     user_updated_service = UserUpdaterService(password_service=password_service)
     
-    auth_service = JwtAuthService(secret_key="a_very_secret_key")
+    # 🔒 SECURITY FIX: Use secret key from environment variables
+    auth_service = JwtAuthService(
+        secret_key=settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
+    
+    # 🔒 SECURITY: Token blacklist for logout functionality
+    token_blacklist = TokenBlacklistService()
     
     book_factory = BookFactory()
     author_factory = AuthorFactory()
@@ -209,26 +218,46 @@ def get_auth_facade() -> AuthFacade:
 
 
 async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)]) -> User:
+    """
+    Validates JWT token and returns the authenticated user.
+    
+    🔒 SECURITY: 
+    - Generic error messages to prevent information disclosure
+    - Checks token blacklist for revoked tokens
+    """
     if token is None:
-        
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="No autenticado",
+            detail="Authentication required",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+    # 🔒 SECURITY: Check if token is blacklisted (logged out)
+    if repos.token_blacklist.is_blacklisted(token):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has been revoked",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     try:
         payload = repos.auth_service.validate_token(token)
         user_id: str = payload.get("sub")
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="No se pudieron validar las credenciales",
+                detail="Invalid authentication credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-    except Exception as e: 
+    except Exception as e:
+        # 🔒 SECURITY FIX: Log detailed error internally, return generic message
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Token validation failed: {type(e).__name__} - {str(e)}")
+        
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e),
+            detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
@@ -236,7 +265,7 @@ async def get_current_user(token: Annotated[str | None, Depends(oauth2_scheme)])
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="No se pudieron validar las credenciales",
+            detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
@@ -250,6 +279,11 @@ async def get_optional_current_user(token: Annotated[str | None, Depends(oauth2_
         return None
 
 class RoleChecker:
+    """
+    Dependency to check if user has required roles.
+    
+    🔒 SECURITY: Validates user authorization for protected endpoints.
+    """
     def __init__(self, allowed_roles: list[str]):
         self.allowed_roles = allowed_roles
 
@@ -257,5 +291,5 @@ class RoleChecker:
         if not any(role in self.allowed_roles for role in user.roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Operacion no Permitida"
+                detail="Insufficient permissions"
             )

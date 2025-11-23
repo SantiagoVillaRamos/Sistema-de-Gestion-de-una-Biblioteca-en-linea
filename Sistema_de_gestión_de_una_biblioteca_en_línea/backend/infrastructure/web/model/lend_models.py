@@ -1,7 +1,8 @@
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional
 from datetime import datetime
+import re
 
 
 class LoanedUserResponse(BaseModel):
@@ -26,15 +27,40 @@ class LoanResponse(BaseModel):
 
 
 class LendBookRequest(BaseModel):
+    """
+    Request model for lending a book.
     
-    user_id: str
-    book_id: str
+    🔒 SECURITY: UUID validation to prevent injection attacks.
+    """
+    user_id: str = Field(..., min_length=36, max_length=36, description="User UUID")
+    book_id: str = Field(..., min_length=36, max_length=36, description="Book UUID")
     
+    @field_validator('user_id', 'book_id')
+    @classmethod
+    def validate_uuid_format(cls, v: str) -> str:
+        """Validate that the ID is a valid UUID format."""
+        uuid_pattern = r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+        if not re.match(uuid_pattern, v.lower()):
+            raise ValueError(f'Invalid UUID format: {v}')
+        return v
 
     
 class ReturnBookRequest(BaseModel):
-
-    loan_id: str
+    """
+    Request model for returning a book.
+    
+    🔒 SECURITY: UUID validation to prevent injection attacks.
+    """
+    loan_id: str = Field(..., min_length=36, max_length=36, description="Loan UUID")
+    
+    @field_validator('loan_id')
+    @classmethod
+    def validate_uuid_format(cls, v: str) -> str:
+        """Validate that the ID is a valid UUID format."""
+        uuid_pattern = r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+        if not re.match(uuid_pattern, v.lower()):
+            raise ValueError(f'Invalid UUID format: {v}')
+        return v
 
 class ReturnBookResponse(BaseModel):
     

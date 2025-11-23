@@ -52,5 +52,15 @@ class UserUpdaterService:
         user.email = new_email_vo
         
     def _update_password(self, user: User, new_password):
+        """
+        Update user password with validation.
+        
+        🔒 SECURITY: Enforces password policy before updating.
+        """
+        from infrastructure.services.password_policy_validator import PasswordPolicyValidator
+        
+        # 🔒 SECURITY: Validate new password strength
+        PasswordPolicyValidator.validate_or_raise(new_password)
+        
         hashed_password = self.password_service.hash_password(new_password)
         user.password = Password(hashed_password)
