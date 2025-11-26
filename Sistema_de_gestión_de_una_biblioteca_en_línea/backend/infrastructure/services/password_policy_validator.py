@@ -1,5 +1,6 @@
 import re
 from typing import List
+from domain.models.exceptions.password_validation_error import PasswordValidationError
 
 
 class PasswordPolicyValidator:
@@ -58,8 +59,8 @@ class PasswordPolicyValidator:
             password: The password to validate
             
         Raises:
-            ValueError: If password doesn't meet requirements
+            PasswordValidationError: If password doesn't meet requirements
         """
         is_valid, errors = cls.validate(password)
         if not is_valid:
-            raise ValueError("; ".join(errors))
+            raise PasswordValidationError("; ".join(errors))
