@@ -23,6 +23,7 @@ from domain.models.exceptions.resource import (
 )
 from domain.models.exceptions.business_exception import BusinessError
 from domain.models.exceptions.password_validation_error import PasswordValidationError
+from infrastructure.security.input_validators import InputValidationError
 from infrastructure.middleware.security_logging import SecurityLoggingMiddleware
 
 
