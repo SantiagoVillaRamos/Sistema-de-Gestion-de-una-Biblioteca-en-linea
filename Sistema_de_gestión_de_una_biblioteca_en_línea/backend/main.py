@@ -23,7 +23,7 @@ from domain.models.exceptions.resource import (
 )
 from domain.models.exceptions.business_exception import BusinessError
 from domain.models.exceptions.password_validation_error import PasswordValidationError
-from infrastructure.security.input_validators import InputValidationError
+from infrastructure.security.input_validators import InputValidationError
 from infrastructure.middleware.security_logging import SecurityLoggingMiddleware
 
 
@@ -100,6 +100,13 @@ def create_app() -> FastAPI:
         
     @app.exception_handler(InvalidUserTypeException)
     async def invalid_user_type_exception(request: Request, exc: InvalidUserTypeException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"detail": str(exc)}
+        )
+
+    @app.exception_handler(InputValidationError)
+    async def input_validation_exception_handler(request: Request, exc: InputValidationError):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"detail": str(exc)}

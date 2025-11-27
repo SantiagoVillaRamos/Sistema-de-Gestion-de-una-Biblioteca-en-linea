@@ -41,22 +41,21 @@ class Config:
             POSTGRES_PASSWORD = 'postgres'
             print("⚠️  WARNING: Using default POSTGRES_PASSWORD='postgres' (development only)")
     
-    # 🔒 SECURITY: JWT secret - no default in production
+    # 🔒 SECURITY: JWT secret - must be set in production
     SECRET_KEY: str = os.getenv("JWT_SECRET_KEY")
     if not SECRET_KEY:
         if ENVIRONMENT == 'production':
-            raise ValueError(
-                "🔒 SECURITY ERROR: JWT_SECRET_KEY must be set in production environment.\n"
-                "Generate a secure key with: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
-            )
+            raise ValueError("🔒 SECURITY ERROR: JWT_SECRET_KEY must be set in production environment")
         else:
             # Development fallback with warning
             SECRET_KEY = 'dev_secret_key_INSECURE_DO_NOT_USE_IN_PRODUCTION'
             print("⚠️  WARNING: Using insecure default JWT_SECRET_KEY (development only)")
-            print("   Generate a secure key with: python -c \"import secrets; print(secrets.token_urlsafe(32))\"")
-    
+
     ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+    
+    # Token expiration settings (configurable via env vars)
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "15"))
+    REFRESH_TOKEN_EXPIRE_DAYS: int = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
     
     # Configuración del servidor - Usar postgresql+psycopg2 para psycopg2-binary
     DATABASE_URL: str = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}" 

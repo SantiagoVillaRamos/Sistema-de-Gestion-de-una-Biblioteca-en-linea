@@ -83,6 +83,10 @@ def validate_safe_text(text: str, field_name: str = "field") -> str:
     # Strip HTML tags first
     clean_text = strip_html_tags(text)
     
+    # 🔒 SECURITY: Reject if HTML tags were present (strict validation)
+    if clean_text != text:
+        raise InputValidationError(f"{field_name} contains HTML tags or encoded entities")
+    
     # Check for SQL injection keywords (case-insensitive)
     sql_keywords = [
         'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'CREATE', 'ALTER',

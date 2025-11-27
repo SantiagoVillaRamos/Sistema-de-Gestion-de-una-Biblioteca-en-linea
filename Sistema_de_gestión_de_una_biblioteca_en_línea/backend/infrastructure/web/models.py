@@ -3,7 +3,6 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class MessageResponse(BaseModel):
-    
     message: str
 
 
@@ -39,11 +38,12 @@ class RefreshTokenRequest(BaseModel):
 
 class RefreshTokenResponse(BaseModel):
     """
-    Response with new access token.
+    Response with new access and refresh tokens.
     
-    🔒 SECURITY: Returns new access token without requiring password.
+    🔒 SECURITY: Returns new access token AND new refresh token (Rotation).
     """
     access_token: str = Field(..., description="New access token")
+    refresh_token: str = Field(..., description="New refresh token (Rotation)")
     token_type: str = Field(default="bearer", description="Token type")
 
 

@@ -6,6 +6,15 @@ from infrastructure.persistence.database import SessionLocal
 from infrastructure.persistence.models import UserModel, BookModel, AuthorModel
 import uuid
 import bcrypt
+import os
+
+# 🔒 SECURITY: Load seed passwords from environment
+SEED_ADMIN_PASSWORD = os.getenv("SEED_ADMIN_PASSWORD", "Admin@1234")
+SEED_USER_PASSWORD = os.getenv("SEED_USER_PASSWORD", "Password123!")
+
+# Warn if using defaults
+if SEED_ADMIN_PASSWORD == "Admin@1234":
+    print("⚠️  WARNING: Using default admin password. Set SEED_ADMIN_PASSWORD in .env")
 
 
 def hash_password(password: str) -> str:
@@ -21,7 +30,7 @@ def seed_data():
             id=str(uuid.uuid4()),
             name="Admin User",
             email="admin@library.com",
-            password_hash=hash_password("Admin@1234"),
+            password_hash=hash_password(SEED_ADMIN_PASSWORD),
             user_type="premium",
             roles="ADMIN,MEMBER",
             is_active=True,
@@ -33,7 +42,7 @@ def seed_data():
             id=str(uuid.uuid4()),
             name="John Doe",
             email="john@example.com",
-            password_hash=hash_password("Password123!"),
+            password_hash=hash_password(SEED_USER_PASSWORD),
             user_type="general",
             roles="MEMBER",
             is_active=True,
@@ -44,7 +53,7 @@ def seed_data():
             id=str(uuid.uuid4()),
             name="Jane Smith",
             email="jane@example.com",
-            password_hash=hash_password("Password123!"),
+            password_hash=hash_password(SEED_USER_PASSWORD),
             user_type="premium",
             roles="MEMBER",
             is_active=True,
@@ -52,75 +61,50 @@ def seed_data():
         db.add(user2)
 
         # Create authors
-        author1_id = str(uuid.uuid4())
-        author1 = AuthorModel(id=author1_id, name="George Orwell")
+        author1 = AuthorModel(
+            id=str(uuid.uuid4()),
+            name="Gabriel García Márquez",
+            description="Nobel Prize winner, known for One Hundred Years of Solitude."
+        )
         db.add(author1)
 
-        author2_id = str(uuid.uuid4())
-        author2 = AuthorModel(id=author2_id, name="J.K. Rowling")
+        author2 = AuthorModel(
+            id=str(uuid.uuid4()),
+            name="J.K. Rowling",
+            description="Author of the Harry Potter series."
+        )
         db.add(author2)
-
-        author3_id = str(uuid.uuid4())
-        author3 = AuthorModel(id=author3_id, name="Isaac Asimov")
-        db.add(author3)
 
         # Create books
         book1 = BookModel(
             id=str(uuid.uuid4()),
-            isbn="978-0-452-28423-4",
-            title="1984",
-            author_id=author1_id,
-            description="A dystopian social science fiction novel and cautionary tale.",
-            available_copies=5,
+            title="One Hundred Years of Solitude",
+            description="A landmark novel of magical realism.",
+            isbn="978-0060883287",
+            available_copies=5
         )
+        # Add author relationship (assuming many-to-many or similar)
+        book1.authors.append(author1)
         db.add(book1)
 
         book2 = BookModel(
             id=str(uuid.uuid4()),
-            isbn="978-0-7475-3269-9",
-            title="Harry Potter and the Philosopher's Stone",
-            author_id=author2_id,
-            description="The first novel in the Harry Potter series.",
-            available_copies=3,
+            title="Harry Potter and the Sorcerer's Stone",
+            description="The first book in the Harry Potter series.",
+            isbn="978-0590353427",
+            available_copies=10
         )
+        book2.authors.append(author2)
         db.add(book2)
 
-        book3 = BookModel(
-            id=str(uuid.uuid4()),
-            isbn="978-0-553-29337-0",
-            title="Foundation",
-            author_id=author3_id,
-            description="The first novel in Isaac Asimov's Foundation Trilogy.",
-            available_copies=4,
-        )
-        db.add(book3)
-
-        book4 = BookModel(
-            id=str(uuid.uuid4()),
-            isbn="978-0-452-28424-1",
-            title="Animal Farm",
-            author_id=author1_id,
-            description="An allegorical novella about Soviet totalitarianism.",
-            available_copies=6,
-        )
-        db.add(book4)
-
         db.commit()
-        print("✅ Database seeded successfully!")
-        print(f"   - Created 3 users (admin@library.com, john@example.com, jane@example.com)")
-        print(f"   - Created 3 authors")
-        print(f"   - Created 4 books")
-        print("\n📝 Login credentials:")
-        print("   Admin: admin@library.com / Admin@1234")
-        print("   User1: john@example.com / Password123!")
-        print("   User2: jane@example.com / Password123!")
+        print("✅ Data seeded successfully!")
+        
     except Exception as e:
+        print(f"❌ Error seeding data: {e}")
         db.rollback()
-        print(f"❌ Error seeding database: {e}")
-        raise
     finally:
         db.close()
-
 
 if __name__ == "__main__":
     seed_data()

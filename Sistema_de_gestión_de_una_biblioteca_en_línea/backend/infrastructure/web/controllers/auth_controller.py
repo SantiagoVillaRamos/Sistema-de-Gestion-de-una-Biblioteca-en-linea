@@ -15,6 +15,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from domain.models.user import User
 from datetime import datetime, timedelta, timezone
+from infrastructure.core.config import settings
 
 # 🔒 SECURITY: Initialize rate limiter for this router
 limiter = Limiter(key_func=get_remote_address)
@@ -108,11 +109,18 @@ async def refresh_access_token(
             detail="User not found or inactive"
         )
     
-    # Create new access token with fresh roles
-    new_access_token = repos.auth_service.create_access_token(user.user_id, user.roles)
+    # 🔒 SECURITY: Token Rotation Implementation
+    # 1. Blacklist the used refresh token to prevent reuse
+    refresh_token_expiry = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    repos.token_blacklist.add_token(refresh_request.refresh_token, refresh_token_expiry)
+    
+    # 2. Create NEW token pair (Access + Refresh)
+    # This ensures the user gets a fresh rotation window
+    token_pair = repos.auth_service.create_token_pair(user.user_id, user.roles)
     
     return RefreshTokenResponse(
-        access_token=new_access_token,
+        access_token=token_pair["access_token"],
+        refresh_token=token_pair["refresh_token"],
         token_type="bearer"
     )
 

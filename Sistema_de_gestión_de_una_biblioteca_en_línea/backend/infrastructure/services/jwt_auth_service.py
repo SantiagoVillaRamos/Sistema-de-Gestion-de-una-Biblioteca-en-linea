@@ -5,22 +5,24 @@ from domain.ports.AuthService import AuthService
 from domain.models.exceptions.business_exception import BusinessUnauthorizedError
 
 
+from infrastructure.core.config import settings
+
 class JwtAuthService(AuthService):
     """
     JWT Authentication Service with support for access and refresh tokens.
     
     🔒 SECURITY ENHANCEMENTS:
     - Separate access and refresh tokens
-    - Shorter access token expiration (15 minutes)
-    - Longer refresh token expiration (7 days)
+    - Shorter access token expiration (configurable)
+    - Longer refresh token expiration (configurable)
     - Token type identification
     """
 
     def __init__(self, secret_key: str, algorithm: str = "HS256"):
         self.secret_key = secret_key
         self.algorithm = algorithm
-        self.access_token_expire_minutes = 15  # 🔒 Reduced from 60 to 15 minutes
-        self.refresh_token_expire_days = 7
+        self.access_token_expire_minutes = settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        self.refresh_token_expire_days = settings.REFRESH_TOKEN_EXPIRE_DAYS
 
     def create_token(self, user_id: str, roles: list[str]) -> str:
         """

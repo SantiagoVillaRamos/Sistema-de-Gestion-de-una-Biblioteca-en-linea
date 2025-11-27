@@ -40,13 +40,13 @@ def login_user(client: TestClient, email: str, password: str) -> str:
     response = client.post(BASE_URL_LOGIN, json=login_response)
     
     assert response.status_code == 200, f"Fallo en login: {login_response.status_code} - {login_response.text}"
-    return response.json()["token"]
+    return response.json()["access_token"]
 
 
 def generate_unique_credentials() -> Dict[str, str]:
     
     test_email = f"admin_list_{uuid.uuid4().hex[:8]}@gmail.com"
-    test_password = "AdminListPassword1234"
+    test_password = "AdminListPassword1234!"
     
     return {
         "email": test_email,
